@@ -2,6 +2,14 @@ import axios from "axios";
 import logo from "./logo.svg";
 import "./App.css";
 import { useEffect, useState } from "react";
+import { Route, Routes } from 'react-router-dom';
+import LandingPage from "../src/Pages/Users/LandingPage";
+import Register from "../src/Pages/Users/Register";
+// import ForgotPassword from "./Pages/Users/ForgotPassword";
+// import Verification from "./Pages/Users/Verification";
+// import LandingPage from '../src/Pages/Users/LandingPage';
+// import RegisterPage from '../src/Pages/Users/RegisterPage';
+// import ForgotPasswordPage from '../src/Pages/Users/ForgotPage';
 
 function App() {
   const [message, setMessage] = useState("");
@@ -15,11 +23,11 @@ function App() {
     })();
   }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        {message}
-      </header>
+    <div>
+      <Routes>
+        <Route path='/' element={<LandingPage />} />
+        <Route path='/register' element={<Register />} />
+      </Routes>
     </div>
   );
 }
