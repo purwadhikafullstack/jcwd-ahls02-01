@@ -1,6 +1,6 @@
 import Axios from "axios";
 import React from "react";
-import { API_URL } from "../../helper";
+import { API_URL } from "../../helper"
 import VectorRegister from "../../Assets/DevImage/Register.png";
 import logo from "../../Assets/DevImage/LogoMedhika.png";
 import NavbarComponent from "../../Components/Users/Navbar";
@@ -13,76 +13,113 @@ import { useDisclosure, useToast } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { loginAction } from "../../Redux/Actions/userActions";
+import { useToastHook } from "../../Components/CustomToast";
 
 const Register=()=>{
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [show, setShow] = React.useState(false)
-  const handleClick = () => setShow(!show)
-  const [name, setName]=React.useState("")
-  const [nomorHandphone, setNomorHandphone]=React.useState()
-  const [email, setEmail]=React.useState("")
-  const [password, setPassword]=React.useState("")
-  const [passwordLength, setPasswordLength]=React.useState(false)
-  const [containsNumbers, setContainsNumbers]=React.useState(false)
-  const [isUpperCase, setIsUpperCase]=React.useState(false)
-  const [confPassword, setConfPassword]=React.useState("")
-  const { isOpen, onToggle, onClose } = useDisclosure()
-  const toast = useToast()
+  const [show, setShow] = React.useState(false);
+  const handleClick = () => setShow(!show);
+  const [name, setName]=React.useState("");
+  const [phone, setPhone]=React.useState();
+  const [email, setEmail]=React.useState("");
+  const [password, setPassword]=React.useState("");
+  const [passwordLength, setPasswordLength]=React.useState(false);
+  const [containsNumbers, setContainsNumbers]=React.useState(false);
+  const [isUpperCase, setIsUpperCase]=React.useState(false);
+  const [confirmPassword, setConfirmPassword]=React.useState("");
+  const { isOpen, onToggle, onClose } = useDisclosure();
+  const toast = useToast();
+  const [loadingStat, setLoadingStat]=React.useState(false);
+  const [currentToast, newToast]=useToastHook();
 
-  // console.log("name", name)
-  // console.log("Nomor Handphone", nomorHandphone)
-  // console.log("email", email)
-  // console.log("password", password)
-  // console.log("konfirmasi password", confPassword)
+  console.log("name", name)
+  console.log("Nomor Handphone", phone)
+  console.log("email", email)
+  console.log("password", password)
+  console.log("konfirmasi password", confirmPassword)
 
   const [inForm, setInForm] = React.useState({
     email: '',
     password: '',
-    confPassword: ''
+    confirmPassword: ''
   })
 
   const handleRegister =async()=>{
     try {
+      // setDisable(!disable)
+      setLoadingStat(true)
       checkStrongPassword();
-      if (name=="" || nomorHandphone=="" || email=="" || password=="" || confPassword==""){
-        alert("Fill in all form")
+      if (name=="" || phone=="" || email=="" || password=="" || confirmPassword==""){
+        // alert("Fill in all form")
+        newToast({
+          title: 'Registrasi Tidak Berhasil.',
+          description: 'Mohon isi semua data registrasi',
+          status: 'error',
+        })
+        setLoadingStat(false)
       } else{
-        if (password!=confPassword){
-          alert("Password not match")
+        if (password!=confirmPassword){
+          newToast({
+            title: 'Registrasi Tidak Berhasil.',
+            description: 'Konfirmasi password tidak sesuai dengan password',
+            status: 'error',
+          })
+          setLoadingStat(false)
         } else if(email.includes("@")){
-          let res = await Axios.post(`${API_URL}/users/`, {
+          let res = await Axios.post(`${API_URL}/users/register`, {
             name: name,
             email: email,
             password: password,
             role: "user",
-            nomorHandphone: nomorHandphone,
-            profilepict: "https://sman11tangerangselatan.sch.id/images/user-u.jpg",
-            status:"unverified"
+            phone: phone,
+            profilePicture: "https://sman11tangerangselatan.sch.id/images/user-u.jpg",
+            isVerified:"unverified"
           })
           console.log("res.data registerUser", res.data)
           if (res.data.token) {
-            console.log("res.data", res.data)
-            console.log("res.data.token", res.data.token)
+            newToast({
+              title: 'Registrasi Berhasil.',
+              description: 'Verifikasi akun melalui link yang dikirim ke email anda',
+              status: 'success',
+            })
+            console.log("res.data FE", res.data)
+            console.log("res.data.token FE", res.data.token)
             localStorage.setItem("tokenIdUser", res.data.token)
             dispatch(loginAction(res.data))
-            toast({
-              title: 'Registrasi Berhasil.',
-              description: 'Verifikasi akun anda dengan link yang ada di email !',
-              status: 'success',
-              duration: 9000,
-              position: 'top',
-              isClosable: true,
-            })
+            setLoadingStat(false)
+            // alert(`registration success,
+            // verified your account with link verification in email`)
+            // console.log("token2 regis", token)
+            // setDisable(!disable)
             navigate("/")
           }
         } else {
-          alert("Email Wrong")
+          // alert("Email Wrong")
+          newToast({
+            title: 'Registrasi Tidak Berhasil.',
+            description: 'Format email salah, mohon memasukan sesuai format email',
+            status: 'error',
+          })
+          setLoadingStat(false)
+          // setOpenToast(!openToast)
+          // setToastMsg(`Email Wrong!`)
+          // setDisable(!disable)
         }
       }    
     } catch (err) {
-      alert(err.response.data.message)
+      // setOpenToast(!openToast)
+      // setToastMsg(`${error.response.data.message}`)
+      newToast({
+        title: 'Registrasi Tidak Berhasil.',
+        description: err.response.data.message,
+        status: 'error',
+      })
+      setLoadingStat(false)
+      // alert(err.response.data.message)
+      // console.log(disable)
+      // setDisable(!disable)
   }
   }
 
@@ -95,17 +132,31 @@ const Register=()=>{
     } else {
       setPasswordLength(false)
     }
+    // console.log("cek password.length",inForm.password.length)
+    // console.log(inForm.password)
   }
 
   const checkStrongPassword =()=>{
     console.log(isUpperCase, containsNumbers, passwordLength)
     if(passwordLength== false || isUpperCase==false ||
       containsNumbers==false ){
-        alert("Weak password")
+        toast({
+          title: 'Password Lemah.',
+          description: 'Disarankan untuk merubah Password yang kuat. Setidaknya memiliki 8 Huruf yang terdiri dari Huruf Kapital dan Angka',
+          status: 'warning',
+          duration: 9000,
+          position: 'top',
+          isClosable: true,
+        })
+        // alert("Weak password")
+        // setOpenToast(!openToast)
+        // setToastMsg(`Weak Password !
+        // plaase create strong password.`)
   }
 }
 
 const checkUpperCase=()=>{
+  // console.log("cek uppercase", isUpperCase)
   if (inForm.password.match(/^(?=.*[A-Z])/)){
     setIsUpperCase(true)
   } else {
@@ -114,6 +165,7 @@ const checkUpperCase=()=>{
 }
 
 const checkNumbers=()=>{
+  // console.log("cek number", containsNumbers)
   if (inForm.password.match(/\d+/g)){
     setContainsNumbers(true)
   } else {
@@ -126,10 +178,12 @@ const checkNumbers=()=>{
     <Box boxShadow='md'>
       <NavbarComponent/>
     </Box>
-    <div className="container">
+    <div class="container">
+      {/* <Image src={logo} width='10%' style={{marginLeft:"10px", marginTop:"25px"}}/> */}
       <div class="text-center mt-4">
         <Text class="h4">Mari daftarkan akun Anda !</Text>
         <Text class="h4">agar memudahkan saat transaksi obat</Text>
+        {/* <Divider borderWidth={"1px"} borderColor={"#333333"} style={{marginTop:"15px"}}/> */}
       </div>
       <div class="row mt-5">
         <div class="col-6">      
@@ -147,9 +201,10 @@ const checkNumbers=()=>{
                 <InputGroup>
                   <InputLeftElement
                     pointerEvents='none'
+                    // BsTelephone
                     children={<BsTelephone color='gray.300' />}
                   />
-                  <Input bgColor={"#FFFFFF"} boxShadow='md' type='tel' placeholder='Phone number' onChange={(e)=>setNomorHandphone(e.target.value)} />
+                  <Input bgColor={"#FFFFFF"} boxShadow='md' type='tel' placeholder='Phone number' onChange={(e)=>setPhone(e.target.value)} />
                 </InputGroup>
               </Box>
               <Box marginTop={"20px"}>
@@ -157,6 +212,13 @@ const checkNumbers=()=>{
                 <Input bgColor={"#FFFFFF"} boxShadow='md' placeholder='contoh@mail.com' onChange={(e)=>setEmail(e.target.value)} />
               </Box>
               <Box marginTop={"20px"}>
+              {/* <Popover
+                returnFocusOnClose={false}
+                isOpen={isOpen}
+                // onClose={onClose}
+                placement='left'
+                closeOnBlur={false}
+              > */}
                 <Text class="h6b">Password</Text>
                   <InputGroup size='md'>
                     <Input bgColor={"#FFFFFF"} boxShadow='md'
@@ -170,6 +232,16 @@ const checkNumbers=()=>{
                       </Button>
                     </InputRightElement>
                   </InputGroup>
+                {/* <PopoverTrigger>
+                </PopoverTrigger>
+                <PopoverContent boxShadow='md'>
+                  <PopoverHeader bgColor={"#DE1B51"} fontWeight='bold' color={"#FFFFFF"}>Password Anda Lemah !</PopoverHeader>
+                  <PopoverArrow />
+                  <PopoverCloseButton color={"#FFFFFF"} onClick={onToggle} />
+                  <PopoverBody fontWeight='semibold' color={"#DE1B51"}>
+                    Dalam membuat password setidaknya miliki 1 Huruf Kapital, Kombinasi Huruf Dengan Angka & 8 Huruf
+                  </PopoverBody>
+                </PopoverContent> */}
                 <div>
                   <div class="h6 mt-3">Password yang kuat setidaknya harus :</div>
                   <span class={passwordLength ? 'h6r' : 'h6'}> 8 huruf</span>
@@ -178,6 +250,7 @@ const checkNumbers=()=>{
                   <span class="h6"> dan </span>
                   <span class={containsNumbers ? 'h6r' : 'h6'}>Angka</span>
                 </div>
+              {/* </Popover> */}
               </Box>
               <Box marginTop={"20px"}>
                 <Text class="h6b">Konfirmasi Password</Text>
@@ -185,7 +258,7 @@ const checkNumbers=()=>{
                     <Input bgColor={"#FFFFFF"} boxShadow='md'
                       pr='4.5rem'
                       type={show ? 'text' : 'password'}
-                      placeholder='Masukan Konfirmasi Password' onChange={(e)=>setConfPassword(e.target.value)}
+                      placeholder='Masukan Konfirmasi Password' onChange={(e)=>setConfirmPassword(e.target.value)}
                     />
                     <InputRightElement width='4.5rem'>
                       <Button h='1.75rem' size='sm' onClick={handleClick}>
@@ -194,7 +267,8 @@ const checkNumbers=()=>{
                     </InputRightElement>
                   </InputGroup>
               </Box>
-                <Button style={{marginTop:"25px"}} class="btn-def_second" onClick={handleRegister}>Daftar Akun</Button>
+                <Button isLoading={loadingStat} loadingText='Loading' style={{marginTop:"25px"}}
+                class="btn-def_second" onClick={handleRegister}>Register</Button>
             </Box>
           </div>
         </div>

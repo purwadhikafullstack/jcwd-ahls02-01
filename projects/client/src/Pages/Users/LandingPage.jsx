@@ -1,29 +1,30 @@
 import React from "react";
 import Axios from "axios";
-import "../../Styles/Users/LandingPage.css"
-import VectorHeader from "../../Assets/DevImage/HeaderLandingPage.png"
-import logo from "../../Assets/DevImage/LogoMedhika.png"
-import kategori1 from "../../Assets/DevImage/Kategori1.png"
-import kategori2 from "../../Assets/DevImage/Kategori2.png"
-import kategori3 from "../../Assets/DevImage/Kategori3.png"
-import jaminan1 from "../../Assets/DevImage/Jaminan1.png"
-import jaminan2 from "../../Assets/DevImage/Jaminan2.png"
-import jaminan3 from "../../Assets/DevImage/Jaminan3.png"
-import bank1 from "../../Assets/DevImage/LogoBCA.png"
-import bank2 from "../../Assets/DevImage/LogoMandiri.png"
-// import BGHeader from "../../Assets/DevImage/BGHeader2.png"
-// import rekomendasi from "../../Assets/DevImage/ProdukPilihanNew.png"
-import obat1 from "../../Assets/DevImage/Panadol.jpg"
-import obat2 from "../../Assets/DevImage/Decolgen.jpg"
-import obat3 from "../../Assets/DevImage/Blackmores.jpg"
-import obat4 from "../../Assets/DevImage/Enervon-C.jpg"
-import obat5 from "../../Assets/DevImage/Derma.jpg"
-import NavbarComponent from "../../Components/Users/Navbar"
-import { Flex, Box, Heading, Input, Image, Text, Divider, Spacer, ButtonGroup, Button, Link, extendTheme } from '@chakra-ui/react'
+import "../../Styles/Users/LandingPage.css";
+import VectorHeader from "../../Assets/DevImage/HeaderLandingPage.png";
+import logo from "../../Assets/DevImage/LogoMedhika.png";
+import kategori1 from "../../Assets/DevImage/Kategori1.png";
+import kategori2 from "../../Assets/DevImage/Kategori2.png";
+import kategori3 from "../../Assets/DevImage/Kategori3.png";
+import jaminan1 from "../../Assets/DevImage/Jaminan1.png";
+import jaminan2 from "../../Assets/DevImage/Jaminan2.png";
+import jaminan3 from "../../Assets/DevImage/Jaminan3.png";
+import bank1 from "../../Assets/DevImage/LogoBCA.png";
+import bank2 from "../../Assets/DevImage/LogoMandiri.png";
+import obat1 from "../../Assets/DevImage/Panadol.jpg";
+import obat2 from "../../Assets/DevImage/Decolgen.jpg";
+import obat3 from "../../Assets/DevImage/Blackmores.jpg";
+import obat4 from "../../Assets/DevImage/Enervon-C.jpg";
+import obat5 from "../../Assets/DevImage/Derma.jpg";
+import NavbarComponent from "../../Components/Users/Navbar";
+import { useNavigate } from "react-router-dom";
+import { Flex, Box, Heading, Input, Image, Text, Divider, Spacer, ButtonGroup, Button, Link, extendTheme } from '@chakra-ui/react';
 
 
 const LandingPage = (props) =>{
-  
+  const navigate = useNavigate();
+
+
   return (
     <>
       <div>
@@ -128,7 +129,7 @@ const LandingPage = (props) =>{
                     </div>
                   </div>
                   <div class="d-flex justify-content-center mt-2">
-                    <Button class="btn-rekom">Keranjang</Button>
+                    <Button class="btn-rekom">Add To Cart</Button>
                   </div>
                 </Box>
               </div>
@@ -144,7 +145,7 @@ const LandingPage = (props) =>{
                     </div>
                   </div>
                   <div class="d-flex justify-content-center mt-2">
-                    <Button class="btn-rekom">Keranjang</Button>
+                    <Button class="btn-rekom">Add To Cart</Button>
                   </div>
                 </Box>
               </div>
@@ -160,7 +161,7 @@ const LandingPage = (props) =>{
                     </div>
                   </div>
                   <div class="d-flex justify-content-center mt-2">
-                    <Button class="btn-rekom">Keranjang</Button>
+                    <Button class="btn-rekom">Add To Cart</Button>
                   </div>
                 </Box>
               </div>
@@ -176,7 +177,7 @@ const LandingPage = (props) =>{
                     </div>
                   </div>
                   <div class="d-flex justify-content-center mt-2">
-                    <Button class="btn-rekom">Keranjang</Button>
+                    <Button class="btn-rekom">Add To Cart</Button>
                   </div>
                 </Box>
               </div>
@@ -192,7 +193,7 @@ const LandingPage = (props) =>{
                     </div>
                   </div>
                   <div class="d-flex justify-content-center mt-2">
-                    <Button class="btn-rekom">Keranjang</Button>
+                    <Button class="btn-rekom">Add To Cart</Button>
                   </div>
                 </Box>
               </div>
@@ -271,4 +272,4 @@ const LandingPage = (props) =>{
   )
 }
 
-export default LandingPage
+export default LandingPage;
