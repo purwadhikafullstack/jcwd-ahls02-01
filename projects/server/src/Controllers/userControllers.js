@@ -124,4 +124,65 @@ module.exports = {
       return next(err)
     }
   },
+  verified: async (req, res, next) => {
+    try {
+      console.log("dataUser Verified", req.dataUser)
+      if (req.dataUser) {
+        let update = await dbQuery(`UPDATE users SET isVerified='verified'
+        WHERE idUser=${req.dataUser.idUser};`)
+        let resultsLogin = await dbQuery(`Select idUser, name, email, role, phone, profilePicture, addDate, isVerified FROM users
+        WHERE idUser = ${req.dataUser.idUser};`);
+
+        console.log("resultsLogin verified", resultsLogin)
+        let { idUser, name, email, password, role, phone, profilePicture, addDate, isVerified } = resultsLogin[0]
+        let token = createToken({ idUser, addDate, isVerified })
+        let mytoken = await dbQuery(`UPDATE tokenlist SET token = ${dbConf.escape(token)}
+        WHERE idUser = ${req.dataUser.idUser};`);
+        console.log("token verified", token)
+        // console.log("mytoken verified", mytoken)
+        return res.status(200).send({ ...resultsLogin[0], token });
+        // return res.status(200).send({ ...resultsLogin[0], token, success: true });
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  keepLogin: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+        let resultsLogin = await dbQuery(`Select idUser, name, email, role, phone, gender, birthDate, profilePicture, isVerified FROM users where idUser=${req.dataUser.idUser};`);
+        console.log("resultsLogin keep =>", resultsLogin[0])
+        console.log("resultsLogin keep length =>", resultsLogin.length)
+
+        if (resultsLogin.length == 1) {
+          console.log("resultsLogin.length == 1")
+          let checkToken = await dbQuery(`SELECT token FROM tokenlist where idUser=${resultsLogin[0].idUser};`)
+          console.log("checkToken nihhh", checkToken)
+          // let birthDateFE = resultsLogin[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
+          // console.log("birthDateFE nihhh", resultsLogin[0].birthDate.toISOString().slice(0, 10).replace('T', ' '))
+          let { idUser, name, email, role, phone, gender, birthDate, profilePicture, isVerified } = resultsLogin[0]
+          // console.log("token keepLogin undefined", resultsLogin[0]);
+          // if (checkToken.length == 1) {
+
+          let token = checkToken[0].token
+          console.log("token Keep", token)
+          return res.status(200).send({ ...resultsLogin[0], token });
+          // }
+        }
+        else {
+          res.status(404).send({
+            success: false,
+            message: "User not Found"
+          })
+        }
+      } else {
+        return res.status(401).send({
+          success: false,
+          message: "Token expired"
+        })
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
 }
