@@ -12,6 +12,7 @@ import ChangePassword from "./Pages/Users/ChangePassword";
 import ForgotPassword from './Pages/Users/ForgotPassword';
 import ResetPassword from "./Pages/Users/ResetPassword";
 import Cart from "./Pages/Users/Cart";
+import Dashboard from "./Pages/Admin/Dashboard";
 import Verification from "./Pages/Users/Verification";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
       role: state.userReducers.role
     }
   })
+  console.log("ROLE APP.JSX", role)
 
   console.log("token app.jsx", token)
   useEffect(() => {
@@ -40,11 +42,21 @@ function App() {
         {
           token ?
           <>
-            <Route path='/' element={<LandingPage />} />
-            <Route path='/verification/:token' element={<Verification />} />
-            <Route path='/changePassword' element={<ChangePassword />} />
-            <Route path='/resetPassword/:token' element={<ResetPassword />} />
-            <Route path='/cart' element={<Cart />} />
+            {
+              role == 'admin' ?
+              <>
+                <Route path='/' element={<LandingPage />} />
+                <Route path='/admin/dashboard' element={<Dashboard />} />
+              </>
+            :
+              <>
+                <Route path='/' element={<LandingPage />} />
+                <Route path='/verification/:token' element={<Verification />} />
+                <Route path='/changePassword' element={<ChangePassword />} />
+                <Route path='/resetPassword/:token' element={<ResetPassword />} />
+                <Route path='/cart' element={<Cart />} />
+              </>
+            }
           </>
         :
           <>
