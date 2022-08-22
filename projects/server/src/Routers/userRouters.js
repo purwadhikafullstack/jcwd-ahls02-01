@@ -8,5 +8,7 @@ router.patch('/verified', readToken, userControllers.verified);
 router.get('/reverified', readToken, userControllers.reverified);
 router.post('/login', userControllers.login);
 router.patch('/change', readToken, userControllers.change);
+router.post('/forgot', userControllers.forgot);
+router.patch('/reset', readToken, userControllers.reset);
 
 module.exports = router;

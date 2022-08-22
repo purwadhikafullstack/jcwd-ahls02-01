@@ -370,4 +370,140 @@ module.exports = {
       return next(error)
     }
   },
+  forgot: async (req, res, next) => {
+    try {
+      let forgot = await dbQuery(`Select * FROM users WHERE email = '${req.body.email}';`);
+      // console.log("req.body forgot", forgot)
+      // console.log("hash", hashPassword(req.body.password))
+
+      if (forgot[0].email) {
+        let { idUser, name, email, password, role, phone, profilePicture, addDate, isVerified } = forgot[0]
+        let token = createToken({ idUser, addDate, isVerified }, "1h")
+        console.log("tokenForgot", token)
+        let mytoken = await dbQuery(`UPDATE tokenlist SET token = ${dbConf.escape(token)}
+          WHERE idUser = ${forgot[0].idUser};`);
+        // console.log("myToken", mytoken)
+        if (mytoken) {
+
+          // }
+          let checkToken = await dbQuery(`SELECT * FROM tokenlist WHERE idUser = ${forgot[0].idUser};`)
+          console.log("checkToken", checkToken)
+          console.log("BOOLEAN", token == checkToken[0].token)
+          if (token == checkToken[0].token) {
+
+            await transporter.sendMail({
+              from: "Admin Medhika",
+              to: email,
+              subject: "Verifikasi Ubah Password Akun Medhika",
+              html: `<div style="background-color: #f6f8fc">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <td bgcolor="#DE1B51" align="center">
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                        <tr>
+                            <td align="center" valign="top" style="padding: 40px 10px 40px 10px;"> </td>                    
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td bgcolor="#DE1B51" align="center" style="padding: 0px 10px 0px 10px;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                            <tr>
+                                <td bgcolor="#ffffff" align="center" class="shadow" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; letter-spacing: 4px; line-height: 48px;">
+                                    <h1 style="font-size: 48px; font-weight: 400; margin: 2;">Hello, ${forgot[0].name} !</h1>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td bgcolor="#f6f8fc" align="center" style="padding: 0px 10px 0px 10px;">
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                          <tr>
+                              <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 40px 30px; color: #333333; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                                  <p style="margin: 0;">Tekan tombol link ini untuk ubah password akun medhika anda.</p>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td bgcolor="#ffffff" align="center">
+                                  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                      <tr>
+                                          <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
+                                              <table border="0" cellspacing="0" cellpadding="0">
+                                                  <tr>
+                                                      <td align="center" style="border-radius: 3px;" bgcolor="#586BB1">
+                                                      <a href="http://localhost:3000/resetPassword/${token}" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #586BB1; display: inline-block;">Link Ubah Password</a></td>
+                                                  </tr>
+                                              </table>
+                                          </td>
+                                      </tr>
+                                  </table>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td bgcolor="#ffffff" align="center" style="padding: 0px 30px 50px 30px; color: #333333; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                                  <p style="margin: 0;">link ubah password hanya aktif selama 1 jam</p>
+                              </td>
+                          </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td bgcolor="#f6f8fc" align="center" style="padding: 0px 0px 0px 0px;">
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                          <tr>
+                              <td bgcolor="#f6f8fc" align="center" style="padding: 0px 30px 30px 30px; color: #333333; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;"> <br>
+                                  <p style="margin: 0;"></p>
+                              </td>
+                          </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td bgcolor="#f6f8fc" align="center" style="padding: 0px 0px 0px 0px;">
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                          <tr>
+                              <td bgcolor="#f6f8fc" align="center" style="padding: 0px 30px 30px 30px; color: #FFFFFF; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;"> <br>
+                                  <p style="margin: 0;">www.medhika.com</p>
+                              </td>
+                          </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </div>`
+            })
+            return res.status(200).send({ ...forgot[0], ...checkToken[0], token });
+          }
+        }
+        // console.log("TOKEN", token)
+        // Mengirimkan Email untuk Verifikasi
+      } else {
+        return res.status(404).send({
+          success: false,
+          message: "User not found"
+        });
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  reset: async (req, res, next) => {
+    try {
+      console.log("req.body resetPass", req.body.newPassword)
+      console.log("dataUser reset", req.dataUser)
+      if (req.dataUser.idUser) {
+        let resetPassword = await dbQuery(`UPDATE users SET password=${dbConf.escape(hashPassword(req.body.newPassword))}
+        WHERE idUser=${req.dataUser.idUser};`);
+        let check = await dbQuery(`SELECT token FROM tokenlist WHERE idUser = ${req.dataUser.idUser};`)
+        console.log("CHECK", check)
+        let { idUser, name, email, password, role, phone, profilePicture, addDate, isVerified } = check[0]
+        let token = createToken({ idUser, addDate, isVerified })
+        return res.status(200).send({ ...check[0], token });
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
 }

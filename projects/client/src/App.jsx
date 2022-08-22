@@ -9,6 +9,8 @@ import LandingPage from "./Pages/Users/LandingPage";
 import Register from "./Pages/Users/Register";
 import NotFoundPage from "./Pages/Users/404";
 import ChangePassword from "./Pages/Users/ChangePassword";
+import ForgotPassword from './Pages/Users/ForgotPassword';
+import ResetPassword from "./Pages/Users/ResetPassword";
 import Verification from "./Pages/Users/Verification";
 
 function App() {
@@ -40,11 +42,13 @@ function App() {
             <Route path='/' element={<LandingPage />} />
             <Route path='/verification/:token' element={<Verification />} />
             <Route path='/changePassword' element={<ChangePassword />} />
+            <Route path='/resetPassword/:token' element={<ResetPassword />} />
           </>
         :
           <>
             <Route path='/' element={<LandingPage />} />
             <Route path='/register' element={<Register />} />
+            <Route path='/forgot' element={<ForgotPassword />} />
           </>
         }
         <Route path='*' element={<NotFoundPage />} />
