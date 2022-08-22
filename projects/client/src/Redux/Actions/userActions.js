@@ -21,16 +21,12 @@ export const keepLogin = () => {
   return async (dispatch) => {
     try {
       let token = localStorage.getItem("tokenIdUser");
-      // console.log("token getItem", token)
-      // memeriksa adanya token
       if (token) {
         let res = await axios.get(`${API_URL}/users/keepLogin`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         })
-        // memeriksa adanya data user atau tidak
-        // console.log("RES.DATA", res.data.token)
         console.log("RES.DATA TOKENS", res.data.token)
         if (res.data.token) {
           //

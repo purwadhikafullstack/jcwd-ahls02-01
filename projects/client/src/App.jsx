@@ -36,14 +36,14 @@ function App() {
         {
           token ?
           <>
-            <Route path='/verification/:token' element={<Verification />} />
             <Route path='/' element={<LandingPage />} />
+            <Route path='/verification/:token' element={<Verification />} />
           </>
         :
-        <>
-          <Route path='/' element={<LandingPage />} />
-          <Route path='/register' element={<Register />} />
-        </>
+          <>
+            <Route path='/' element={<LandingPage />} />
+            <Route path='/register' element={<Register />} />
+          </>
         }
         <Route path='*' element={<NotFoundPage />} />
       </Routes>
