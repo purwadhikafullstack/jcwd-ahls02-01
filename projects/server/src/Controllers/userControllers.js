@@ -290,4 +290,58 @@ module.exports = {
       return next(err)
     }
   },
+  login: async (req, res, next) => {
+    try {
+      console.log("coba admin", req.body)
+      let emailLogin = await dbQuery(`SELECT idUser, name, email, password, role, gender, birthDate, profilePicture, addDate, isVerified FROM users WHERE email LIKE
+      '%${req.body.email}%' and password LIKE '%${hashPassword(req.body.password)}%';`);
+      console.log("emailLogin Login", emailLogin[0])
+      if (emailLogin[0].role == "admin") {
+        console.log("login admin oke")
+
+        let { idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate } = emailLogin[0]
+        let token = createToken({ idUser, email, role, addDate })
+
+        return res.status(200).send({ ...emailLogin[0], token });
+      } else {
+        console.log("login user")
+        if (req.body.email != emailLogin[0].email) {
+          let message = "incorrect email"
+          return res.status(404).send({
+            message
+          });
+        } else if (hashPassword(req.body.password) != emailLogin[0].password) {
+          let message = "incorrect password"
+          return res.status(404).send({
+            message
+          });
+        } else {
+          if (emailLogin[0].isVerified == "unverified") {
+            // generate token
+            let checkToken = await dbQuery(`SELECT token FROM tokenlist WHERE idUser = ${emailLogin[0].idUser};`)
+            console.log("isVerified yang Unverified")
+            let { idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate, isVerified } = emailLogin[0]
+            let token = checkToken[0].token
+
+            return res.status(200).send({ ...emailLogin[0], token });
+          } else if (emailLogin[0].isVerified == "verified") {
+            // generate token
+            console.log("isVerified yang verified")
+            // let birthDateFE = emailLogin[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
+            let { idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate, isVerified } = emailLogin[0]
+            let token = createToken({ idUser, email, role, addDate, isVerified })
+
+            return res.status(200).send({ ...emailLogin[0], token });
+          } else {
+            res.status(404).send({
+              success: false,
+              message: "User Not Found"
+            })
+          }
+        }
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
 }

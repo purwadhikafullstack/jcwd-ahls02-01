@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useDisclosure, useToast } from '@chakra-ui/react';
 import { logoutAction } from "../../Redux/Actions/userActions";
-// import Modal from "../../Components/Users/ModalLogin";
+import Modal from "../../Components/Users/ModalLogin";
 import { API_URL } from "../../helper";
 import { IoCart, IoCloseCircle } from 'react-icons/io5';
 import { FaUser, FaUserSlash, FaUserCircle } from 'react-icons/fa';
@@ -97,7 +97,6 @@ const NavbarComponent = (props) => {
                             src={profilePicture}
                             alt='Foto Profile'
                           />
-                            {/* <IoCloseCircle as={Button} style={{ fontSize: 30, color:"#DE1B51"}}/> */}
                           </MenuButton>
                           <MenuList>
                             <MenuGroup title='User Tidak Terverifikasi'>
@@ -156,7 +155,6 @@ const NavbarComponent = (props) => {
                       src={profilePicture}
                       alt='Foto Profile'
                     />
-                      {/* <IoCloseCircle as={Button} style={{ fontSize: 30, color:"#DE1B51"}}/> */}
                     </MenuButton>
                     <MenuList>
                       <MenuGroup title='Dashboard'>
@@ -175,7 +173,7 @@ const NavbarComponent = (props) => {
           :
             <ButtonGroup gap='2'>
                 <Button class="btn-def" onClick={() => setShow(!show)}>Login</Button>
-                  {/* <Modal style={{color: "#000000"}} onClose={() => setShow(!show)} show={show} /> */}
+                  <Modal style={{color: "#000000"}} onClose={() => setShow(!show)} show={show} />
                 <Button class="btn-def" onClick={()=> navigate("/register")}>Register</Button>
             </ButtonGroup>
           }
