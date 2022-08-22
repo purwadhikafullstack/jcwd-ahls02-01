@@ -64,6 +64,33 @@ const NavbarComponent = (props) => {
     navigate("/");
   };
 
+  const btnCart = async()=>{
+    try {
+      if (isVerified == 'verified'){
+        navigate("/cart")
+      } else if (isVerified == 'unverified') {
+        newToast({
+          title: 'Akun Tidak Terverifikasi.',
+          description: 'Mohon untuk verifikasi akun di email anda. agar memudahkan saat transaksi di Medhika',
+          status: 'warning',
+        })
+      } else {
+        newToast({
+          title: 'Anda Belum Login',
+          description: 'Anda harus login agar bisa transaksi di Medhika',
+          status: 'warning',
+        })
+        setShow(!show)
+      }
+    } catch (err) {
+      newToast({
+        title: 'Error.',
+        description: 'Coba refresh browser anda',
+        status: 'error',
+      })
+    }
+  }
+
     console.log("S T A T U S Navb", isVerified)
     console.log("profilePicture", profilePicture)
   return (
@@ -86,7 +113,8 @@ const NavbarComponent = (props) => {
                     isVerified == 'unverified' ?
                       <div class="row">
                         <div class="col-6">
-                        <IoCart style={{ fontSize: 30, color:"#DE1B51", marginRight:"5px" }}/>
+                          <IoCart onClick={btnCart} style={{ cursor:"pointer", fontSize: 30, color:"#DE1B51", marginRight:"5px" }}/>
+                          <Modal style={{color: "#000000"}} onClose={() => setShow(!show)} show={show} />
                         </div>
                         <div class="col-6">
                         <Menu>
@@ -113,7 +141,7 @@ const NavbarComponent = (props) => {
                     :
                       <div class="row">
                         <div class="col-6">
-                        <IoCart style={{ fontSize: 30, color:"#DE1B51", marginRight:"5px" }}/>
+                        <IoCart onClick={btnCart} style={{ cursor:"pointer", fontSize: 30, color:"#DE1B51", marginRight:"5px" }}/>
                         </div>
                         <div class="col-6">
                         <Menu>
@@ -144,7 +172,7 @@ const NavbarComponent = (props) => {
               :
                 <div class="row">
                   <div class="col-6">
-                  <IoCart style={{ fontSize: 30, color:"#DE1B51", marginRight:"5px" }}/>
+                  <IoCart onClick={btnCart} style={{ cursor:"pointer" ,fontSize: 30, color:"#DE1B51", marginRight:"5px" }}/>
                   </div>
                   <div class="col-6">
                   <Menu>
