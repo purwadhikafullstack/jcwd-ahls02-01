@@ -506,4 +506,94 @@ module.exports = {
       return next(error)
     }
   },
+  edit: async (req, res) => {
+    console.log("req.dataUsers Edit", req.dataUser)
+    if (req.dataUser.idUser) {
+      // console.log("req.body Edit", req.body)
+      if (req.body.name == '' && req.body.gender == '' && req.body.birthDate == '') {
+        let checkEmail = await dbQuery(`SELECT email FROM users WHERE email = '${req.body.email}'; `)
+        if (checkEmail.length > 0) {
+          console.log("alert 1")
+          let message = "Email already used"
+          return res.status(404).send({
+            message
+          });
+        } else {
+          let edit = await dbQuery(`UPDATE users SET email = '${req.body.email}' WHERE idUser=${req.dataUser.idUser};`)
+          let resultsLogin = await dbQuery(`Select idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate,
+            isVerified FROM users WHERE idUser = ${req.dataUser.idUser};`);
+          console.log("edit email", resultsLogin[0])
+          let { idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate, isVerified } = resultsLogin[0]
+          let token = createToken({ idUser, email, role, addDate, isVerified })
+          return res.status(200).send({ ...resultsLogin[0], token, success: true });
+        }
+      }
+      else if (req.body.email == '' && req.body.gender == '' && req.body.birthDate == '') {
+        let edit = await dbQuery(`UPDATE users SET name='${req.body.name}' WHERE idUser=${req.dataUser.idUser};`)
+        let resultsLogin = await dbQuery(`Select idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate,
+        isVerified FROM users WHERE idUser = ${req.dataUser.idUser}`);
+        console.log("edit name", resultsLogin[0])
+        let { idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate, isVerified } = resultsLogin[0]
+        let token = createToken({ idUser, email, role, addDate, isVerified })
+        return res.status(200).send({ ...resultsLogin[0], token, success: true });
+      }
+      else if (req.body.name == '' && req.body.email == '' && req.body.birthDate == '') {
+        let edit = await dbQuery(`UPDATE users SET gender='${req.body.gender}' WHERE idUser=${req.dataUser.idUser};`)
+        let resultsLogin = await dbQuery(`Select idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate,
+        isVerified FROM users WHERE idUser = ${req.dataUser.idUser}`);
+        console.log("edit gender", resultsLogin[0])
+        let { idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate, isVerified } = resultsLogin[0]
+        let token = createToken({ idUser, email, role, addDate, isVerified })
+        return res.status(200).send({ ...resultsLogin[0], token, success: true });
+      }
+      else if (req.body.name == '' && req.body.email == '' && req.body.gender == '') {
+        let edit = await dbQuery(`UPDATE users SET birthDate ='${req.body.birthDate} 10:00:00' WHERE idUser=${req.dataUser.idUser};`)
+        let resultsLogin = await dbQuery(`Select idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate,
+        isVerified FROM users WHERE idUser = ${req.dataUser.idUser}`);
+        console.log("edit birthDate", resultsLogin[0])
+        let birthDateFE = resultsLogin[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
+        let { idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate, isVerified } = resultsLogin[0]
+        let token = createToken({ idUser, email, role, addDate, isVerified })
+        return res.status(200).send({ ...resultsLogin[0], birthDateFE, token, success: true });
+      }
+      else if (req.body.name == '' && req.body.email == '') {
+        let edit = await dbQuery(`UPDATE users SET gender ='${req.body.gender}',
+          birthDate = '${req.body.birthDate} 10:00:00' WHERE idUser=${req.dataUser.idUser};`)
+        let resultsLogin = await dbQuery(`Select idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate,
+          isVerified FROM users WHERE idUser = ${req.dataUser.idUser}`);
+        console.log("edit gender & birthDate", resultsLogin[0])
+        if (resultsLogin[0].idUser == req.dataUser.idUser) {
+          let birthDateFE = resultsLogin[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
+          let { idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate, isVerified } = resultsLogin[0]
+          let token = createToken({ idUser, email, role, addDate, isVerified })
+          console.log("kirim token gender birthdate")
+          return res.status(200).send({ ...resultsLogin[0], birthDateFE, token });
+        }
+      }
+      else {
+        let checkEmail = await dbQuery(`SELECT email FROM users WHERE email = '${req.body.email}'; `)
+        if (checkEmail.length > 0) {
+          console.log("alert 1")
+          let message = "Email already used"
+          return res.status(404).send({
+            message
+          });
+        } else {
+          let edit = await dbQuery(`UPDATE users SET name='${req.body.name}', email='${req.body.email}',
+            gender = '${req.body.gender}', birthDate='${req.body.birthDate}' WHERE idUser=${req.dataUser.idUser};`)
+          let resultsLogin = await dbQuery(`Select idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate,
+            isVerified FROM users WHERE idUser = ${req.dataUser.idUser}`);
+          console.log("edit birthDate", resultsLogin[0])
+          let { idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate, isVerified } = resultsLogin[0]
+          let token = createToken({ idUser, email, role, addDate, isVerified })
+          return res.status(200).send({ ...resultsLogin[0], token, success: true });
+        }
+      }
+    } else {
+      return res.status(401).send({
+        success: false,
+        message: "Token expired"
+      })
+    }
+  },
 }
