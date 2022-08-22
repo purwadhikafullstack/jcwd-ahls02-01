@@ -3,7 +3,8 @@ const { userControllers } = require('../Controllers');
 const router = require('express').Router();
 
 router.post('/register', userControllers.register);
-router.patch('/verified', readToken, userControllers.verified);
 router.get('/keepLogin', readToken, userControllers.keepLogin);
+router.patch('/verified', readToken, userControllers.verified);
+router.get('/reverified', readToken, userControllers.reverified);
 
 module.exports = router;
