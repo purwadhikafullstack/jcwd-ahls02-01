@@ -16,3 +16,27 @@ export const logoutAction = (data) => {
     type: "LOGOUT"
   }
 }
+
+export const keepLogin = () => {
+  return async (dispatch) => {
+    try {
+      let token = localStorage.getItem("tokenIdUser");
+      if (token) {
+        let res = await axios.get(`${API_URL}/users/keepLogin`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        console.log("RES.DATA TOKENS", res.data.token)
+        if (res.data.token) {
+          //
+          localStorage.setItem("tokenIdUser", res.data.token)
+          console.log("resdata keepLogin", res.data)
+          dispatch(loginAction(res.data))
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}

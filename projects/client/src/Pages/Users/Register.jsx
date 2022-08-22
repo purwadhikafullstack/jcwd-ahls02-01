@@ -89,37 +89,24 @@ const Register=()=>{
             localStorage.setItem("tokenIdUser", res.data.token)
             dispatch(loginAction(res.data))
             setLoadingStat(false)
-            // alert(`registration success,
-            // verified your account with link verification in email`)
-            // console.log("token2 regis", token)
-            // setDisable(!disable)
             navigate("/")
           }
         } else {
-          // alert("Email Wrong")
           newToast({
             title: 'Registrasi Tidak Berhasil.',
             description: 'Format email salah, mohon memasukan sesuai format email',
             status: 'error',
           })
           setLoadingStat(false)
-          // setOpenToast(!openToast)
-          // setToastMsg(`Email Wrong!`)
-          // setDisable(!disable)
         }
       }    
     } catch (err) {
-      // setOpenToast(!openToast)
-      // setToastMsg(`${error.response.data.message}`)
       newToast({
         title: 'Registrasi Tidak Berhasil.',
         description: err.response.data.message,
         status: 'error',
       })
       setLoadingStat(false)
-      // alert(err.response.data.message)
-      // console.log(disable)
-      // setDisable(!disable)
   }
   }
 
@@ -132,31 +119,21 @@ const Register=()=>{
     } else {
       setPasswordLength(false)
     }
-    // console.log("cek password.length",inForm.password.length)
-    // console.log(inForm.password)
   }
 
   const checkStrongPassword =()=>{
     console.log(isUpperCase, containsNumbers, passwordLength)
     if(passwordLength== false || isUpperCase==false ||
       containsNumbers==false ){
-        toast({
+        newToast({
           title: 'Password Lemah.',
-          description: 'Disarankan untuk merubah Password yang kuat. Setidaknya memiliki 8 Huruf yang terdiri dari Huruf Kapital dan Angka',
-          status: 'warning',
-          duration: 9000,
-          position: 'top',
-          isClosable: true,
+          description: 'Disarankan untuk merubah password yang kuat. setidaknya memiliki 8 huruf yang terdiri dari huruf kapital dan angka',
+          status: 'error',
         })
-        // alert("Weak password")
-        // setOpenToast(!openToast)
-        // setToastMsg(`Weak Password !
-        // plaase create strong password.`)
   }
 }
 
 const checkUpperCase=()=>{
-  // console.log("cek uppercase", isUpperCase)
   if (inForm.password.match(/^(?=.*[A-Z])/)){
     setIsUpperCase(true)
   } else {
@@ -165,7 +142,6 @@ const checkUpperCase=()=>{
 }
 
 const checkNumbers=()=>{
-  // console.log("cek number", containsNumbers)
   if (inForm.password.match(/\d+/g)){
     setContainsNumbers(true)
   } else {
@@ -179,11 +155,9 @@ const checkNumbers=()=>{
       <NavbarComponent/>
     </Box>
     <div class="container">
-      {/* <Image src={logo} width='10%' style={{marginLeft:"10px", marginTop:"25px"}}/> */}
       <div class="text-center mt-4">
         <Text class="h4">Mari daftarkan akun Anda !</Text>
         <Text class="h4">agar memudahkan saat transaksi obat</Text>
-        {/* <Divider borderWidth={"1px"} borderColor={"#333333"} style={{marginTop:"15px"}}/> */}
       </div>
       <div class="row mt-5">
         <div class="col-6">      
@@ -212,13 +186,6 @@ const checkNumbers=()=>{
                 <Input bgColor={"#FFFFFF"} boxShadow='md' placeholder='contoh@mail.com' onChange={(e)=>setEmail(e.target.value)} />
               </Box>
               <Box marginTop={"20px"}>
-              {/* <Popover
-                returnFocusOnClose={false}
-                isOpen={isOpen}
-                // onClose={onClose}
-                placement='left'
-                closeOnBlur={false}
-              > */}
                 <Text class="h6b">Password</Text>
                   <InputGroup size='md'>
                     <Input bgColor={"#FFFFFF"} boxShadow='md'
@@ -232,16 +199,6 @@ const checkNumbers=()=>{
                       </Button>
                     </InputRightElement>
                   </InputGroup>
-                {/* <PopoverTrigger>
-                </PopoverTrigger>
-                <PopoverContent boxShadow='md'>
-                  <PopoverHeader bgColor={"#DE1B51"} fontWeight='bold' color={"#FFFFFF"}>Password Anda Lemah !</PopoverHeader>
-                  <PopoverArrow />
-                  <PopoverCloseButton color={"#FFFFFF"} onClick={onToggle} />
-                  <PopoverBody fontWeight='semibold' color={"#DE1B51"}>
-                    Dalam membuat password setidaknya miliki 1 Huruf Kapital, Kombinasi Huruf Dengan Angka & 8 Huruf
-                  </PopoverBody>
-                </PopoverContent> */}
                 <div>
                   <div class="h6 mt-3">Password yang kuat setidaknya harus :</div>
                   <span class={passwordLength ? 'h6r' : 'h6'}> 8 huruf</span>
@@ -250,7 +207,6 @@ const checkNumbers=()=>{
                   <span class="h6"> dan </span>
                   <span class={containsNumbers ? 'h6r' : 'h6'}>Angka</span>
                 </div>
-              {/* </Popover> */}
               </Box>
               <Box marginTop={"20px"}>
                 <Text class="h6b">Konfirmasi Password</Text>

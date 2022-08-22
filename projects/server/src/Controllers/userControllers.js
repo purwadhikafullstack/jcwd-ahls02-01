@@ -124,4 +124,170 @@ module.exports = {
       return next(err)
     }
   },
+  keepLogin: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+        let resultsLogin = await dbQuery(`Select idUser, name, email, role, phone, gender, birthDate, profilePicture, isVerified FROM users where idUser=${req.dataUser.idUser};`);
+        console.log("resultsLogin keep =>", resultsLogin[0])
+        console.log("resultsLogin keep length =>", resultsLogin.length)
+
+        if (resultsLogin.length == 1) {
+          console.log("resultsLogin.length == 1")
+          let checkToken = await dbQuery(`SELECT token FROM tokenlist where idUser=${resultsLogin[0].idUser};`)
+          // let birthDateFE = resultsLogin[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
+          let { idUser, name, email, role, phone, gender, birthDate, profilePicture, isVerified } = resultsLogin[0]
+          // console.log("token keepLogin undefined", resultsLogin[0]);
+          // if (checkToken.length == 1) {
+
+          let token = checkToken[0].token
+          return res.status(200).send({ ...resultsLogin[0], token });
+          // }
+        }
+        else {
+          res.status(404).send({
+            success: false,
+            message: "User not Found"
+          })
+        }
+      } else {
+        return res.status(401).send({
+          success: false,
+          message: "Token expired"
+        })
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  verified: async (req, res, next) => {
+    try {
+      if (req.dataUser) {
+        let update = await dbQuery(`UPDATE users SET isVerified='verified'
+        WHERE idUser=${req.dataUser.idUser};`)
+        let resultsLogin = await dbQuery(`Select idUser, name, email, role, phone, profilePicture, addDate, isVerified FROM users
+        WHERE idUser = ${req.dataUser.idUser};`);
+
+        console.log("resultsLogin verified", resultsLogin)
+        let { idUser, name, email, password, role, phone, profilePicture, addDate, isVerified } = resultsLogin[0]
+        let token = createToken({ idUser, addDate, isVerified })
+        let mytoken = await dbQuery(`UPDATE tokenlist SET token = ${dbConf.escape(token)}
+        WHERE idUser = ${req.dataUser.idUser};`);
+        console.log("token verified", token)
+        // console.log("mytoken verified", mytoken)
+        return res.status(200).send({ ...resultsLogin[0], token });
+        // return res.status(200).send({ ...resultsLogin[0], token, success: true });
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  reverified: async (req, res, next) => {
+    try {
+      console.log("check dataUser.name", req.dataUser.name);
+      console.log("check dataUser Reverif", req.dataUser);
+      if (req.dataUser) {
+        let resultsLogin = await dbQuery(`Select * FROM users
+        WHERE idUser = ${req.dataUser.idUser};`);
+
+        let { idUser, name, email, password, role, phone, profilePicture, addDate, isVerified } = resultsLogin[0];
+        let token = createToken({ idUser, addDate, isVerified }, "1h")
+        console.log("resultLogin reverified", resultsLogin)
+        console.log("token reverified", token)
+        let mytoken = await dbQuery(`UPDATE tokenlist SET token = ${dbConf.escape(token)}
+        WHERE idUser = ${req.dataUser.idUser};`);
+        // let checkToken = await dbQuery(`SELECT tokens FROM mytoken`)
+        // console.log("checkToken", checkToken[0].tokens)
+
+        await transporter.sendMail({
+          from: "Admin Medhika",
+          to: email,
+          subject: "Verifikasi Ulang Email Akun Medhika",
+          html: `<div style="background-color: #f6f8fc">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td bgcolor="#DE1B51" align="center">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                      <tr>
+                          <td align="center" valign="top" style="padding: 40px 10px 40px 10px;"> </td>                    
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td bgcolor="#DE1B51" align="center" style="padding: 0px 10px 0px 10px;">
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                          <tr>
+                              <td bgcolor="#ffffff" align="center" class="shadow" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; letter-spacing: 4px; line-height: 48px;">
+                                  <h1 style="font-size: 48px; font-weight: 400; margin: 2;">Hello, ${resultsLogin[0].name} !</h1>
+                              </td>
+                          </tr>
+                      </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td bgcolor="#f6f8fc" align="center" style="padding: 0px 10px 0px 10px;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                        <tr>
+                            <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 40px 30px; color: #333333; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                                <p style="margin: 0;">Tekan tombol untuk verifikasi akun medhika anda.</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td bgcolor="#ffffff" align="center">
+                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
+                                            <table border="0" cellspacing="0" cellpadding="0">
+                                                <tr>
+                                                    <td align="center" style="border-radius: 3px;" bgcolor="#586BB1">
+                                                    <a href="http://localhost:3000/verification/${token}" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #586BB1; display: inline-block;">Verifikasi Akun</a></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td bgcolor="#ffffff" align="center" style="padding: 0px 30px 50px 30px; color: #333333; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                                <p style="margin: 0;">tombol verifikasi hanya aktif selama 1 jam</p>
+                            </td>
+                        </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td bgcolor="#f6f8fc" align="center" style="padding: 0px 0px 0px 0px;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                            <td bgcolor="#f6f8fc" align="center" style="padding: 0px 30px 30px 30px; color: #333333; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;"> <br>
+                                <p style="margin: 0;"></p>
+                            </td>
+                        </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td bgcolor="#f6f8fc" align="center" style="padding: 0px 0px 0px 0px;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                            <td bgcolor="#f6f8fc" align="center" style="padding: 0px 30px 30px 30px; color: #FFFFFF; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;"> <br>
+                                <p style="margin: 0;">www.medhika.com</p>
+                            </td>
+                        </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </div>`
+        })
+        return res.status(200).send({ ...resultsLogin[0], token });
+        // success: true,
+        // message: "Reverification email link delivered"
+        // })
+      }
+    } catch (err) {
+      return next(err)
+    }
+  },
 }

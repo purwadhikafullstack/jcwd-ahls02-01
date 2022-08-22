@@ -1,6 +1,5 @@
 import React from "react";
 import Axios from "axios";
-// import "../style/landingPage.css";
 import logo from "../../Assets/DevImage/LogoMedhika.png";
 import { Flex, Box, Heading, Input, Image, Spacer, ButtonGroup, Button, Link, Menu, MenuButton,
   MenuGroup, MenuList, MenuDivider, MenuItem, Text} from '@chakra-ui/react';
@@ -10,7 +9,6 @@ import { useDisclosure, useToast } from '@chakra-ui/react';
 import { logoutAction } from "../../Redux/Actions/userActions";
 // import Modal from "../../Components/Users/ModalLogin";
 import { API_URL } from "../../helper";
-// import {  } from 'react-icons/io'
 import { IoCart, IoCloseCircle } from 'react-icons/io5';
 import { FaUser, FaUserSlash, FaUserCircle } from 'react-icons/fa';
 import { loginAction } from "../../Redux/Actions/userActions";
@@ -46,15 +44,11 @@ const NavbarComponent = (props) => {
           if (res.data.token){
               localStorage.setItem("tokenIdUser", res.data.token)
               dispatch(loginAction(res.data))
-              // setOpenToast(!openToast)
-              // setToastMsg(`Resend Verification Success,
-              // Please check your email`)
               newToast({
                 title: 'Resend Verifikasi Berhasil.',
                 description:'Verifikasi akun anda dengan link yang ada di email',
                 status: 'success',
               })
-              // alert('Resend verification success ✅')
           }
       } catch (err) {
         newToast({
