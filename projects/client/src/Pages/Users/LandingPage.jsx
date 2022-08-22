@@ -179,7 +179,7 @@ const LandingPage = (props) =>{
                 <Box marginTop={"40px"}>
                   <Text class="h6b">Rekomendasi</Text>
                 </Box>
-                <div class="VectorRekomendasi" style={{height:"00px"}}>
+                <div class="VectorRekomendasi" style={{height:"400px"}}>
                   <div class="row">
                     <div class="col-2"></div>
                     <div class="col-2">
@@ -271,7 +271,7 @@ const LandingPage = (props) =>{
                   </div>
                 </div>
               </div>
-              <Divider borderWidth={"1px"} borderColor={"#333333"} style={{marginTop:"470px"}}/>
+              <Divider borderWidth={"1px"} borderColor={"#333333"} style={{marginTop:"100px"}}/>
               <Box marginTop={"40px"}>
                 <Text class="h6b">Jaminan Untuk Anda</Text>
               </Box>
