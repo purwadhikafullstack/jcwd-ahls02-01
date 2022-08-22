@@ -9,6 +9,7 @@ import LandingPage from "./Pages/Users/LandingPage";
 import Register from "./Pages/Users/Register";
 import Verification from "./Pages/Users/Verification";
 import NotFoundPage from "./Pages/Users/404";
+import ChangePassword from "./Pages/Users/ChangePassword";
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <>
             <Route path='/' element={<LandingPage />} />
             <Route path='/verification/:token' element={<Verification />} />
+            <Route path='/changePassword' element={<ChangePassword />} />
           </>
         :
           <>

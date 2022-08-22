@@ -344,4 +344,30 @@ module.exports = {
       return next(error)
     }
   },
+  change: async (req, res, next) => {
+    try {
+      console.log("Password Lama", req.body.oldPassword)
+      console.log("Password Baru", req.body.newPassword)
+      console.log("dataUser changePassword", req.dataUser.idUser)
+      let checkPassword = await dbQuery(`SELECT * FROM users WHERE idUser = ${req.dataUser.idUser};`)
+      console.log("CHECK", checkPassword[0].password == hashPassword(req.body.oldPassword))
+      if (checkPassword[0].password == hashPassword(req.body.oldPassword)) {
+        let changePassword = await dbQuery(`UPDATE users SET password=${dbConf.escape(hashPassword(req.body.newPassword))}
+        WHERE idUser=${req.dataUser.idUser};`);
+        let change = await dbQuery(`SELECT token FROM tokenlist WHERE idUser = ${req.dataUser.idUser};`)
+        console.log("CHECKPASSWORD", checkPassword[0])
+        let { idUser, name, email, password, role, phone, profilePicture, addDate, isVerified } = checkPassword[0]
+        let token = createToken({ idUser, email, role, addDate, isVerified })
+        return res.status(200).send({ ...checkPassword[0], token });
+      }
+      else {
+        let message = "Old Password tidak sesuai / salah"
+        return res.status(404).send({
+          message
+        });
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
 }
