@@ -3,17 +3,16 @@ import logo from "./logo.svg";
 import "./App.css";
 import { useEffect, useState } from "react";
 import { Route, Routes } from 'react-router-dom';
-import { keepLogin } from './Redux/Actions/userActions';
 import { useDispatch, useSelector } from 'react-redux';
+import { keepLogin } from './Redux/Actions/userActions';
 import LandingPage from "./Pages/Users/LandingPage";
 import Register from "./Pages/Users/Register";
-import Verification from "./Pages/Users/Verification";
 import NotFoundPage from "./Pages/Users/404";
 import ChangePassword from "./Pages/Users/ChangePassword";
 import ForgotPassword from './Pages/Users/ForgotPassword';
 import ResetPassword from "./Pages/Users/ResetPassword";
 import Cart from "./Pages/Users/Cart";
-
+import Verification from "./Pages/Users/Verification";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -25,6 +24,7 @@ function App() {
     }
   })
 
+  console.log("token app.jsx", token)
   useEffect(() => {
     dispatch(keepLogin());
     (async () => {
