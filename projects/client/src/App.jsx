@@ -13,6 +13,7 @@ import ForgotPassword from './Pages/Users/ForgotPassword';
 import ResetPassword from "./Pages/Users/ResetPassword";
 import Cart from "./Pages/Users/Cart";
 import Dashboard from "./Pages/Admin/Dashboard";
+import EditProfile from "./Pages/Users/EditProfile";
 import Verification from "./Pages/Users/Verification";
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
                 <Route path='/changePassword' element={<ChangePassword />} />
                 <Route path='/resetPassword/:token' element={<ResetPassword />} />
                 <Route path='/cart' element={<Cart />} />
+                <Route path='/editProfile' element={<EditProfile />} />
               </>
             }
           </>
