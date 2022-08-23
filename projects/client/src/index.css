@@ -1,3 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;600;900&display=swap');
+
+:root{
+  --colorOne: #FFFFFF;
+  --colorTwo: #f6f8fc;
+  --colorThree: #CCDBEF;
+  --colorFour: #586BB1;
+  --colorFive: #212A6C;
+  --colorSix: #DE1B51;
+  --colorSeven: #9B1339;
+  --colorEight: #333333;
+  --defaultFont: 'Nunito', sans-serif;
+  --offcanvas-width: 270px;
+  --topNavbarHeight: 56px;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -10,4 +26,292 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.font-brand {
+  font-family: var(--defaultFont);
+}
+
+.h1{
+  font-family: var(--defaultFont);
+  font-weight: 600 !important;
+  font-size: 40px !important;
+  color: var(--colorEight);
+}
+
+.h1b{
+  font-family: var(--defaultFont);
+  font-weight: 900 !important;
+  font-size: 40px !important;
+  color: var(--colorEight);
+}
+
+.h2{
+  font-family: var(--defaultFont);
+  font-weight: 600 !important;
+  font-size: 35px !important;
+  color: var(--colorEight);
+}
+
+.h2b{
+  font-family: var(--defaultFont);
+  font-weight: 900 !important;
+  font-size: 35px !important;
+  color: var(--colorEight);
+}
+
+.h3{
+  font-family: var(--defaultFont);
+  font-weight: 600 !important;
+  font-size: 30px !important;
+  color: var(--colorEight);
+}
+
+.h3b{
+  font-family: var(--defaultFont);
+  font-weight: 900 !important;
+  font-size: 30px !important;
+  color: var(--colorEight);
+}
+
+.h4{
+  font-family: var(--defaultFont);
+  font-weight: 600 !important;
+  font-size: 25px !important;
+  color: var(--colorEight);
+}
+
+.h4b{
+  font-family: var(--defaultFont);
+  font-weight: 900 !important;
+  font-size: 25px !important;
+  color: var(--colorEight);
+}
+
+.h5{
+  font-family: var(--defaultFont);
+  font-weight: 600 !important;
+  font-size: 20px !important;
+  color: var(--colorEight);
+}
+
+.h5b{
+  font-family: var(--defaultFont);
+  font-weight: 900 !important;
+  font-size: 20px !important;
+  color: var(--colorEight);
+}
+
+.h6{
+  font-family: var(--defaultFont);
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  color: var(--colorEight);
+}
+
+.h6r{
+  font-family: var(--defaultFont);
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  color: var(--colorSix);
+}
+
+.h6-link{
+  font-family: var(--defaultFont);
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  color: var(--colorEight);
+  margin-top: 50px;
+}
+
+.h6b{
+  font-family: var(--defaultFont);
+  font-weight: 900 !important;
+  font-size: 15px !important;
+  color: var(--colorEight);
+}
+
+.h6br{
+  font-family: var(--defaultFont);
+  font-weight: 900 !important;
+  font-size: 15px !important;
+  color: var(--colorSix);
+}
+
+.btn-def {
+  cursor: pointer;
+  font-family: var(--defaultFont);
+  font-weight: 900 !important;
+  font-size: 16px !important;
+  border-width: 2px;
+  border-color: var(--colorSix) !important;
+  color: var(--colorSix);
+  background-color: var(--colorOne) !important;
+  border-radius: 5px;
+  height: 35px;
+  width: 120px;
+  /* border-radius: 0.3rem; */
+}
+
+.btn-def:hover {
+  border-color: var(--colorOne) !important;
+  color: var(--colorOne);
+  background-color: var(--colorSix) !important;
+  /* border-radius: 0.3rem; */
+}
+
+.btn-rekom {
+  cursor: pointer;
+  font-family: var(--defaultFont);
+  font-weight: 900 !important;
+  font-size: 12px !important;
+  border-width: 2px;
+  border-color: var(--colorSix) !important;
+  color: var(--colorSix);
+  background-color: var(--colorOne) !important;
+  border-radius: 5px;
+  height: 30px;
+  width: 130px;
+  /* border-radius: 0.3rem; */
+}
+
+.btn-rekom:hover {
+  border-color: var(--colorOne) !important;
+  color: var(--colorOne);
+  background-color: var(--colorSix) !important;
+  /* border-radius: 0.3rem; */
+}
+
+.btn-def_second {
+  cursor: pointer;
+  font-family: var(--defaultFont);
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  /* border-width: 2px;
+  border-color: var(--colorSix) !important; */
+  color: var(--colorOne);
+  background-color: var(--colorSix) !important;
+  border-radius: 5px;
+  height: 35px;
+  width: 170px;
+  /* border-radius: 0.3rem; */
+}
+
+.btn-def_second:hover {
+  border-color: var(--colorOne) !important;
+  color: var(--colorOne);
+  background-color: var(--colorSeven) !important;
+  /* border-radius: 0.3rem; */
+}
+.btn-def_second2 {
+  cursor: pointer;
+  font-family: var(--defaultFont);
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  /* border-width: 2px;
+  border-color: var(--colorSix) !important; */
+  color: var(--colorOne);
+  background-color: var(--colorSix) !important;
+  border-radius: 5px;
+  height: 35px;
+  width: 120px;
+  /* border-radius: 0.3rem; */
+}
+
+.btn-def_second2:hover {
+  border-color: var(--colorOne) !important;
+  color: var(--colorOne);
+  background-color: var(--colorSeven) !important;
+  /* border-radius: 0.3rem; */
+}
+
+.mdl {
+  background-color: #00000098;
+}
+
+.sidebarAdmin {
+  position: fixed;
+  width: 300px;
+  height: 100%;
+  left: 0;
+  background: var(--colorSix);
+}
+
+nav ul{
+  background: var(--colorSix);
+  height: 100%;
+  width: 100%;
+  list-style: none;
+}
+
+nav ul li {
+  line-height: 60px;
+  border-bottom: 1px solid #586BB1;
+}
+
+nav ul li a {
+  color:#FFFFFF;
+  text-decoration: none;
+  font-size: 20px;
+  padding-left: 40px;
+  font-weight: 500;
+  display: block;
+  width: 100%;
+  
+}
+nav ul li.active a{
+  color:#FFFFFF;
+  background: #9B1339;
+  border-left-color: #586BB1;
+}
+
+nav ul li a:hover {
+  color:#FFFFFF;
+  background: #9B1339;
+  border-left-color: #586BB1;
+}
+
+@media (max-width:768px){
+  .sidebarAdmin {
+    position: fixed;
+    width: 140px;
+    height: 100%;
+    left: 0;
+    background: var(--colorSix);
+  }
+  
+  nav ul{
+    background: var(--colorSix);
+    height: 100%;
+    width: 100%;
+    list-style: none;
+  }
+  
+  nav ul li {
+    line-height: 60px;
+    border-bottom: 1px solid #586BB1;
+  }
+  
+  nav ul li a {
+    color:#FFFFFF;
+    text-decoration: none;
+    font-size: 12px;
+    padding-left: 40px;
+    font-weight: 500;
+    display: block;
+    width: 100%;
+    
+  }
+  nav ul li.active a{
+    color:#FFFFFF;
+    background: #9B1339;
+    border-left-color: #586BB1;
+  }
+  
+  nav ul li a:hover {
+    color:#FFFFFF;
+    background: #9B1339;
+    border-left-color: #586BB1;
+  }
+
 }
