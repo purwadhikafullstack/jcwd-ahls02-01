@@ -189,62 +189,60 @@ const EditProfile=(props)=>{
     </Box>
       <div class="container">
         <div class="row mt-5">
-          <div class="col-md-2">
-
-          </div>
-          <div class="col-md-3">
+          <div class="d-flex justify-content-center">
           {
             isLargerThan1280 ?  
               <Image
                 borderRadius='full'
-                boxSize='300px'
+                boxSize='150px'
                 src={profilePicture}
                 alt='Foto Profile'
               />
             :
-            <div class="d-flex justify-content-center">
               <Image
                 borderRadius='full'
-                boxSize='300px'
+                boxSize='150px'
                 src={profilePicture}
                 alt='Foto Profile'
               />
-            </div>
           }
           </div>
-          <div class="col-md-5">
+        </div>
+        <div class="row">
+          <div class="col-md-4"></div>
+          <div class="col-md-4">
             {
               editProfile == false ?
               <>
               <div class="rounded-4 mt-5" style={{backgroundColor:"#edf0f4", paddingTop:"20px"}}>
                 <Flex ms={"40px"}>
-                  <Text class="h5b text-uppercase">{name}</Text>
+                  <Text class="h6b text-uppercase">{name}</Text>
                 </Flex>
                 <Flex mt={"10px"} ms={"40px"}>
-                    <Text class="h5">{email}</Text>
+                    <Text class="h6">{email}</Text>
                 </Flex>
                 <Flex mt={"10px"} ms={"40px"}>
-                    <Text class="h5">{gender}</Text>
+                    <Text class="h6">{gender}</Text>
                 </Flex>
                 <Flex mt={"10px"} ms={"40px"}>
-                    <Text class="h5">{birthDateFE}</Text>
+                    <Text class="h6">{birthDateFE}</Text>
                 </Flex>
               </div>
-                <IconButton shadow={"md"} mt={"10px"} size='md' icon={<FaRegEdit color="#DE1B51" size={'25px'} />} onClick={() => setEditProfile(!editProfile)} />
+                <IconButton shadow={"md"} mt={"10px"} size='md' icon={<FaRegEdit color="#DE1B51" size={'20px'} />} onClick={() => setEditProfile(!editProfile)} />
               </>
             :
               <>
               <div class="rounded-4 mt-5" style={{backgroundColor:"#edf0f4", paddingTop:"20px"}}>
                 <Flex ms={"40px"} me={"40px"}>
-                <Input bgColor={"#FFFFFF"} boxShadow='md' fontSize={"xl"} fontWeight="bold" textTransform={"uppercase"}
+                <Input bgColor={"#FFFFFF"} boxShadow='md' fontSize={"l"} fontWeight="bold" textTransform={"uppercase"}
                     onChange={(e)=>setNameEdit(e.target.value)} defaultValue={name} />
                 </Flex>
                 <Flex mt={"10px"} ms={"40px"} me={"40px"} >
-                  <Input bgColor={"#FFFFFF"} boxShadow='md' fontSize={"xl"}
+                  <Input bgColor={"#FFFFFF"} boxShadow='md' fontSize={"l"}
                     onChange={(e)=>setEmailEdit(e.target.value)} defaultValue={email} />
                 </Flex>
                 <Flex mt={"10px"} ms={"40px"} me={"40px"} boxShadow='md'>
-                  <Select placeholder='Gender' bgColor={"#FFFFFF"} fontSize={"xl"} 
+                  <Select placeholder='Gender' bgColor={"#FFFFFF"} fontSize={"l"} 
                     onChange={(e)=>setGenderEdit(e.target.value)}>
                     <option>Pria</option>
                     <option>Wanita</option>
@@ -253,27 +251,25 @@ const EditProfile=(props)=>{
                     onChange={(e)=>setNameEdit(e.target.value)} defaultValue={gender} /> */}
                 </Flex>
                 <Flex mt={"10px"} ms={"40px"} me={"40px"}>
-                  <Input bgColor={"#FFFFFF"} boxShadow='md' fontSize={"xl"} placeholder="YYYY-MM-DD"
+                  <Input type={"date"} bgColor={"#FFFFFF"} boxShadow='md' fontSize={"l"} placeholder="YYYY-MM-DD"
                     onChange={(e)=>setBirthDateEdit(e.target.value)} defaultValue={birthDateFE} />
                 </Flex>
                 <ButtonGroup mt={"10px"} ms={"40px"} pb={"10px"}>
-                  <Button isLoading={loadingStat} loadingText='Loading' class="btn-def" onClick={handleEditProfile}>Submit</Button>
-                  <Button class="btn-def_second2" onClick={handleCancel}>Cancel</Button>
+                  <Button isLoading={loadingStat} class="btn-def_second2" onClick={handleEditProfile}>Submit</Button>
+                  <Button class="btn-def" onClick={handleCancel}>Cancel</Button>
                 </ButtonGroup>
               </div>
                 {/* <IconButton shadow={"md"} mt={"10px"} size='md' icon={<FaRegEdit color="#DE1B51" size={'25px'} />} onClick={() => setEditProfile(!editProfile)} /> */}
               </>
           }
           </div>
-          <div class="col-md-2">
-
-          </div>
+          <div class="col-md-4"></div>
         </div>
-          <div class="row mt-5" style={{borderBlockWidth:"2px", borderBlockColor:"#333333"}}>
+          <div class="row mt-5 text-center" style={{borderBlockWidth:"2px", borderBlockColor:"#333333"}}>
             <br />
             <br />
             <br />
-            <Text class="h3 mt-3">Address</Text>
+            <Text class="h5 mt-3">Address</Text>
           </div>
       </div>
     </Box>

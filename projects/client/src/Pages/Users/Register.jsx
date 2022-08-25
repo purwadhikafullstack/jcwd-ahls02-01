@@ -160,10 +160,11 @@ const checkNumbers=()=>{
         <Text class="h4">agar memudahkan saat transaksi obat</Text>
       </div>
       <div class="row mt-5">
-        <div class="col-6">      
+        {/* <div class="col-md-1"></div> */}
+        <div class="col-md-6">      
           <Image src={VectorRegister} width='75%' style={{marginLeft:"40px"}}/>
         </div>
-        <div class="col-6"> 
+        <div class="col-md-5"> 
           <div class="rounded-4" style={{backgroundColor:"#F6F8FC"}}>
             <Box padding={"20px"}>
               <Box>
@@ -223,11 +224,12 @@ const checkNumbers=()=>{
                     </InputRightElement>
                   </InputGroup>
               </Box>
-                <Button isLoading={loadingStat} loadingText='Loading' style={{marginTop:"25px"}}
+                <Button isLoading={loadingStat} style={{marginTop:"25px"}}
                 class="btn-def_second" onClick={handleRegister}>Register</Button>
             </Box>
           </div>
         </div>
+        <div class="col-md-1"></div>
       </div>
     </div>
     </>

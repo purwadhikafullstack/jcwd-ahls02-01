@@ -75,11 +75,6 @@ const NavbarComponent = (props) => {
           status: 'warning',
         })
       } else {
-        newToast({
-          title: 'Anda Belum Login',
-          description: 'Anda harus login agar bisa transaksi di Medhika',
-          status: 'warning',
-        })
         setShow(!show)
       }
     } catch (err) {
@@ -91,6 +86,7 @@ const NavbarComponent = (props) => {
     }
   }
 
+    // console.log("SHOW Navb", show)
     console.log("S T A T U S Navb", isVerified)
     console.log("profilePicture", profilePicture)
   return (

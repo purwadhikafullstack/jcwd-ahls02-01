@@ -44,7 +44,7 @@ dbConf.getConnection((err, connection) => {
 // NOTE : Add your routes here
 const { userRouters } = require('./Routers');
 const { response } = require("express");
-app.use('/users', userRouters);
+app.use('/api/users', userRouters);
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);
@@ -80,13 +80,13 @@ app.use((err, req, res, next) => {
 //#endregion
 
 //#region CLIENT
-const clientPath = "../../client/build";
-app.use(express.static(join(__dirname, clientPath)));
+// const clientPath = "../../client/build";
+// app.use(express.static(join(__dirname, clientPath)));
 
 // Serve the HTML page
-app.get("*", (req, res) => {
-  res.sendFile(join(__dirname, clientPath, "index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(join(__dirname, clientPath, "index.html"));
+// });
 
 //#endregion
 
