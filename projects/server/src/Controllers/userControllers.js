@@ -144,7 +144,7 @@ module.exports = {
           // }
         }
         else {
-          res.status(404).send({
+         return res.status(404).send({
             success: false,
             message: "User not Found"
           })

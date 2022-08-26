@@ -1,0 +1,170 @@
+const db = require("../Config/database");
+const util = require("util");
+const query = util.promisify(db.query).bind(db);
+const transporter = require("../Config/nodemailer");
+const uploader = require("../Config/uploader");
+const fs = require("fs");
+
+module.exports = {
+  getDataProduct: async (req, res) => {
+    try {
+      const query1 =
+        "SELECT idProduct,productName,productPicture,composition,dosage,description,warning,defaultUnit FROM products";
+      const products = await query(query1);
+
+      let query2 = "SELECT defaultUnit FROM products ";
+      for (let i = 0; i < products.length; i++) {
+        let satuan = await query(query2, products[i].defaultUnit);
+        products[i] = {
+          ...products[i],
+          defaultUnit: defaultUnit[""].defaultUnit,
+        };
+      }
+
+      let query3 = "SELECT categoryName FROM Category ";
+      for (let i = 0; i < products.length; i++) {
+        let kategori = await query(query3, products[i].idCategory);
+        products[i] = { ...products[i], kategori: kategori[0].categoryName };
+      }
+      res.status(200).send(products);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  deleteProduct: async (req, res) => {
+    try {
+      var ProdukId = req.params.id;
+      console.log("ini produk id", ProdukId);
+
+      const sql0 = `Select * From stocks WHERE idProduct = ${ProdukId};`;
+      let sql10Result = await query(sql0);
+
+      if (sql10Result.length > 0) {
+        const sqlA = `DELETE FROM stocks WHERE idProduct = ?;`;
+        let sqlAResult = await query(sqlA, [ProdukId]);
+
+        const sql1 = `DELETE FROM products WHERE idProduct = ?`;
+        let sql1Result = await query(sql1, [ProdukId]);
+      } else {
+        const sql3 = `DELETE FROM products WHERE idProduct = ?`;
+        let sql3Result = await query(sql3, [ProdukId]);
+      }
+      const sql2 = `Select product.productName, product.productPicture, product.composition,product.dosage,product.description,product.warning FROM products ;`;
+      let sql2Result = await query(sql2);
+
+      res.status(200).send({
+        error: false,
+        message: "Hapus Produk Sukses!",
+        data: sql2Result,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  addProduct: (req, res) => {
+    try {
+      const path = "Public/Produk/images";
+      const upload = uploader(path, "Product").fields([{ name: "gambar" }]);
+      const id = req.dataToken.id;
+      console.log("ini id", id);
+      upload(req, res, (err) => {
+        if (err) {
+          return res
+            .status(500)
+            .json({ message: "Upload Foto Produk Gagal!", error: err.message });
+        }
+        const { gambar } = req.files;
+        const imagePath = gambar ? path + "/" + gambar[0].filename : null;
+        const data = JSON.parse(req.body.data);
+        data.gambar = imagePath;
+        console.log("data add data", data);
+
+        if (
+          data.productName === "" ||
+          data.composition === "" ||
+          data.dosage === "" ||
+          data.description === "" ||
+          data.warning === "" ||
+          data.defaultUnit === "" ||
+          data.productPicture === null
+        ) {
+          return res
+            .status(500)
+            .json({ message: "Semua Data Harus Di isi", error: true });
+        }
+        var sql = `INSERT INTO products SET ?`;
+        db.query(sql, data, (err, results) => {
+          console.log("ini result", results);
+          if (err) {
+            fs.unlinkSync("" + imagePath);
+            return res
+              .status(500)
+              .json({ message: "server Error", error: err.message });
+          }
+          sql = `SELECT * FROM products`;
+          db.query(sql, (err, results) => {
+            if (err) {
+              return res
+                .status(500)
+                .json({ message: "server Error", error: error.message });
+            }
+            return res
+              .status(200)
+              .send({
+                message: "Add Product Success",
+                error: false,
+                results: results,
+              });
+          });
+        });
+      });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: "server error", error: error.message });
+    }
+  },
+  editProduct: (req,res)=>{
+    var produk_id=parseInt(req.query.id);
+    var id = req.dataToken.id;
+
+    var sql= `Select * from products where id = ${produk_id};`;
+    db.query(sql,(err,results)=>{
+      console.log('hasil edit produk',results);
+      if(err) throw err;
+      if (results.length > 0){
+        const path = 'Public/Produk/images';
+        const upload = uploader(path,'Produk').fields([{name:'gambar'}]);
+
+        upload(req,res,(err)=>{
+          if(err){
+            return res.status(500).json({message:'Update Gambar Produk Gagal!', error: err.message});
+
+          }
+          const {gambar}=req.files;
+          console.log('{ gambar }', {gambar})
+          var imagePath = gambar ? path + '/'+gambar[0].filename:null;
+          console.log('imagePath',imagePath)
+          var data = JSON.parse(req.body.data);
+          console.log('data',data)
+          console.log('data.gambar',data.gambar)
+
+          try {
+            if (imagePath){
+              data.gambar=imagePath;
+              console.log('data.gambar bawah',data.gambar)
+            }
+            if(data.stok<results[0].stok){
+              return res.status(500).json({message:'stok produk Tidak bisa diubah', error:true})
+            }else{
+              let newDataStokMasuk=data.stok - results[0].stok;
+              let sisa = results[0].stok + newDataStokMasuk;
+            }
+          } catch (error) {
+            
+          }
+        })
+      }
+    })
+  }
+};

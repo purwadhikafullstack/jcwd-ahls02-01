@@ -44,7 +44,7 @@ dbConf.getConnection((err, connection) => {
 // NOTE : Add your routes here
 const { userRouters } = require('./Routers');
 const { response } = require("express");
-app.use('/users', userRouters);
+app.use('/api/users', userRouters);
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);
@@ -97,3 +97,5 @@ app.listen(PORT, (err) => {
     console.log(`APP RUNNING at ${PORT} ✅`);
   }
 });
+
+
