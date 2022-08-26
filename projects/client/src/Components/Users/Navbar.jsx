@@ -43,7 +43,7 @@ const NavbarComponent = (props) => {
           console.log("resdata reverify",res.data.token)
           if (res.data.token){
               localStorage.setItem("tokenIdUser", res.data.token)
-              dispatch(loginAction(res.data))
+              // dispatch(loginAction(res.data))
               newToast({
                 title: 'Resend Verifikasi Berhasil.',
                 description:'Verifikasi akun anda dengan link yang ada di email',

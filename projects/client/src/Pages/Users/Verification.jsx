@@ -34,6 +34,10 @@ const Verification=(props)=>{
         }
     })
 
+    React.useEffect(() => {
+      getTokens();
+  }, []);
+
   console.log("params",params.token);
   console.log("isVerified", isVerified);
 
@@ -70,6 +74,34 @@ const Verification=(props)=>{
     }
   }
 
+  console.log("blacklist",blacklist);
+  const getTokens= async ()=>{
+    try {
+      console.log("getTokens jalan");
+      console.log("params",params.token);
+      if (params.token) {
+        let res = await Axios.post(`${API_URL}/users/getTokens`, {
+          token: params.token
+        }, {
+          headers: {
+            'Authorization': `Bearer ${params.token}`
+          }
+        })
+        // memeriksa adanya data user atau tidak
+        console.log("RES.DATA.TOKEN verified", res.data)
+        if (res.data.message == "token valid") {
+          //
+          setBlacklist(true)
+        } else {
+          setBlacklist(false)
+  
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return( 
     <>
     <Box
@@ -81,7 +113,7 @@ const Verification=(props)=>{
       <NavbarComponent/>
     </Box>
       {
-        isVerified == 'unverified' ?
+        blacklist == true ?
         <>
           <div class="">
             <br />

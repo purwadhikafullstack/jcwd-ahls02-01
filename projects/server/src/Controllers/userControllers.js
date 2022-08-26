@@ -131,7 +131,7 @@ module.exports = {
         console.log("resultsLogin keep =>", resultsLogin[0])
         console.log("resultsLogin keep length =>", resultsLogin.length)
 
-        if (resultsLogin.length == 1) {
+        if (resultsLogin.length) {
           console.log("resultsLogin.length == 1")
           let checkToken = await dbQuery(`SELECT token FROM tokenlist where idUser=${resultsLogin[0].idUser};`)
           // let birthDateFE = resultsLogin[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
@@ -290,4 +290,26 @@ module.exports = {
       return next(err)
     }
   },
+  getTokens: async (req, res, next) => {
+    try {
+      let checkToken = await dbQuery(`SELECT token FROM tokenlist where idUser=${req.dataUser.idUser};`)
+      console.log("1 ==>", checkToken[0].token)
+      console.log("2 ==>", req.dataUser)
+      console.log("3 ==>", req.body)
+      if (req.body.token == checkToken[0].token) {
+        return res.status(200).send({
+          success: true,
+          message: "token valid"
+        });
+      } else {
+        return res.status(200).send({
+          success: false,
+          message: "invalid token"
+        });
+
+      }
+    } catch (error) {
+      return next(error)
+    }
+  }
 }
