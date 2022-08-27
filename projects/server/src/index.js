@@ -1,10 +1,10 @@
 require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 dotenv.config();
 const { join } = require("path");
-const bearerTokens = require('express-bearer-token')
+const bearerTokens = require("express-bearer-token");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -22,13 +22,13 @@ const app = express();
 //   res.setHeader('Access-Control-Allow-Method', 'GET, POST, PUT, PATCH, DELETE, OPTION');
 //   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 // })
-app.use(cors())
+app.use(cors());
 app.use(bearerTokens());
 app.use(express.json());
-app.use(express.static('Public'));
+app.use(express.static("Public"));
 
 // DB Check Connection
-const { dbConf } = require('./Config/database');
+const { dbConf } = require("./Config/database");
 
 dbConf.getConnection((err, connection) => {
   if (err) {
@@ -36,15 +36,16 @@ dbConf.getConnection((err, connection) => {
   }
 
   console.log(`Connected to MySQL Server: , ${connection.threadId}`);
-})
+});
 
 //#region API ROUTES
 
 // ===========================
 // NOTE : Add your routes here
-const { userRouters } = require('./Routers');
+const { userRouters, adminRouters } = require("./Routers");
 const { response } = require("express");
-app.use('/api/users', userRouters);
+app.use("/api/users", userRouters);
+app.use("/api/admin", adminRouters);
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);
@@ -97,5 +98,3 @@ app.listen(PORT, (err) => {
     console.log(`APP RUNNING at ${PORT} ✅`);
   }
 });
-
-
