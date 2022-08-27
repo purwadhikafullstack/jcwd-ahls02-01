@@ -8,7 +8,7 @@ import { useDisclosure, useToast } from '@chakra-ui/react';
 import { useNavigate, useParams } from "react-router-dom";
 import { BsFillPersonCheckFill } from 'react-icons/bs';
 import { IoIosWarning } from "react-icons/io";
-import { Button, Text, Box } from "@chakra-ui/react";
+import { Button, Text, Box, useMediaQuery } from "@chakra-ui/react";
 import { loginAction } from "../../Redux/Actions/userActions";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
@@ -19,6 +19,7 @@ const Verification=(props)=>{
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useToast()
+  const [isLargerThan1280] = useMediaQuery('(min-width: 1280px)')
   const [openToast, setOpenToast] = React.useState(false);
   const [toastMsg, setToastMsg] = React.useState("");
   const [blacklist, setBlacklist] = React.useState(false);
@@ -92,12 +93,17 @@ const Verification=(props)=>{
             <br />
             <div class="text-center pt-5 pb-5">
             <div class="d-flex justify-content-center">
-              <BsFillPersonCheckFill size={100} style={{color:"#DE1B51"}}/>
+              {
+                isLargerThan1280 ?
+                <BsFillPersonCheckFill size={100} style={{color:"#DE1B51"}}/>
+              :
+                <BsFillPersonCheckFill size={60} style={{color:"#DE1B51"}}/>
+              }
             </div>
-            <div class="text-muted">Setelah verifikasi, Anda dapat melakukan transaksi di Medhika.</div>
+              <Text class="h6" style={{marginLeft:"15px", marginRight:"15px"}}>Setelah verifikasi, Anda dapat melakukan transaksi di Medhika.</Text>
             </div>
             <div class="d-flex justify-content-center">
-              <Button isLoading={loadingStat} loadingText='Loading' class="btn-def_second"
+              <Button isLoading={loadingStat} class="btn-def_second"
                 onClick={handleVerified}>Verifikasi Akun Anda</Button>
             </div>
             <br />
@@ -128,18 +134,23 @@ const Verification=(props)=>{
         :
         <div class="container text-center">
           <div class="row mt-5">
-            <div class="col-4">
+            <div class="col-md-4">
 
             </div>
-            <div class="col-4">
+            <div class="col-md-4">
               <div class="d-flex justify-content-center">
+              {
+                isLargerThan1280 ?
                 <IoIosWarning class="mt-5" size={"150px"} style={{color:"#DE1B51"}} />
+              :
+                <IoIosWarning class="mt-5" size={"100px"} style={{color:"#DE1B51"}} />
+              }
               </div>
               <Text class="h5">Invalid Token</Text>
               {/* onClick={() => navigate("/")} */}
               <Button class="btn-def_second mt-3 h5b" onClick={() => navigate("/")}>Close this page</Button>
             </div>
-            <div class="col-4">
+            <div class="col-md-4">
 
             </div>
           </div>

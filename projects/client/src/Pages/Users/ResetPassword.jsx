@@ -193,7 +193,7 @@ const checkNumbers=()=>{
                     </InputRightElement>
                   </InputGroup>
               </Box>
-                <Button isLoading={loadingStat} loadingText='Loading' style={{marginTop:"25px"}} class="btn-def_second" onClick={handleReset}>Reset Password</Button>
+                <Button isLoading={loadingStat} style={{marginTop:"25px"}} class="btn-def_second" onClick={handleReset}>Reset Password</Button>
                 <Image src={VectorChangePassword} width='100%' style={{ marginTop:"40px"}}/>
           </div>
           <div className="col-md-4 col-sm-0">

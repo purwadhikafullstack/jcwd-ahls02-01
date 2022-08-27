@@ -56,11 +56,6 @@ const LandingPage = (props) =>{
         })
         setLoadingStat(false);
       } else {
-        newToast({
-          title: 'Anda Belum Login',
-          description: 'Anda harus login agar bisa transaksi di Medhika',
-          status: 'warning',
-        })
         setShow(!show)
         setLoadingStat(false);
       }
@@ -194,7 +189,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                           <Modal style={{color: "#000000"}} onClose={() => setShow(!show)} show={show} />
                         </div>
@@ -212,7 +207,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                         </div>
                       </Box>
@@ -229,7 +224,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                         </div>
                       </Box>
@@ -246,7 +241,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                         </div>
                       </Box>
@@ -263,7 +258,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                         </div>
                       </Box>
@@ -337,7 +332,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                           <Modal style={{color: "#000000"}} onClose={() => setShow(!show)} show={show} />
                         </div>
@@ -355,7 +350,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                           <Modal style={{color: "#000000"}} onClose={() => setShow(!show)} show={show} />
                         </div>
@@ -373,7 +368,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                           <Modal style={{color: "#000000"}} onClose={() => setShow(!show)} show={show} />
                         </div>
