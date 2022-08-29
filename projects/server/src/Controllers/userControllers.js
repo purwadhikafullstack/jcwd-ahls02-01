@@ -667,10 +667,9 @@ module.exports = {
         let resultsLogin = await dbQuery(`Select idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate,
         isVerified FROM users WHERE idUser = ${req.dataUser.idUser}`);
         console.log("edit birthDate", resultsLogin[0])
-        let birthDateFE = resultsLogin[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
         let { idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate, isVerified } = resultsLogin[0]
         let token = createToken({ idUser, email, role, addDate, isVerified })
-        return res.status(200).send({ ...resultsLogin[0], birthDateFE, token, success: true });
+        return res.status(200).send({ ...resultsLogin[0], token, success: true });
       }
       else if (req.body.name == '' && req.body.email == '') {
         let edit = await dbQuery(`UPDATE users SET gender ='${req.body.gender}',
@@ -679,11 +678,11 @@ module.exports = {
           isVerified FROM users WHERE idUser = ${req.dataUser.idUser}`);
         console.log("edit gender & birthDate", resultsLogin[0])
         if (resultsLogin[0].idUser == req.dataUser.idUser) {
-          let birthDateFE = resultsLogin[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
+          // let birthDateFE = resultsLogin[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
           let { idUser, name, email, role, phone, gender, birthDate, profilePicture, addDate, isVerified } = resultsLogin[0]
           let token = createToken({ idUser, email, role, addDate, isVerified })
           console.log("kirim token gender birthdate")
-          return res.status(200).send({ ...resultsLogin[0], birthDateFE, token });
+          return res.status(200).send({ ...resultsLogin[0], token });
         }
       }
       else {
