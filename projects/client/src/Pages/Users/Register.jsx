@@ -6,7 +6,7 @@ import logo from "../../Assets/DevImage/LogoMedhika.png";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { Flex, Box, Heading, Input, Image, Text, Divider, Spacer, ButtonGroup, Button, Link, extendTheme, InputGroup, InputLeftElement,
   InputRightElement, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Popover,
-  PopoverTrigger, PopoverContent, PopoverHeader, PopoverArrow, PopoverCloseButton, PopoverBody, PopoverFooter } from '@chakra-ui/react';
+  PopoverTrigger, PopoverContent, PopoverHeader, PopoverArrow, PopoverCloseButton, PopoverBody, PopoverFooter, InputLeftAddon } from '@chakra-ui/react';
 // import { PhoneIcon } from '@chakra-ui/icons'
 import { BsTelephone } from 'react-icons/bs';
 import { useDisclosure, useToast } from '@chakra-ui/react';
@@ -67,13 +67,20 @@ const Register=()=>{
             status: 'error',
           })
           setLoadingStat(false)
+        } else if (phone.length < 10){
+          newToast({
+            title: 'Registrasi Tidak Berhasil.',
+            description: 'Isi dengan nomor telfon aktif',
+            status: 'error',
+          })
+          setLoadingStat(false)
         } else if(email.includes("@")){
           let res = await Axios.post(`${API_URL}/users/register`, {
             name: name,
             email: email,
             password: password,
             role: "user",
-            phone: phone,
+            phone: `+62${phone}`,
             profilePicture: "https://sman11tangerangselatan.sch.id/images/user-u.jpg",
             isVerified:"unverified"
           })
@@ -174,12 +181,8 @@ const checkNumbers=()=>{
               <Box marginTop={"20px"}>
                 <Text class="h6b">Nomor Handphone</Text>
                 <InputGroup>
-                  <InputLeftElement
-                    pointerEvents='none'
-                    // BsTelephone
-                    children={<BsTelephone color='gray.300' />}
-                  />
-                  <Input bgColor={"#FFFFFF"} boxShadow='md' type='tel' placeholder='Phone number' onChange={(e)=>setPhone(e.target.value)} />
+                  <InputLeftAddon children='+62'/>
+                  <Input bgColor={"#FFFFFF"} boxShadow='md' type='tel' placeholder='phone number' onChange={(e)=>setPhone(e.target.value)} />
                 </InputGroup>
               </Box>
               <Box marginTop={"20px"}>
