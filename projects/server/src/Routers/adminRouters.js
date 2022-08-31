@@ -4,14 +4,14 @@ const AdminController = require("../Controllers/adminControllers");
 
 router.get("/dataproduct", readToken, AdminController.getDataProduct);
 router.delete("/deleteproduct/:id", readToken, AdminController.deleteProduct);
-// router.get("/getprodukID", readToken, AdminController.getUnikIDProduct);
-// router.get("/paginate", readToken, AdminController.pagination);
-// router.post("/addproduct", readToken, AdminController.addProduct);
-// router.patch("/editproduct", readToken, AdminController.editProduct);
-router.post("/createcategory", AdminController.createCategory);
-router.patch("/updatecategory", AdminController.updateCategory);
-router.delete("/deletecategory", AdminController.deleteCategory);
-router.get("/getunitdata", AdminController.getAvailableUnit);
-router.post("/convertunit", AdminController.getConverstionUnit);
+router.post("/addproduct", readToken, AdminController.addProduct);
+router.patch("/editproduct", readToken, AdminController.editProduct);
+router.post("/createcategory", readToken,AdminController.createCategory);
+router.patch("/updatecategory",readToken, AdminController.updateCategory);
+router.post("/deletecategory",readToken, AdminController.deleteCategory);
+router.get("/getunitdata",readToken, AdminController.getAvailableUnit);
+router.post("/convertunit",readToken,AdminController.getConverstionUnit);
+router.get("/getcategory",readToken,AdminController.getCategoryList)
+
 
 module.exports = router;

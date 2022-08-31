@@ -4,20 +4,20 @@ const mysql = require("mysql");
 const util = require("util");
 
 console.log(
-  process.env.DB_HOST,
-  process.env.DB_USER,
-  process.env.DB_NAME,
-  process.env.DB_PORT
+  // process.env.DB_HOST,
+  // process.env.DB_USER,
+  // process.env.DB_NAME,
+  // process.env.DB_PORT
 );
 const dbConf = mysql.createPool({
   connectionLimit: 1000,
   connectTimeout: 60 * 60 * 1000,
   acquireTimeout: 60 * 60 * 1000,
   timeout: 60 * 60 * 1000,
-  host: "localhost",
-  user: "root",
-  password: "pass1234",
-  database: "medhika",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   port: "3306",
 });
 
