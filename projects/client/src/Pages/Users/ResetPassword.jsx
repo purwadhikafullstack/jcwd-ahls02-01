@@ -26,11 +26,43 @@ const ResetPassword=(props)=>{
   const toast = useToast()
   const [loadingStat, setLoadingStat]=React.useState(false);
   const [currentToast, newToast]=useToastHook();
+  const [blacklist, setBlacklist] = React.useState(false);
   const { token }=useSelector((state) => {
     return {
         token:state.userReducers.token
       }
     })
+
+    React.useEffect(() => {
+      getTokens();
+  }, []);
+
+  const getTokens= async ()=>{
+    try {
+      console.log("getTokens jalan");
+      console.log("params",params.token);
+      if (params.token) {
+        let res = await Axios.post(`${API_URL}/users/getTokens`, {
+          token: params.token
+        }, {
+          headers: {
+            'Authorization': `Bearer ${params.token}`
+          }
+        })
+        // memeriksa adanya data user atau tidak
+        console.log("RES.DATA.TOKEN verified", res.data)
+        if (res.data.message == "token valid") {
+          //
+          setBlacklist(true)
+        } else {
+          setBlacklist(false)
+  
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   console.log("password", password)
   console.log("konfirmasi password", confirmPassword)
@@ -144,7 +176,7 @@ const checkNumbers=()=>{
       <NavbarComponent/>
     </Box>
   {
-    token == params.token ?
+    blacklist == true ?
     <>
       <div className="container text-center pt-5 pb-5">
         <h4 className="h4-register">Create New Password</h4>

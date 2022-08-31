@@ -21,11 +21,12 @@ const EditProfile=(props)=>{
   const [isLargerThan720] = useMediaQuery('(min-width: 720px)')
   const [loadingStat, setLoadingStat]=React.useState(false);
   const [currentToast, newToast]=useToastHook();
-  const {isVerified, email, gender, birthDateFE, users, name, profilePicture, token}=useSelector((state) => {
+  const {isVerified, email, gender, birthDate, birthDateFE, users, name, profilePicture, token}=useSelector((state) => {
     return {
         isVerified:state.userReducers.isVerified,
         email:state.userReducers.email,
         gender:state.userReducers.gender,
+        birthDate:state.userReducers.birthDate,
         birthDateFE:state.userReducers.birthDateFE,
         users:state.userReducers.users,
         name:state.userReducers.name,
@@ -174,7 +175,7 @@ const EditProfile=(props)=>{
     setEmailEdit("");
   };
 
-  console.log("check users", gender, birthDateFE, editProfile)
+  console.log("check users", gender, birthDate, birthDateFE, editProfile)
   console.log("edit value", nameEdit, emailEdit, genderEdit, birthDateEdit)
 
   return (
