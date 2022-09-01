@@ -13,6 +13,7 @@ import ForgotPassword from './Pages/Users/ForgotPassword';
 import ResetPassword from "./Pages/Users/ResetPassword";
 import Cart from "./Pages/Users/Cart";
 import Dashboard from "./Pages/Admin/Dashboard";
+import Category from "./Pages/Admin/Category";
 import EditProfile from "./Pages/Users/EditProfile";
 import Verification from "./Pages/Users/Verification";
 
@@ -44,10 +45,11 @@ function App() {
           token ?
           <>
             {
-              role == 'admin' ?
+              role === 'admin' ?
               <>
                 <Route path='/' element={<LandingPage />} />
                 <Route path='/admin/dashboard' element={<Dashboard />} />
+                <Route path='/admin/category' element={<Category/>} />
               </>
             :
               <>

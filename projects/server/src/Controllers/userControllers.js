@@ -130,21 +130,19 @@ module.exports = {
         let resultsLogin = await dbQuery(`Select idUser, name, email, role, phone, gender, birthDate, profilePicture, isVerified FROM users where idUser=${req.dataUser.idUser};`);
         console.log("resultsLogin keep =>", resultsLogin[0])
         console.log("resultsLogin keep length =>", resultsLogin.length)
-
-        if (resultsLogin.length == 1) {
+        if (resultsLogin.length == "1") {
           console.log("resultsLogin.length == 1")
           let checkToken = await dbQuery(`SELECT token FROM tokenlist where idUser=${resultsLogin[0].idUser};`)
           // let birthDateFE = resultsLogin[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
           let { idUser, name, email, role, phone, gender, birthDate, profilePicture, isVerified } = resultsLogin[0]
           // console.log("token keepLogin undefined", resultsLogin[0]);
           // if (checkToken.length == 1) {
-
           let token = checkToken[0].token
-          return res.status(200).send({ ...resultsLogin[0], token });
+          return res.status(200).send({ ...resultsLogin[0], token:req.token });
           // }
         }
         else {
-          res.status(404).send({
+         return res.status(404).send({
             success: false,
             message: "User not Found"
           })
