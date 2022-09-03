@@ -782,23 +782,30 @@ module.exports = {
         if (req.dataUser.idUser) {
           console.log('req body upload', req.body);
           console.log('pengecekan file', req.files);
+          console.log('pengecekan size file', req.files[0].size > 1000000);
+          if (req.files[0].size < 1000000) {
+            let { idUserLogin } = JSON.parse(req.body.data);
 
-          let { idUserLogin } = JSON.parse(req.body.data);
+            let imgData = req.files.map(val => {
+              return `${dbConf.escape(`${process.env.PORT_URL}/Profile/${val.filename}`)}`;
+            })
+            console.log("imgData", imgData.join(','))
 
-          let imgData = req.files.map(val => {
-            return `${dbConf.escape(`${process.env.PORT_URL}/Profile/${val.filename}`)}`;
-          })
-          console.log("imgData", imgData.join(','))
+            let edit = await dbQuery(`UPDATE users SET profilePicture=${imgData.join(',')}
+            WHERE idUser = ${req.dataUser.idUser};`)
+            let resultsLogin = await dbQuery(`Select * FROM users
+            WHERE idUser = ${req.dataUser.idUser};`);
 
-          let edit = await dbQuery(`UPDATE users SET profilePicture=${imgData.join(',')}
-          WHERE idUser = ${req.dataUser.idUser};`)
-          let resultsLogin = await dbQuery(`Select * FROM users
-          WHERE idUser = ${req.dataUser.idUser};`);
-
-          let { idUser, name, email, role, phone, gender, birthDate, profilePicture, isVerified } = resultsLogin[0]
-          let token = createToken({ idUser, name, email, role, isVerified })
-          return res.status(200).send({ ...resultsLogin[0], token, success: true });
-
+            let { idUser, name, email, role, phone, gender, birthDate, profilePicture, isVerified } = resultsLogin[0]
+            let token = createToken({ idUser, name, email, role, isVerified })
+            return res.status(200).send({ ...resultsLogin[0], token, success: true });
+          } else {
+            console.log("masuk else profile pict size")
+            return res.status(401).send({
+              success: false,
+              message: "Profile Picture Max Size 1MB"
+            })
+          }
         } else {
           return res.status(401).send({
             success: false,

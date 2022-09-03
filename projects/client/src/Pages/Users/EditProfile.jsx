@@ -82,11 +82,17 @@ const EditProfile=(props)=>{
       if (res.data.token) {
         // console.log("RES DATA TOKEN LOGIN", res.data.token)
         localStorage.setItem("tokenIdUser", res.data.token)
-        dispatch(loginAction(res.data.token))
+        dispatch(loginAction(res.data))
+        setFile(profilePicture)
       }
-      // dispatch(getPostings())
   } catch (error) {
-    console.log(error)
+    newToast({
+      title: 'Edit Profile Tidak Berhasil.',
+      description: 'Profile Picture Max Size 1MB',
+      status: 'error',
+    })
+    setFile(profilePicture)
+    setLoadingStat(false)
   }
 }
 
@@ -109,7 +115,7 @@ const handleEditProfile=async()=>{
                 'Authorization': `Bearer ${token}`
               }
             })
-            if (res.data.token) {
+            if (res.data) {
               {handleProfilePicture()}
               // console.log("RES DATA TOKEN LOGIN", res.data.token)
               localStorage.setItem("tokenIdUser", res.data.token)
@@ -124,30 +130,30 @@ const handleEditProfile=async()=>{
             }
           } else {
             console.log("JALUR true 2")
-            let token = localStorage.getItem("tokenIdUser");
-            let res = await Axios.patch(`${API_URL}/users/edit`, {
-              name: nameEdit,
-              email: emailEdit,
-              gender: genderEdit,
-              birthDate: birthDateEdit
-            }, {
-              headers: {
-                'Authorization': `Bearer ${token}`
-              }
-            })
-            if (res.data.token) {
+            // let token = localStorage.getItem("tokenIdUser");
+            // let res = await Axios.patch(`${API_URL}/users/edit`, {
+            //   name: nameEdit,
+            //   email: emailEdit,
+            //   gender: genderEdit,
+            //   birthDate: birthDateEdit
+            // }, {
+            //   headers: {
+            //     'Authorization': `Bearer ${token}`
+            //   }
+            // })
+            // if (res.data.token) {
               {handleProfilePicture()}
               // console.log("RES DATA TOKEN LOGIN", res.data.token)
-              localStorage.setItem("tokenIdUser", res.data.token)
-              dispatch(loginAction(res.data))
-              setEditProfile(!editProfile)
-              newToast({
-                title: 'Edit Profile Berhasil.',
-                description: 'Data pada profile anda sudah terupdate.',
-                status: 'success',
-              })
-              setLoadingStat(false)
-            }
+              // localStorage.setItem("tokenIdUser", res.data.token)
+              // dispatch(loginAction(res.data))
+              // setEditProfile(!editProfile)
+              // newToast({
+              //   title: 'Edit Profile Berhasil.',
+              //   description: 'Data pada profile anda sudah terupdate.',
+              //   status: 'success',
+              // })
+              // setLoadingStat(false)
+            // }
             // {handleProfilePicture()}
           }
         } else {
@@ -190,7 +196,7 @@ const handleEditProfile=async()=>{
 
   const onButtonClick = () => {
     inputFile.current.click();
-    setPreviewPost(!previewPost);
+    setPreviewPost(true);
   };
 
   const handleFileUpload = (e) => {  
@@ -201,6 +207,7 @@ const handleEditProfile=async()=>{
   const handleCancel = () => {
     setEditProfile(!editProfile);
     setEmailEdit("");
+    setFile(profilePicture)
   };
 
   console.log("check users", gender, birthDate, birthDateFE, editProfile)
@@ -258,6 +265,7 @@ const handleEditProfile=async()=>{
               ref={inputFile}
               onChange={(e)=> handleFileUpload (e)}
               type="file"
+              // defaultValue={profilePicture}
             />
             {
               previewPost == false ?
@@ -265,7 +273,7 @@ const handleEditProfile=async()=>{
                 alt="Profile Picture" style={{cursor:"pointer", width:"15%", borderRadius:"50%"}} />
             :
               <img src={file} onDoubleClick={onButtonClick}
-                alt="Profile Picture" style={{cursor:"pointer", width:"15%", borderRadius:"50%"}} />
+                alt="Upload Profile Picture" style={{cursor:"pointer", width:"15%", borderRadius:"50%"}} />
             }
           </div>
         </div>
