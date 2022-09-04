@@ -10,10 +10,34 @@ module.exports = {
       .get(`${url}/province?key=${key}`)
       .then((response) => {
         res.send({
-          error: false,
-          message: 'get data province success',
-          data: response.data,
+          // error: false,
+          // message: 'get data province success',
+          data: response.data.rajaongkir.results,
         });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
+  getProvince2: (req, res) => {
+    axios
+      .get(`${url}/province?key=${key}`)
+      .then((response) => {
+        let namaProvinsi = []
+        console.log("cek Header Province2===")
+        console.log("cek Header Province2", req.headers.provinceid)
+        let resultTemp = response.data.rajaongkir.results
+        for (let i = 0; i < resultTemp.length; i++) {
+          if (resultTemp[i].province_id == req.headers.provinceid) {
+            namaProvinsi.push(resultTemp[i].province)
+            console.log("check namaProvinsi", namaProvinsi)
+            res.send({
+              // error: false,
+              // message: 'get data province success',
+              namaProvinsi
+            });
+          }
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -24,9 +48,10 @@ module.exports = {
       .get(`${url}/city?province=${req.headers.provinceid}&key=${key}`)
       .then((response) => {
         res.send({
-          error: false,
-          message: 'get data kota success',
-          data: response.data,
+          // error: false,
+          // message: 'get data kota success',
+          // data: response.data,
+          data: response.data.rajaongkir.results,
         });
       })
       .catch((err) => {

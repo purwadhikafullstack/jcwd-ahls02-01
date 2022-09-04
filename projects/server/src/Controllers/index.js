@@ -1,6 +1,7 @@
 const userControllers = require('./userControllers');
+const addressControllers = require('./addressControllers')
 const rajaOngkirControllers = require('./rajaOngkirControllers')
 
 module.exports = {
-  userControllers, rajaOngkirControllers
+  userControllers, addressControllers, rajaOngkirControllers
 }
