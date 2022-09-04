@@ -63,14 +63,15 @@ module.exports = {
           data.defaultUnit === "" ||
           data.composition === "" ||
           data.dosage === ""||
-          data.warning === ""
+          data.warning === ""||
+          data.stockQuantity
         ) {
           return res
             .status(500)
             .json({ message: "Semua Data Harus Di isi", error: true });
         }
         var sql = `INSERT INTO products (productName,idCategory,description,defaultUnit,productPicture,convertedQuantity,dosage,composition,warning)
-        Values ("${data.name}","${data.category}","${data.description}","${data.defaultUnit}","${data.gambar}",${data.convertedQuantity},"${data.dosage}","${data.composition}","${data.warning}")`;
+        Values ("${data.name}","${data.category}","${data.description}","${data.defaultUnit}","${data.gambar}",${data.convertedQuantity},"${data.dosage}","${data.composition}","${data.warning}") AND stocks (stockQuantity) VALUES ("${data.stockQuantity})`;
         const products = await query(sql);
         const getNewquery = `SELECT idProduct FROM products WHERE productName ="${data.name}" AND idCategory="${data.category}"`;
         const getInserted = await query(getNewquery);
