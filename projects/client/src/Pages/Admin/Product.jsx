@@ -147,6 +147,14 @@ const ModalCreate = (props) => {
               onValueChange("dosage", event.target.value);
             }}
           />
+          <FormLabel>Stock</FormLabel>
+          <Input
+            value={formState.stockQuantity}
+            onChange={(event) => {
+              onValueChange("stock", event.target.value);
+            }}
+            type="number"
+            />
         </FormControl>
       </ModalBody>
       <ModalFooter>
@@ -281,6 +289,15 @@ const ModalEdit = (props) => {
               onValueChange("dosage", event.target.value);
             }}
           />
+          <FormLabel>Stock</FormLabel>
+          <Input
+            value={formState.stockQuantity}
+            onChange={(event) => {
+              onValueChange("stock", event.target.value);
+            }}
+            type="number"
+            />
+          
         </FormControl>
       </ModalBody>
       <ModalFooter>
@@ -323,8 +340,9 @@ const Productpage = () => {
               <Th>Picture</Th>
               <Th>Unit</Th>
               <Th>Netto</Th>
-              {/* <Th>Composition</Th> */}
+              <Th>Stock</Th>
               <Th>Actions</Th>
+              {/* <Th>Composition</Th> */}
             </Tr>
           </Thead>
           <Tbody>
@@ -342,6 +360,7 @@ const Productpage = () => {
                   <Td>{value.defaultUnit}</Td>
                   {/* <Td>{value.composition}</Td> */}
                   <Td>{value.convertedQuantity}</Td>
+                  <Td>{value.stockQuantity}</Td>
                   <Td>
                     <Button
                       style={{ margin: "10px" }}
@@ -370,6 +389,7 @@ const Productpage = () => {
                           composition: value.composition,
                           dosage: value.dosage,
                           warning: value.warning,
+                          stock: value.stockQuantity
                         });
                         props.setModalState("edit");
                       }}
