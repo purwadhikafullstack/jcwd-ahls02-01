@@ -11,5 +11,10 @@ router.patch("/change", readToken, userControllers.change);
 router.post("/forgot", userControllers.forgot);
 router.patch("/reset", readToken, userControllers.reset);
 router.patch("/edit", readToken, userControllers.edit);
-
+router.get("/getproducts", readToken, userControllers.getProducts);
+router.get(
+  "/getproductdetail/:id",
+  readToken,
+  userControllers.getproductDetail
+);
 module.exports = router;

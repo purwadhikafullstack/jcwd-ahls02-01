@@ -1,6 +1,6 @@
 import * as test from "react";
 import axios from "axios";
-import { API_URL } from "../../helper";
+import { API_URL, BE_URL } from "../../helper";
 import {
   Text,
   useMediaQuery,
@@ -44,7 +44,8 @@ const ModalCreate = (props) => {
     composition: "",
     dosage: "",
   });
-  const onValueChange = (name, value) => {
+  const onValueChange = (name, value, target) => {
+    if (name === "gambar") value = target.files[0];
     setFormState({ ...formState, [name]: value });
   };
   const [categoryList, setCategoryList] = test.useState([]);
@@ -113,7 +114,7 @@ const ModalCreate = (props) => {
           <Input
             type={"file"}
             onChange={(event) => {
-              onValueChange("gambar", event.target.value);
+              onValueChange("gambar", event.target.value, event.target);
             }}
           />
           <FormLabel>Description</FormLabel>
@@ -154,7 +155,7 @@ const ModalCreate = (props) => {
               onValueChange("stock", event.target.value);
             }}
             type="number"
-            />
+          />
         </FormControl>
       </ModalBody>
       <ModalFooter>
@@ -177,7 +178,8 @@ const ModalCreate = (props) => {
 };
 const ModalEdit = (props) => {
   const [formState, setFormState] = test.useState({ ...props.selectedEdit });
-  const onValueChange = (name, value) => {
+  const onValueChange = (name, value, target) => {
+    if (name === "gambar") value = target.files[0];
     setFormState({ ...formState, [name]: value });
   };
   const [categoryList, setCategoryList] = test.useState([]);
@@ -250,7 +252,7 @@ const ModalEdit = (props) => {
           <Input
             type={"file"}
             onChange={(event) => {
-              onValueChange("gambar", event.target.value);
+              onValueChange("gambar", event.target.value, event.target);
             }}
           />
           <FormLabel>Description</FormLabel>
@@ -296,8 +298,7 @@ const ModalEdit = (props) => {
               onValueChange("stock", event.target.value);
             }}
             type="number"
-            />
-          
+          />
         </FormControl>
       </ModalBody>
       <ModalFooter>
@@ -355,7 +356,7 @@ const Productpage = () => {
                   <Td>{value.categoryName}</Td>
                   {/* <Td style={{ width: "50px" }}>{value.description}</Td> */}
                   <Td>
-                    <img src={value.productPicture}></img>
+                    <img src={BE_URL + value.productPicture}></img>
                   </Td>
                   <Td>{value.defaultUnit}</Td>
                   {/* <Td>{value.composition}</Td> */}
@@ -389,7 +390,7 @@ const Productpage = () => {
                           composition: value.composition,
                           dosage: value.dosage,
                           warning: value.warning,
-                          stock: value.stockQuantity
+                          stock: value.stockQuantity,
                         });
                         props.setModalState("edit");
                       }}
