@@ -25,5 +25,7 @@ getAvailableUnit: async (req, res) => {
     return res.status(200).json({
       data: hasil,
     });
+    // convertedquantity = netto
+    // the REAL stock quantity is in stocks table (had a hardtime figuring this out)
   },
 }

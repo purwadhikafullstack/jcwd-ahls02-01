@@ -24,7 +24,7 @@ const Sidebar=(props)=>{
     navigate("/")
   }
   const btninventory=()=>{
-    navigate(``)
+    navigate(`/admin/productpage`)
  
   }
   const btncategory=()=>{

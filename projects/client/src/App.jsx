@@ -16,6 +16,7 @@ import Dashboard from "./Pages/Admin/Dashboard";
 import Category from "./Pages/Admin/Category";
 import EditProfile from "./Pages/Users/EditProfile";
 import Verification from "./Pages/Users/Verification";
+import Productpage from "./Pages/Admin/Product";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -50,6 +51,7 @@ function App() {
                 <Route path='/' element={<LandingPage />} />
                 <Route path='/admin/dashboard' element={<Dashboard />} />
                 <Route path='/admin/category' element={<Category/>} />
+                <Route path='/admin/productpage' element={<Productpage/>} />
               </>
             :
               <>
