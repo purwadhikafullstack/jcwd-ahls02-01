@@ -64,7 +64,7 @@ module.exports = {
           data.composition === "" ||
           data.dosage === ""||
           data.warning === ""||
-          data.stockQuantity
+          data.stockQuantity === ""
         ) {
           return res
             .status(500)
