@@ -782,7 +782,7 @@ module.exports = {
         if (req.dataUser.idUser) {
           console.log('req body upload', req.body);
           console.log('pengecekan file', req.files);
-          console.log('pengecekan size file', req.files[0].size > 1000000);
+          console.log('pengecekan size file', req.files[0].size < 1000000);
           if (req.files[0].size < 1000000) {
             let { idUserLogin } = JSON.parse(req.body.data);
 
