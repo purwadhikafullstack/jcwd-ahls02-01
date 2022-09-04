@@ -96,7 +96,7 @@ const ModalCreate = (props) => {
             }}
             type="number"
           />
-          <FormLabel>Quantity</FormLabel>
+          <FormLabel>Netto</FormLabel>
           <Input
             onChange={(event) => {
               onValueChange("convertedQuantity", event.target.value);
@@ -224,7 +224,7 @@ const ModalEdit = (props) => {
             }}
             type="number"
           />
-          <FormLabel>Quantity</FormLabel>
+          <FormLabel>Netto</FormLabel>
           <Input
             value={formState.convertedQuantity}
             onChange={(event) => {
