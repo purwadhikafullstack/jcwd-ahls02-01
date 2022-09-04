@@ -12,5 +12,6 @@ router.patch('/change', readToken, userControllers.change);
 router.post('/forgot', userControllers.forgot);
 router.patch('/reset', readToken, userControllers.reset);
 router.patch('/edit', readToken, userControllers.edit);
+router.patch('/profilePicture', readToken, userControllers.profilePicture);
 
 module.exports = router;
