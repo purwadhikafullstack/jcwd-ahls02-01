@@ -79,7 +79,7 @@ const EditProfile=(props)=>{
   // console.log("fullname",fullnameProfile != "")
   // console.log("username",usernameProfile != "")
   // console.log("bio",bioProfile != "")
-  // console.log("check imgPosting edit foto",imgPosting)
+  console.log("check previewPost", previewPost)
   
   const handleProfilePicture = async()=>{
     try {
@@ -120,67 +120,165 @@ const EditProfile=(props)=>{
   }
 }
 
+console.log("EMAIL EDIT CHECK", emailEdit);
 const handleEditProfile=async()=>{
   try {
     setLoadingStat(true);
     if(previewPost==true){
           console.log("JALUR true jalan");
           if(nameEdit != "" || emailEdit !="" || genderEdit !="" || birthDateEdit !=""){
-            console.log("previewPost true 1");
-            let token = localStorage.getItem("tokenIdUser");
-            let res = await Axios.patch(`${API_URL}/users/edit`, {
-              name: nameEdit,
-              email: emailEdit,
-              gender: genderEdit,
-              birthDate: birthDateEdit
-            }, {
-              headers: {
-                'Authorization': `Bearer ${token}`
+            // if (emailEdit !=""){
+              console.log("EMAILEDIT KE ISI JALAN")
+              if (emailEdit.includes("@")){
+                console.log("previewPost true 1");
+                let token = localStorage.getItem("tokenIdUser");
+                let res = await Axios.patch(`${API_URL}/users/edit`, {
+                  name: nameEdit,
+                  email: emailEdit,
+                  gender: genderEdit,
+                  birthDate: birthDateEdit
+                }, {
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  }
+                });
+                if (res.data) {
+                  {handleProfilePicture()};
+                  localStorage.setItem("tokenIdUser", res.data.token);
+                  dispatch(loginAction(res.data));
+                  setEditProfile(!editProfile);
+                  setNameEdit("");
+                  setEmailEdit("");
+                  setGenderEdit("");
+                  setBirthDateEdit("");
+                  newToast({
+                    title: 'Edit Profile Berhasil.',
+                    description: 'Data pada profile anda sudah terupdate.',
+                    status: 'success',
+                  });
+                  setLoadingStat(false);
+                }
+              } else if (emailEdit == ""){
+                console.log("previewPost true 2");
+                let token = localStorage.getItem("tokenIdUser");
+                let res = await Axios.patch(`${API_URL}/users/edit`, {
+                  name: nameEdit,
+                  email: emailEdit,
+                  gender: genderEdit,
+                  birthDate: birthDateEdit
+                }, {
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  }
+                });
+                if (res.data) {
+                  {handleProfilePicture()};
+                  localStorage.setItem("tokenIdUser", res.data.token);
+                  dispatch(loginAction(res.data));
+                  setEditProfile(!editProfile);
+                  setNameEdit("");
+                  setGenderEdit("");
+                  setBirthDateEdit("");
+                  newToast({
+                    title: 'Edit Profile Berhasil.',
+                    description: 'Data pada profile anda sudah terupdate.',
+                    status: 'success',
+                  });
+                  setLoadingStat(false);
+                }
+              } 
+              else {
+                newToast({
+                  title: 'Registrasi Tidak Berhasil.',
+                  description: 'Format email salah, mohon memasukan sesuai format email',
+                  status: 'error',
+                })
+                setLoadingStat(false)
               }
-            });
-            if (res.data) {
-              {handleProfilePicture()};
-              localStorage.setItem("tokenIdUser", res.data.token);
-              dispatch(loginAction(res.data));
-              setEditProfile(!editProfile);
-              newToast({
-                title: 'Edit Profile Berhasil.',
-                description: 'Data pada profile anda sudah terupdate.',
-                status: 'success',
-              });
-              setLoadingStat(false);
-            }
           } else {
             console.log("JALUR true 2");
               {handleProfilePicture()};
               setEditProfile(!editProfile);
           }
         } else {
-          console.log("JALUR false 1");
-          if(nameEdit != "" || emailEdit !="" || genderEdit !="" || birthDateEdit !=""){
-            let token = localStorage.getItem("tokenIdUser");
-            let res = await Axios.patch(`${API_URL}/users/edit`, {
-              name: nameEdit,
-              email: emailEdit,
-              gender: genderEdit,
-              birthDate: birthDateEdit
-            }, {
-              headers: {
-                'Authorization': `Bearer ${token}`
+          console.log("JALUR false JALANNN");
+          if(nameEdit == "" && emailEdit=="" && genderEdit =="" && birthDateEdit ==""){
+            newToast({
+              title: 'Edit Profile Tidak Berhasil.',
+              description: 'Data user tidak ada yang dirubah',
+              status: 'error',
+            })
+            setLoadingStat(false)
+          }
+          else if(nameEdit != "" || emailEdit !="" || genderEdit !="" || birthDateEdit !=""){
+            // if (emailEdit !=""){
+              console.log("EMAILEDIT KE ISI JALAN")
+              if (emailEdit.includes("@")){
+                console.log("previewPost false 1");
+                let token = localStorage.getItem("tokenIdUser");
+                let res = await Axios.patch(`${API_URL}/users/edit`, {
+                  name: nameEdit,
+                  email: emailEdit,
+                  gender: genderEdit,
+                  birthDate: birthDateEdit
+                }, {
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  }
+                });
+                if (res.data) {
+                  // {handleProfilePicture()};
+                  localStorage.setItem("tokenIdUser", res.data.token);
+                  dispatch(loginAction(res.data));
+                  setEditProfile(!editProfile);
+                  setNameEdit("");
+                  setEmailEdit("");
+                  setGenderEdit("");
+                  setBirthDateEdit("");
+                  newToast({
+                    title: 'Edit Profile Berhasil.',
+                    description: 'Data pada profile anda sudah terupdate.',
+                    status: 'success',
+                  });
+                  setLoadingStat(false);
+                }
+              } else if (emailEdit ==""){
+                console.log("previewPost false 2");
+                let token = localStorage.getItem("tokenIdUser");
+                let res = await Axios.patch(`${API_URL}/users/edit`, {
+                  name: nameEdit,
+                  email: emailEdit,
+                  gender: genderEdit,
+                  birthDate: birthDateEdit
+                }, {
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  }
+                });
+                if (res.data) {
+                  // {handleProfilePicture()};
+                  localStorage.setItem("tokenIdUser", res.data.token);
+                  dispatch(loginAction(res.data));
+                  setEditProfile(!editProfile);
+                  setNameEdit("");
+                  setGenderEdit("");
+                  setBirthDateEdit("");
+                  newToast({
+                    title: 'Edit Profile Berhasil.',
+                    description: 'Data pada profile anda sudah terupdate.',
+                    status: 'success',
+                  });
+                  setLoadingStat(false);
+                }
+              } 
+              else {
+                newToast({
+                  title: 'Registrasi Tidak Berhasil.',
+                  description: 'Format email salah, mohon memasukan sesuai format email',
+                  status: 'error',
+                })
+                setLoadingStat(false)
               }
-            });
-            if (res.data) {
-              console.log("RES DATA EDIT PROFILE", res.data);
-              localStorage.setItem("tokenIdUser", res.data.token);
-              dispatch(loginAction(res.data));
-              newToast({
-                title: 'Edit Profile Berhasil.',
-                description: 'Data pada profile anda sudah terupdate.',
-                status: 'success',
-              });
-              setLoadingStat(false);
-              setEditProfile(!editProfile);
-            }
           } 
         }
       } catch (err) {
@@ -340,6 +438,9 @@ const handleEditProfile=async()=>{
   const handleCancel = () => {
     setEditProfile(!editProfile);
     setEmailEdit("");
+    setNameEdit("");
+    setGenderEdit("");
+    setBirthDateEdit("");
     setFile(profilePicture);
   };
 
