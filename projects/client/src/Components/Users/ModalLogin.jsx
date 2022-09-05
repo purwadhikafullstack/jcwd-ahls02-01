@@ -50,6 +50,7 @@ function ModalLogin(props) {
           if (res.data.role == "user") {
             localStorage.setItem("tokenIdUser", res.data.token)
             dispatch(loginAction(res.data))
+            setShow(false)
             newToast({
               title: 'Login Berhasil.',
               description: "Selamat datang di medhika",
@@ -125,13 +126,15 @@ function ModalLogin(props) {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
-                <Link href='/forgot' class="h6br">Forgot Password?</Link>
+                <div class="mt-2">
+                  <Link href='/forgot' class="h6br">Forgot Password?</Link>
+                </div>
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button isLoading={loadingStat} loadingText='Loading' class="btn-def me-3"
+            <Button isLoading={loadingStat} class="btn-def_second2 me-3"
               onClick={handleLogin}>Login</Button>
-            <Button class="btn-def_second2" onClick={props.onClose}>Cancel</Button>
+            <Button class="btn-def" onClick={props.onClose}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

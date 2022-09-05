@@ -210,7 +210,7 @@ const checkNumbers=()=>{
                     </InputRightElement>
                   </InputGroup>
               </Box>
-                <Button isLoading={loadingStat} loadingText='Loading' style={{marginTop:"25px"}}
+                <Button isLoading={loadingStat} style={{marginTop:"25px"}}
                   class="btn-def_second" onClick={handleSubmit}>Submit</Button>
               <Image src={VectorChangePassword} width='100%' style={{marginLeft:"10px", marginBottom:"5px"}}/>
           </div>
@@ -220,38 +220,8 @@ const checkNumbers=()=>{
         </div>
         <br />
         <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
+
     </>
-    : 
-    <div class="container text-center">
-    <div class="row mt-5">
-      <div class="col-4">
-
-      </div>
-      <div class="col-4">
-        <div class="d-flex justify-content-center">
-          <IoIosWarning class="mt-5" size={"150px"} style={{color:"#DE1B51"}} />
-        </div>
-        <Text class="h5">Invalid Token</Text>
-        <Button class="btn-def_second mt-3 h5b" onClick={() => navigate("/")}>Close this page</Button>
-      </div>
-      <div class="col-4">
-
-      </div>
-    </div>
-  </div>
   </Box>
   </>
   )
