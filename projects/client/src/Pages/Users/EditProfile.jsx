@@ -16,7 +16,7 @@ import { useToastHook } from "../../Components/CustomToast";
 import { getAddress, getAddressActions } from "../../Redux/Actions/addressActions";
 import ModalAddress from "../../Components/Users/ModalAddress";
 import { getProvinceRajaOngkir, getProvinceActions2 } from "../../Redux/Actions/getProvinceActions";
-import { getCityRajaOngkir } from "../../Redux/Actions/getCityActions";
+import { getCityRajaOngkir, getCityActions2 } from "../../Redux/Actions/getCityActions";
 
 const EditProfile=(props)=>{
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ const EditProfile=(props)=>{
     getProvinceRajaOngkir2()
   }, [])
 
-  const {address, phone, email, gender, birthDateFE, idUser, name, profilePicture, token, getProvince, getProvince2, getCity}=useSelector((state) => {
+  const {address, phone, email, gender, birthDateFE, idUser, name, profilePicture, token, getProvince, getProvince2, getCity, getCity2}=useSelector((state) => {
     return {
         address:state.addressReducers.address,
         phone:state.userReducers.phone,
@@ -49,7 +49,8 @@ const EditProfile=(props)=>{
         token:state.userReducers.token,
         getProvince:state.getProvinceReducers.getProvince,
         getProvince2:state.getProvinceReducers.getProvince2,
-        getCity:state.getCityReducers.getCity
+        getCity:state.getCityReducers.getCity,
+        getCity2:state.getCityReducers.getCity2
         }
     });
 
@@ -58,6 +59,7 @@ const EditProfile=(props)=>{
   const [addProvinsi, setAddProvinsi]=React.useState("");
   const [addProvinsiId, setAddProvinsiId]=React.useState(0);
   const [addKota, setAddKota]=React.useState("");
+  const [addKotaId, setAddKotaId]=React.useState(0);
   const [addKodePos, setAddKodePos]=React.useState("");
   const [addPenerima, setAddPenerima]=React.useState("");
   const [addTelfon, setAddTelfon]=React.useState("");
@@ -194,7 +196,7 @@ const handleEditProfile=async()=>{
     const handleAddAddress =async(props)=>{
       try {
         setLoadingStat(true)
-        if (addLabel =="" || addAlamat=="" || getProvince2.namaProvinsi==undefined || addKota=="" || addPenerima=="" || addTelfon==""){
+        if (addLabel =="" || addAlamat=="" || getProvince2==undefined || getCity2==undefined || addPenerima=="" || addTelfon=="" || addKodePos==""){
           newToast({
             title: 'Tambah Alamat Tidak Berhasil.',
             description: 'Mohon isi semua data yang bertanda bintang *',
@@ -213,8 +215,10 @@ const handleEditProfile=async()=>{
             let res = await Axios.post(`${API_URL}/address/addAddress`, {
               label: addLabel,
               address: addAlamat,
-              province: getProvince2.namaProvinsi[0],
-              city: addKota,
+              province: getProvince2,
+              provinceid: addProvinsiId,
+              city: getCity2,
+              cityid: addKotaId,
               postalCode: addKodePos,
               receiverName: addPenerima,
               receiverPhone: addTelfon,
@@ -258,10 +262,23 @@ const handleEditProfile=async()=>{
           let city = getCityRajaOngkir(a)
           dispatch(city)
           if (getCity){
-            setAddKota(e.target.value)
+            setAddKotaId(e.target.value)
             {getProvinceRajaOngkir2()}
           }
           // setGetCityOn(!getCityOn)
+        } else {
+          alert("else")
+        }
+      } catch (error) {
+        alert(error)
+      }
+    }
+
+    const handleCityName = async(e) => {
+      try {
+        console.log("====addProvinsiId func", addKotaId)
+        if (addKotaId > 0){
+          {getCityRajaOngkir2()}
         } else {
           alert("else")
         }
@@ -281,8 +298,28 @@ const handleEditProfile=async()=>{
             }
           })
           if (res.data) {
-            console.log("RES DATA GET PROVINCE RAJAONGKIR", res.data)
-            dispatch(getProvinceActions2(res.data))
+            console.log("RES DATA GET PROVINCE RAJAONGKIR", res.data.namaProvinsi[0])
+            dispatch(getProvinceActions2(res.data.namaProvinsi[0]))
+          }
+        }
+      } catch (error) {
+        console.log(error)
+      }
+  }
+    const getCityRajaOngkir2 = async() => {
+      try {
+        console.log("CITY_ID ACTIONS 2", addKotaId)
+        if (addKotaId > 0) {
+          console.log("CITY2 JALANNN")
+          let res = await Axios.get(`${API_URL}/rajaOngkir/getCity2`, {
+            headers: {
+              provinceid: addProvinsiId,
+              cityid: addKotaId
+            }
+          })
+          if (res.data) {
+            console.log("RES DATA GET CITY RAJAONGKIR", res.data.namaKota[0])
+            dispatch(getCityActions2(res.data.namaKota[0]))
           }
         }
       } catch (error) {
@@ -361,8 +398,9 @@ const handleEditProfile=async()=>{
     })
   }
 
-  console.log("check users", gender, birthDateFE, editProfile)
-  console.log("edit value", nameEdit, emailEdit, genderEdit, birthDateEdit)
+  console.log("check ADD ADDRESS BARU", addLabel, addAlamat, getProvince2, addProvinsiId, getCity2, addKotaId, addPenerima, addTelfon, addKodePos)
+  // console.log("check users", gender, birthDateFE, editProfile)
+  // console.log("edit value", nameEdit, emailEdit, genderEdit, birthDateEdit)
 
   return (
     <>
@@ -493,14 +531,6 @@ const handleEditProfile=async()=>{
                           </div>
                           <div class="col-md-1"></div>
                           <div class="col-md-5">
-                          {/* <FormControl as="select" ref={provRef} onChange={(e)=>setProvId(e.current.value)}>
-                            <option value="pilih provinsi">Pilih Provinsi Tujuan</option>
-                            {getProvince.data.map((p) => (
-                              <option key={p.province_id} value={p.province_id}>
-                                {p.province}
-                              </option>
-                            ))}
-                          </FormControl> */}
                             <FormControl isRequired>
                               <FormLabel mt={8}>Provinsi</FormLabel>
                                 <Select bgColor={"#FFFFFF"} boxShadow='md' placeholder='Pilih Provinsi' onChange={(e)=>setAddProvinsiId(e.target.value)}>
@@ -510,10 +540,6 @@ const handleEditProfile=async()=>{
                                     </option>
                                   ))}
                                 </Select>
-                                {/* <Select bgColor={"#FFFFFF"} boxShadow='md' placeholder='Pilih Provinsi' onChange={(e)=>setAddProvinsi(e.target.value)}>
-                                  <option>DKI Jakarta</option>
-                                  <option>Bandung</option>
-                                </Select> */}
                               <FormLabel mt={4}>Kota</FormLabel>
                               {
                                 addProvinsiId > 0 ?
@@ -522,7 +548,7 @@ const handleEditProfile=async()=>{
                                   {
                                     getCity.data &&
                                     getCity.data.map((k) => (
-                                      <option key={k.city_id} value={k.city_name}>
+                                      <option key={k.city_id} value={k.city_id}>
                                         {k.city_name}
                                       </option>
                                     ))
@@ -532,13 +558,20 @@ const handleEditProfile=async()=>{
                                 <Select isDisabled bgColor={"#FFFFFF"} boxShadow='md' placeholder='Pilih Kota' >
                                 </Select>
                               }
-                                {/* <Select bgColor={"#FFFFFF"} boxShadow='md' placeholder='Pilih Kota' onChange={(e)=>setAddKota(e.target.value)}>
-                                  <option>Jakarta Timur</option>
-                                  <option>Jakarta Selatan</option>
-                                </Select> */}
+                              {
+                                addKotaId > 0 ?
+                                <>
+                                <FormLabel mt={4}>Kode Pos</FormLabel> 
+                                  <Input bgColor={"#FFFFFF"} boxShadow='md' placeholder="..." onChange={(e)=>setAddKodePos(e.target.value)}
+                                  onClick={handleCityName} />
+                                </>
+                              :
+                                <>
+                                  <FormLabel mt={4}>Kode Pos</FormLabel>
+                                    <Input isDisabled bgColor={"#FFFFFF"} boxShadow='md' placeholder="..."/>
+                                </>
+                              }
                             </FormControl>
-                            <FormLabel mt={4}>Kode Pos</FormLabel>
-                              <Input bgColor={"#FFFFFF"} boxShadow='md' placeholder="..." onChange={(e)=>setAddKodePos(e.target.value)}/>
                             <Checkbox mt={5} checked={addUtama} onChange={(e)=> {setAddUtama(e.target.checked)}}>
                               Alamat Utama
                             </Checkbox>

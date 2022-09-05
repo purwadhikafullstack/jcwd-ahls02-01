@@ -476,12 +476,26 @@ module.exports = {
       if (checkPassword[0].password == hashPassword(req.body.oldPassword)) {
         let changePassword = await dbQuery(`UPDATE users SET password=${dbConf.escape(hashPassword(req.body.newPassword))}
         WHERE idUser=${req.dataUser.idUser};`);
-        let change = await dbQuery(`SELECT token FROM tokenlist WHERE idUser = ${req.dataUser.idUser};`)
-        console.log("CHECKPASSWORD", checkPassword[0])
-        let { idUser, name, email, password, role, phone, profilePicture, addDate, isVerified } = checkPassword[0]
-        let birthDateFE = checkPassword[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
-        let token = createToken({ idUser, email, role, addDate, isVerified })
-        return res.status(200).send({ ...checkPassword[0], birthDateFE, token });
+
+        if (checkPassword[0].birthDate == null) {
+          // generate token
+
+          console.log("CHECKPASSWORD", checkPassword[0])
+          let { idUser, name, email, password, role, phone, profilePicture, addDate, isVerified } = checkPassword[0]
+          let token = createToken({ idUser, email, role, addDate, isVerified })
+
+          return res.status(200).send({ ...checkPassword[0], token });
+        } else {
+          // generate token
+
+          console.log("CHECKPASSWORD", checkPassword[0])
+          let { idUser, name, email, password, role, phone, profilePicture, addDate, isVerified } = checkPassword[0]
+          let birthDateFE = checkPassword[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
+          let token = createToken({ idUser, email, role, addDate, isVerified })
+
+          return res.status(200).send({ ...checkPassword[0], birthDateFE, token });;
+        }
+
       }
       else {
         let message = "Old Password tidak sesuai / salah"
@@ -782,8 +796,8 @@ module.exports = {
         if (req.dataUser.idUser) {
           console.log('req body upload', req.body);
           console.log('pengecekan file', req.files);
-          console.log('pengecekan size file', req.files[0].size < 1000000);
-          if (req.files[0].size < 1000000) {
+          console.log('pengecekan size file', req.files[0].size <= 1000000);
+          if (req.files[0].size <= 1000000) {
             let { idUserLogin } = JSON.parse(req.body.data);
 
             let imgData = req.files.map(val => {

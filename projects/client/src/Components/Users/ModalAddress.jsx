@@ -13,7 +13,7 @@ import { Flex, Box, Heading, Input, Image, Text, Divider, Spacer, ButtonGroup, B
   InputRightElement, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel, Checkbox,
   Textarea, Select} from '@chakra-ui/react';
 import { getProvinceRajaOngkir, getProvinceActions2 } from "../../Redux/Actions/getProvinceActions";
-import { getCityRajaOngkir } from "../../Redux/Actions/getCityActions";
+import { getCityRajaOngkir, getCityActions2 } from "../../Redux/Actions/getCityActions";
 
 function ModalAddress(props) {
   const dispatch = useDispatch();
@@ -25,6 +25,8 @@ function ModalAddress(props) {
   const toast = useToast()
   const [currentToast, newToast]=useToastHook();
   const [editKota, setEditKota]=React.useState("")
+  const [postalCodeOn, setPostalCodeOn]=React.useState(false)
+  const [editKotaId, setEditKotaId]=React.useState(0)
   const [editProvinsiId, setEditProvinsiId]=React.useState(0)
   const [loadingStat, setLoadingStat]=React.useState(false);
   const [editLabel, setEditLabel]=React.useState("")
@@ -32,17 +34,17 @@ function ModalAddress(props) {
   const [editTelfon, setEditTelfon]=React.useState("")
   const [editAlamat, setEditAlamat]=React.useState("")
   const [editProvinsi, setEditProvinsi]=React.useState("")
-  // const [editKota, setEditKota]=React.useState("")
   const [editKodePos, setEditKodePos]=React.useState("")
   const [editUtama, setEditUtama]=React.useState(false)
   const [editAddress, setEditAddress]=React.useState(false)
 
-  const { address, getProvince, getProvince2, getCity }=useSelector((state) => {
+  const { address, getProvince, getProvince2, getCity, getCity2 }=useSelector((state) => {
     return {
         address:state.addressReducers.address,
         getProvince:state.getProvinceReducers.getProvince,
         getProvince2:state.getProvinceReducers.getProvince2,
-        getCity:state.getCityReducers.getCity
+        getCity:state.getCityReducers.getCity,
+        getCity2:state.getCityReducers.getCity2
         }
     })
 
@@ -70,8 +72,8 @@ function ModalAddress(props) {
           }
         })
         if (res.data) {
-          console.log("RES DATA GET PROVINCE RAJAONGKIR", res.data)
-          dispatch(getProvinceActions2(res.data))
+          console.log("RES DATA GET PROVINCE EDIT RAJAONGKIR", res.data.namaProvinsi[0])
+          dispatch(getProvinceActions2(res.data.namaProvinsi[0]))
         }
       }
     } catch (error) {
@@ -79,6 +81,10 @@ function ModalAddress(props) {
     }
   }
 
+  // const handleProvince = () =>{
+  //   setEditOn(!editOn);
+  //   setEditProvinsiId(e.target.value);
+  // }
   const handleCity = async(e) => {
     try {
       console.log("====addProvinsiId func", editProvinsiId)
@@ -88,17 +94,53 @@ function ModalAddress(props) {
         let city = getCityRajaOngkir(a)
         dispatch(city)
         if (getCity){
-          setEditKota(e.target.value)
+          setEditKotaId(e.target.value)
           {getProvinceRajaOngkir2()}
         }
         // setGetCityOn(!getCityOn)
       } else {
-        alert("else")
+        // alert("else")
       }
     } catch (error) {
-      alert(error)
+      // alert(error)
     }
   }
+
+  const handleCityName = async(e) => {
+    try {
+      console.log("====addProvinsiId func", editKotaId)
+      setPostalCodeOn(!postalCodeOn)
+      if (editKotaId > 0){
+        // setPostalCodeOn(!postalCodeOn)
+        {getCityRajaOngkir2()}
+      } else {
+        // alert("else")
+      }
+    } catch (error) {
+      // alert(error)
+    }
+  }
+
+  const getCityRajaOngkir2 = async() => {
+    try {
+      console.log("CITY_ID ACTIONS 2", editKotaId)
+      if (editKotaId > 0) {
+        console.log("CITY2 JALANNN")
+        let res = await Axios.get(`${API_URL}/rajaOngkir/getCity2`, {
+          headers: {
+            provinceid: editProvinsiId,
+            cityid: editKotaId
+          }
+        })
+        if (res.data) {
+          console.log("RES DATA GET CITY EDIT RAJAONGKIR", res.data.namaKota[0])
+          dispatch(getCityActions2(res.data.namaKota[0]))
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+}
 
   const handleDeleteAddress = async () =>{
     try {
@@ -128,18 +170,24 @@ function ModalAddress(props) {
     }
   }
 
+    console.log("EDIT ONN", postalCodeOn)
+    console.log("getProvince2 & getCity2", getProvince2, getCity2)
   const handleEditAddress=async()=>{
     try {
       setLoadingStat(true)
       if(editAddress == true){
+        console.log("handleEditAddress Jalannn")
         let token = localStorage.getItem("tokenIdUser");
         let res = await Axios.patch(`${API_URL}/address/editAddress`, {
           idAddress: props.data,
           label: editLabel,
           address: editAlamat,
-          province: getProvince2.namaProvinsi[0],
-          city: editKota,
+          province: getProvince2,
+          provinceid: editProvinsiId,
+          city: getCity2,
+          cityid: editKotaId,
           postalCode: editKodePos,
+          editPostalCode: postalCodeOn,
           receiverName: editPenerima,
           receiverPhone: editTelfon,
           isDefaultAddress: editUtama
@@ -149,7 +197,7 @@ function ModalAddress(props) {
           }
         })
         if (res.data) {
-          // console.log("RES DATA EDIT PROFILE", res.data)
+          console.log("RES DATA EDIT PROFILE", res.data)
           // localStorage.setItem("tokenIdUser", res.data.token)
           dispatch(getAddressActions(res.data))
           newToast({
@@ -194,7 +242,7 @@ function ModalAddress(props) {
           </div>
           <div class="d-flex justify-content-end pb-2">
             <ButtonGroup mt={6}>
-              <Button isLoading={loadingStat} loadingText='Loading' class="btn-def me-3"
+              <Button isLoading={loadingStat} class="btn-def me-3"
                 onClick={handleDeleteAddress}>Delete</Button>
               <Button class="btn-def_second2" onClick={() => setEditAddress(!editAddress)}>Edit</Button>
             </ButtonGroup>
@@ -218,7 +266,7 @@ function ModalAddress(props) {
             </div>
             <div class="d-flex justify-content-end pb-2">
               <ButtonGroup mt={6}>
-                <Button isLoading={loadingStat} loadingText='Loading' class="btn-def me-3"
+                <Button isLoading={loadingStat} class="btn-def me-3"
                   onClick={handleDeleteAddress}>Delete</Button>
                 <Button class="btn-def_second2" onClick={() => setEditAddress(!editAddress)}>Edit</Button>
               </ButtonGroup>
@@ -232,6 +280,7 @@ function ModalAddress(props) {
   const handleCancelEdit =()=>{
     setEditAddress(!editAddress)
     setEditUtama(false)
+    setPostalCodeOn(false)
     setEditLabel("")
     setEditPenerima("")
     setEditTelfon("")
@@ -281,7 +330,7 @@ function ModalAddress(props) {
                   {
                     getCity.data &&
                     getCity.data.map((k) => (
-                      <option key={k.city_id} value={k.city_name}>
+                      <option key={k.city_id} value={k.city_id}>
                         {k.city_name}
                       </option>
                     ))
@@ -291,12 +340,13 @@ function ModalAddress(props) {
                 <Select isDisabled bgColor={"#FFFFFF"} boxShadow='md' placeholder={value.city}>
                 </Select>
               }
+                <FormLabel mt={4}>Kode Pos</FormLabel>
+                  <Input bgColor={"#FFFFFF"} boxShadow='md' defaultValue={value.postalCode} onChange={(e)=>setEditKodePos(e.target.value)}
+                  onClick={handleCityName} />
             </FormControl>
-            <FormLabel mt={4}>Kode Pos</FormLabel>
-              <Input bgColor={"#FFFFFF"} boxShadow='md' placeholder="..." defaultValue={value.postalCode} onChange={(e)=>setEditKodePos(e.target.value)}/>
             <div class="d-flex justify-content-end">
               <ButtonGroup mt={6}>
-                <Button isLoading={loadingStat} loadingText='Loading' class="btn-def_second2 me-1"
+                <Button isLoading={loadingStat} class="btn-def_second2 me-1"
                   onClick={handleEditAddress}>Submit</Button>
                 <Button class="btn-def" onClick={handleCancelEdit}>Cancel</Button>
               </ButtonGroup>
@@ -341,7 +391,7 @@ function ModalAddress(props) {
                       {
                         getCity.data &&
                         getCity.data.map((k) => (
-                          <option key={k.city_id} value={k.city_name}>
+                          <option key={k.city_id} value={k.city_id}>
                             {k.city_name}
                           </option>
                         ))
@@ -351,15 +401,16 @@ function ModalAddress(props) {
                     <Select isDisabled bgColor={"#FFFFFF"} boxShadow='md' placeholder={value.city}>
                     </Select>
                   }
+                    <FormLabel mt={4}>Kode Pos</FormLabel>
+                      <Input bgColor={"#FFFFFF"} boxShadow='md' defaultValue={value.postalCode} onChange={(e)=>setEditKodePos(e.target.value)}
+                      onClick={handleCityName} />
                 </FormControl>
-                <FormLabel mt={4}>Kode Pos</FormLabel>
-                  <Input bgColor={"#FFFFFF"} boxShadow='md' placeholder="..." defaultValue={value.postalCode} onChange={(e)=>setEditKodePos(e.target.value)}/>
                   <Checkbox mt={5} checked={editUtama} onChange={(e)=> {setEditUtama(e.target.checked)}}>
                     Alamat Utama
                   </Checkbox>
                 <div class="d-flex justify-content-end">
                   <ButtonGroup mt={6}>
-                    <Button isLoading={loadingStat} loadingText='Loading' class="btn-def_second2 me-1"
+                    <Button isLoading={loadingStat} class="btn-def_second2 me-1"
                       onClick={handleEditAddress}>Submit</Button>
                     <Button class="btn-def" onClick={handleCancelEdit}>Cancel</Button>
                   </ButtonGroup>
@@ -373,7 +424,7 @@ function ModalAddress(props) {
   }
 
 
-  console.log('editAddress ==>', editLabel, editPenerima, editTelfon, editAlamat, editProvinsi, editKota, editKodePos, editUtama)
+  console.log('editAddress ==>', editLabel, editPenerima, editTelfon, editAlamat, getProvince2, editProvinsiId, getCity2, editKotaId, editKodePos, editUtama)
   // console.log('address modalAddress', address)
   // console.log('props.data', props.utama)
   return (

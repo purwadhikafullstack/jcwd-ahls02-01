@@ -172,11 +172,15 @@ const NavbarComponent = (props) => {
                         <MenuList>
                           <MenuGroup title='Profile'>
                             <MenuItem onClick={()=> navigate("/editProfile")}>Edit Profile</MenuItem>
-                            <MenuItem>Add Address</MenuItem>
                             <MenuItem onClick={()=> navigate("/changePassword")}>Change Password</MenuItem>
                           </MenuGroup>
                           <MenuDivider />
-                          <MenuGroup title='Pengaturan Akun'>
+                          <MenuGroup title='Transaction'>
+                            <MenuItem>Product List</MenuItem>
+                            <MenuItem>Transaction List</MenuItem>
+                          </MenuGroup>
+                          <MenuDivider />
+                          <MenuGroup title='Setting Account'>
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
                           </MenuGroup>
                         </MenuList>

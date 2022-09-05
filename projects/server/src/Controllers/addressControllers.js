@@ -35,7 +35,7 @@ module.exports = {
           console.log("ADD ADDRESS false")
           let addAddress = await dbQuery(`INSERT INTO address (idUser, receiverName, receiverPhone, address, province, idProvince, city, idCity, postalCode, isDefaultAddress, label)
             values (${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(req.body.receiverName)}, ${dbConf.escape(req.body.receiverPhone)}, ${dbConf.escape(req.body.address)},
-              ${dbConf.escape(req.body.province)}, ${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(req.body.city)}, ${dbConf.escape(req.dataUser.idUser)},
+              ${dbConf.escape(req.body.province)}, ${dbConf.escape(req.body.provinceid)}, ${dbConf.escape(req.body.city)}, ${dbConf.escape(req.body.cityid)},
               ${dbConf.escape(req.body.postalCode)}, '${req.body.isDefaultAddress}', ${dbConf.escape(req.body.label)});`);
           console.log("CHECK addAddress", addAddress.insertId)
           if (addAddress.insertId) {
@@ -54,7 +54,7 @@ module.exports = {
           if (checkUtama[0] == undefined) {
             let addAddress = await dbQuery(`INSERT INTO address (idUser, receiverName, receiverPhone, address, province, idProvince, city, idCity, postalCode, isDefaultAddress, label)
               values (${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(req.body.receiverName)}, ${dbConf.escape(req.body.receiverPhone)}, ${dbConf.escape(req.body.address)},
-                ${dbConf.escape(req.body.province)}, ${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(req.body.city)}, ${dbConf.escape(req.dataUser.idUser)},
+                ${dbConf.escape(req.body.province)}, ${dbConf.escape(req.body.provinceid)}, ${dbConf.escape(req.body.city)}, ${dbConf.escape(req.body.cityid)},
                 ${dbConf.escape(req.body.postalCode)}, '${req.body.isDefaultAddress}', ${dbConf.escape(req.body.label)});`);
             // console.log("CHECK addAddress", addAddress.insertId)
             if (addAddress.insertId) {
@@ -70,7 +70,7 @@ module.exports = {
 
             let addAddress = await dbQuery(`INSERT INTO address (idUser, receiverName, receiverPhone, address, province, idProvince, city, idCity, postalCode, isDefaultAddress, label)
               values (${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(req.body.receiverName)}, ${dbConf.escape(req.body.receiverPhone)}, ${dbConf.escape(req.body.address)},
-                ${dbConf.escape(req.body.province)}, ${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(req.body.city)}, ${dbConf.escape(req.dataUser.idUser)},
+                ${dbConf.escape(req.body.province)}, ${dbConf.escape(req.body.provinceid)}, ${dbConf.escape(req.body.city)}, ${dbConf.escape(req.body.cityid)},
                 ${dbConf.escape(req.body.postalCode)}, '${req.body.isDefaultAddress}', ${dbConf.escape(req.body.label)});`);
             console.log("CHECK addAddress", addAddress.insertId)
             if (addAddress.insertId) {
@@ -93,67 +93,66 @@ module.exports = {
 
       // EDIT UTAMA
       if (req.body.label == '' && req.body.receiverName == '' && req.body.receiverPhone == '' && req.body.address == '' && req.body.postalCode == '') {
-        if (req.body.city == '') {
-          if (req.body.isDefaultAddress == true) {
-            let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
-            console.log("checkUtama[0]", checkUtama[0])
-            if (checkUtama[0] == undefined) {
-              let edit = await dbQuery(`UPDATE address SET isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
+        console.log("EDIT UTAMA 1 JALANNN")
+        console.log("EDIT UTAMA 2 JALANNN")
+        if (req.body.isDefaultAddress == true) {
+          console.log("EDIT UTAMA 3 JALANNN")
+          let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
+          console.log("checkUtama[0]", checkUtama[0])
+          if (checkUtama[0] == undefined) {
+            let edit = await dbQuery(`UPDATE address SET isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
 
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit utama undefined", resultsEdit)
+            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+            console.log("resultEdit utama undefined", resultsEdit)
 
-              return res.status(200).send(resultsEdit);
-            } else {
-              let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
+            return res.status(200).send(resultsEdit);
+          } else {
+            let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
 
-              let edit = await dbQuery(`UPDATE address SET isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit utama", resultsEdit)
+            let edit = await dbQuery(`UPDATE address SET isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
+            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+            console.log("resultEdit utama", resultsEdit)
 
-              return res.status(200).send(resultsEdit);
-            }
+            return res.status(200).send(resultsEdit);
           }
         }
       }
       // EDIT LABEL
       else if (req.body.receiverName == '' && req.body.receiverPhone == '' && req.body.address == '' && req.body.postalCode == '') {
-        if (req.body.city == '') {
-          let checkLabel = await dbQuery(`SELECT label FROM address WHERE label = ${dbConf.escape(req.body.label)} AND idUser = ${req.dataUser.idUser};`)
-          console.log("checkLabel.length", checkLabel.length)
+        let checkLabel = await dbQuery(`SELECT label FROM address WHERE label = ${dbConf.escape(req.body.label)} AND idUser = ${req.dataUser.idUser};`)
+        console.log("checkLabel.length", checkLabel.length)
 
-          if (checkLabel.length > 0) {
-            let message = 'Label sudah terdaftar, Mohon isi dengan nama lain'
-            return res.status(404).send({
-              message
-            });
+        if (checkLabel.length > 0) {
+          let message = 'Label sudah terdaftar, Mohon isi dengan nama lain'
+          return res.status(404).send({
+            message
+          });
+        } else {
+          if (req.body.isDefaultAddress == false) {
+            let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}' WHERE idAddress=${req.body.idAddress};`)
+
+            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+            console.log("resultEdit label", resultsEdit)
+
+            return res.status(200).send(resultsEdit);
           } else {
-            if (req.body.isDefaultAddress == false) {
-              let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}' WHERE idAddress=${req.body.idAddress};`)
+            let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
+            console.log("checkUtama[0]", checkUtama[0])
+            if (checkUtama[0] == undefined) {
+              let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
 
+              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+              console.log("resultEdit label undefined", resultsEdit)
+
+              return res.status(200).send(resultsEdit);
+            } else {
+              let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
+
+              let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
               let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
               console.log("resultEdit label", resultsEdit)
 
               return res.status(200).send(resultsEdit);
-            } else {
-              let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
-              console.log("checkUtama[0]", checkUtama[0])
-              if (checkUtama[0] == undefined) {
-                let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
-
-                let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-                console.log("resultEdit label undefined", resultsEdit)
-
-                return res.status(200).send(resultsEdit);
-              } else {
-                let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
-
-                let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
-                let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-                console.log("resultEdit label", resultsEdit)
-
-                return res.status(200).send(resultsEdit);
-              }
             }
           }
         }
@@ -161,200 +160,190 @@ module.exports = {
 
       // EDIT RECEIVERNAME
       else if (req.body.label == '' && req.body.receiverPhone == '' && req.body.address == '' && req.body.postalCode == '') {
-        if (req.body.city == '') {
-          if (req.body.isDefaultAddress == false) {
-            let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}' WHERE idAddress=${req.body.idAddress};`)
-            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-            console.log("resultEdit nama penerima", resultsEdit)
-
-            return res.status(200).send(resultsEdit);
-          } else {
-            let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
-            console.log("checkUtama[0]", checkUtama[0])
-            if (checkUtama[0] == undefined) {
-              let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
-
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit nama penerima undefined", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            } else {
-              let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
-
-              let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit nama penerima", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            }
-          }
-        }
-      }
-
-      // EDIT RECEIVERPHONE
-      else if (req.body.label == '' && req.body.receiverName == '' && req.body.address == '' && req.body.postalCode == '') {
-        if (req.body.city == '') {
-          if (req.body.isDefaultAddress == false) {
-            let edit = await dbQuery(`UPDATE address SET receiverPhone = '${req.body.receiverPhone}' WHERE idAddress=${req.body.idAddress};`)
-            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-            console.log("resultEdit telfon", resultsEdit)
-
-            return res.status(200).send(resultsEdit);
-          } else {
-            let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
-            console.log("checkUtama[0]", checkUtama[0])
-            if (checkUtama[0] == undefined) {
-              let edit = await dbQuery(`UPDATE address SET receiverPhone = '${req.body.receiverPhone}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
-
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit telfon undefined", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            } else {
-              let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
-
-              let edit = await dbQuery(`UPDATE address SET receiverPhone = '${req.body.receiverPhone}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit telfon", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            }
-          }
-        }
-      }
-
-      // EDIT ADDRESS, PROVINCE & CITY
-      else if (req.body.label == '' && req.body.receiverName == '' && req.body.receiverPhone == '' && req.body.postalCode == '' && req.body.city != '') {
-        console.log("alamat, provinsi & kota JALAANNN")
-        console.log("BOOLEAN KOTA", req.body.city != '')
         if (req.body.isDefaultAddress == false) {
-          let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', province = '${req.body.province}', city = '${req.body.city}' WHERE idAddress=${req.body.idAddress};`)
+          let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}' WHERE idAddress=${req.body.idAddress};`)
           let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-          console.log("resultEdit alamat, provinsi & kota", resultsEdit)
+          console.log("resultEdit nama penerima", resultsEdit)
 
           return res.status(200).send(resultsEdit);
         } else {
           let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
           console.log("checkUtama[0]", checkUtama[0])
           if (checkUtama[0] == undefined) {
-            let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', province = '${req.body.province}', city = '${req.body.city}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
+            let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
 
             let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-            console.log("resultEdit alamat, provinsi & kota undefined", resultsEdit)
+            console.log("resultEdit nama penerima undefined", resultsEdit)
 
             return res.status(200).send(resultsEdit);
           } else {
             let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
 
-            let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', province = '${req.body.province}', city = '${req.body.city}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
+            let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
             let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-            console.log("resultEdit alamat, provinsi & kota", resultsEdit)
+            console.log("resultEdit nama penerima", resultsEdit)
 
             return res.status(200).send(resultsEdit);
           }
         }
       }
 
+      // EDIT RECEIVERPHONE
+      else if (req.body.label == '' && req.body.receiverName == '' && req.body.address == '' && req.body.postalCode == '') {
+        if (req.body.isDefaultAddress == false) {
+          let edit = await dbQuery(`UPDATE address SET receiverPhone = '${req.body.receiverPhone}' WHERE idAddress=${req.body.idAddress};`)
+          let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+          console.log("resultEdit telfon", resultsEdit)
+
+          return res.status(200).send(resultsEdit);
+        } else {
+          let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
+          console.log("checkUtama[0]", checkUtama[0])
+          if (checkUtama[0] == undefined) {
+            let edit = await dbQuery(`UPDATE address SET receiverPhone = '${req.body.receiverPhone}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
+
+            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+            console.log("resultEdit telfon undefined", resultsEdit)
+
+            return res.status(200).send(resultsEdit);
+          } else {
+            let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
+
+            let edit = await dbQuery(`UPDATE address SET receiverPhone = '${req.body.receiverPhone}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
+            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+            console.log("resultEdit telfon", resultsEdit)
+
+            return res.status(200).send(resultsEdit);
+          }
+        }
+      }
+
+      // // EDIT ADDRESS, PROVINCE & CITY
+      // else if (req.body.label == '' && req.body.receiverName == '' && req.body.receiverPhone == '' && req.body.postalCode == '' && req.body.city != '') {
+      //   console.log("alamat, provinsi & kota JALAANNN")
+      //   console.log("BOOLEAN KOTA", req.body.city != '')
+      //   if (req.body.isDefaultAddress == false) {
+      //     let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', province = '${req.body.province}', city = '${req.body.city}' WHERE idAddress=${req.body.idAddress};`)
+      //     let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+      //     console.log("resultEdit alamat, provinsi & kota", resultsEdit)
+
+      //     return res.status(200).send(resultsEdit);
+      //   } else {
+      //     let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
+      //     console.log("checkUtama[0]", checkUtama[0])
+      //     if (checkUtama[0] == undefined) {
+      //       let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', province = '${req.body.province}', city = '${req.body.city}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
+
+      //       let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+      //       console.log("resultEdit alamat, provinsi & kota undefined", resultsEdit)
+
+      //       return res.status(200).send(resultsEdit);
+      //     } else {
+      //       let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
+
+      //       let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', province = '${req.body.province}', city = '${req.body.city}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
+      //       let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+      //       console.log("resultEdit alamat, provinsi & kota", resultsEdit)
+
+      //       return res.status(200).send(resultsEdit);
+      //     }
+      //   }
+      // }
+
       // EDIT ADDRESS
       else if (req.body.label == '' && req.body.receiverName == '' && req.body.receiverPhone == '' && req.body.postalCode == '') {
-        if (req.body.city == '') {
-          if (req.body.isDefaultAddress == false) {
-            let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}' WHERE idAddress=${req.body.idAddress};`)
+        if (req.body.isDefaultAddress == false) {
+          let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}' WHERE idAddress=${req.body.idAddress};`)
+          let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+          console.log("resultEdit alamat", resultsEdit)
+
+          return res.status(200).send(resultsEdit);
+        } else {
+          let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
+          console.log("checkUtama[0]", checkUtama[0])
+          if (checkUtama[0] == undefined) {
+            let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
+
+            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+            console.log("resultEdit alamat undefined", resultsEdit)
+
+            return res.status(200).send(resultsEdit);
+          } else {
+            let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
+
+            let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
             let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
             console.log("resultEdit alamat", resultsEdit)
 
             return res.status(200).send(resultsEdit);
-          } else {
-            let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
-            console.log("checkUtama[0]", checkUtama[0])
-            if (checkUtama[0] == undefined) {
-              let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
-
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit alamat undefined", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            } else {
-              let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
-
-              let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit alamat", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            }
           }
         }
       }
 
       // EDIT POSTALCODE
       else if (req.body.label == '' && req.body.receiverName == '' && req.body.receiverPhone == '' && req.body.address == '') {
-        if (req.body.city == '') {
-          if (req.body.isDefaultAddress == false) {
-            let edit = await dbQuery(`UPDATE address SET postalCode = '${req.body.postalCode}' WHERE idAddress=${req.body.idAddress};`)
+        if (req.body.isDefaultAddress == false) {
+          let edit = await dbQuery(`UPDATE address SET postalCode = '${req.body.postalCode}' WHERE idAddress=${req.body.idAddress};`)
+          let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+          console.log("resultEdit alamat", resultsEdit)
+
+          return res.status(200).send(resultsEdit);
+        } else {
+          let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
+          console.log("checkUtama[0]", checkUtama[0])
+          if (checkUtama[0] == undefined) {
+            let edit = await dbQuery(`UPDATE address SET postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
+
+            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+            console.log("resultEdit alamat undefined", resultsEdit)
+
+            return res.status(200).send(resultsEdit);
+          } else {
+            let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
+
+            let edit = await dbQuery(`UPDATE address SET postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
             let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
             console.log("resultEdit alamat", resultsEdit)
 
             return res.status(200).send(resultsEdit);
-          } else {
-            let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
-            console.log("checkUtama[0]", checkUtama[0])
-            if (checkUtama[0] == undefined) {
-              let edit = await dbQuery(`UPDATE address SET postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
-
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit alamat undefined", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            } else {
-              let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
-
-              let edit = await dbQuery(`UPDATE address SET postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit alamat", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            }
           }
         }
       }
 
       // EDIT RECEIVERNAME & RECEIVERPHONE
       else if (req.body.label == '' && req.body.address == '' && req.body.postalCode == '') {
-        if (req.body.city == '') {
-          if (req.body.isDefaultAddress == false) {
-            let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}' WHERE idAddress=${req.body.idAddress};`)
+        if (req.body.isDefaultAddress == false) {
+          let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}' WHERE idAddress=${req.body.idAddress};`)
+          let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+          console.log("resultEdit nama penerima & telfon", resultsEdit)
+
+          return res.status(200).send(resultsEdit);
+        } else {
+          let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
+          console.log("checkUtama[0]", checkUtama[0])
+          if (checkUtama[0] == undefined) {
+            let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
+
+            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+            console.log("resultEdit nama penerima & telfon undefined", resultsEdit)
+
+            return res.status(200).send(resultsEdit);
+          } else {
+            let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
+
+            let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
             let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
             console.log("resultEdit nama penerima & telfon", resultsEdit)
 
             return res.status(200).send(resultsEdit);
-          } else {
-            let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
-            console.log("checkUtama[0]", checkUtama[0])
-            if (checkUtama[0] == undefined) {
-              let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
-
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit nama penerima & telfon undefined", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            } else {
-              let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
-
-              let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit nama penerima & telfon", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            }
           }
         }
       }
 
       // EDIT ADDRESS, PROVINCE, CITY & POSTALCODE
-      else if (req.body.label == '' && req.body.receiverName == '' && req.body.receiverPhone == '' && req.body.city != '') {
+      else if (req.body.label == '' && req.body.receiverName == '' && req.body.receiverPhone == '') {
         if (req.body.isDefaultAddress == false) {
-          let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', province = '${req.body.province}', city = '${req.body.city}', postalCode = '${req.body.postalCode}' WHERE idAddress=${req.body.idAddress};`)
+          let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', province = '${req.body.province}', idProvince =${req.body.provinceid}, city = '${req.body.city}', idCity =${req.body.cityid}, postalCode = '${req.body.postalCode}' WHERE idAddress=${req.body.idAddress};`)
           let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
           console.log("resultEdit alamat, provinsi, kota & kode pos", resultsEdit)
 
@@ -363,7 +352,7 @@ module.exports = {
           let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
           console.log("checkUtama[0]", checkUtama[0])
           if (checkUtama[0] == undefined) {
-            let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', province = '${req.body.province}', city = '${req.body.city}', postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
+            let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', province = '${req.body.province}', idProvince =${req.body.provinceid}, city = '${req.body.city}', idCity =${req.body.cityid}, postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
 
             let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
             console.log("resultEdit alamat, provinsi, kota & kode pos undefined", resultsEdit)
@@ -372,7 +361,7 @@ module.exports = {
           } else {
             let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
 
-            let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', province = '${req.body.province}', city = '${req.body.city}', postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
+            let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', province = '${req.body.province}', idProvince =${req.body.provinceid}, city = '${req.body.city}', idCity =${req.body.cityid}, postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
             let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
             console.log("resultEdit alamat, provinsi, kota & kode pos", resultsEdit)
 
@@ -383,73 +372,69 @@ module.exports = {
 
       // EDIT ADDRESS & POSTALCODE
       else if (req.body.label == '' && req.body.receiverName == '' && req.body.receiverPhone == '') {
-        if (req.body.city == '') {
-          if (req.body.isDefaultAddress == false) {
-            let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', postalCode = '${req.body.postalCode}' WHERE idAddress=${req.body.idAddress};`)
+        if (req.body.isDefaultAddress == false) {
+          let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', postalCode = '${req.body.postalCode}' WHERE idAddress=${req.body.idAddress};`)
+          let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+          console.log("resultEdit alamat & kode pos", resultsEdit)
+
+          return res.status(200).send(resultsEdit);
+        } else {
+          let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
+          console.log("checkUtama[0]", checkUtama[0])
+          if (checkUtama[0] == undefined) {
+            let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
+
+            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+            console.log("resultEdit alamat & kode pos undefined", resultsEdit)
+
+            return res.status(200).send(resultsEdit);
+          } else {
+            let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
+
+            let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
             let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
             console.log("resultEdit alamat & kode pos", resultsEdit)
 
             return res.status(200).send(resultsEdit);
-          } else {
-            let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
-            console.log("checkUtama[0]", checkUtama[0])
-            if (checkUtama[0] == undefined) {
-              let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
-
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit alamat & kode pos undefined", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            } else {
-              let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
-
-              let edit = await dbQuery(`UPDATE address SET address = '${req.body.address}', postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit alamat & kode pos", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            }
           }
         }
       }
 
       // EDIT LABEL, RECEIVERNAME & RECEIVERPHONE
       else if (req.body.address == '' && req.body.postalCode == '') {
-        if (req.body.city == '') {
-          let checkLabel = await dbQuery(`SELECT label FROM address WHERE label = ${dbConf.escape(req.body.label)} AND idUser = ${req.dataUser.idUser};`)
-          console.log("checkLabel.length", checkLabel.length)
+        let checkLabel = await dbQuery(`SELECT label FROM address WHERE label = ${dbConf.escape(req.body.label)} AND idUser = ${req.dataUser.idUser};`)
+        console.log("checkLabel.length", checkLabel.length)
 
-          if (checkLabel.length > 0) {
-            let message = 'Label sudah terdaftar, Mohon isi dengan nama lain'
-            return res.status(404).send({
-              message
-            });
+        if (checkLabel.length > 0) {
+          let message = 'Label sudah terdaftar, Mohon isi dengan nama lain'
+          return res.status(404).send({
+            message
+          });
+        } else {
+          if (req.body.isDefaultAddress == false) {
+            let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}' WHERE idAddress=${req.body.idAddress};`)
+            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+            console.log("resultEdit label, penerima & telfon", resultsEdit)
+
+            return res.status(200).send(resultsEdit);
           } else {
-            if (req.body.isDefaultAddress == false) {
-              let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}' WHERE idAddress=${req.body.idAddress};`)
+            let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
+            console.log("checkUtama[0]", checkUtama[0])
+            if (checkUtama[0] == undefined) {
+              let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
+
+              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+              console.log("resultEdit label, penerima & telfon undefined", resultsEdit)
+
+              return res.status(200).send(resultsEdit);
+            } else {
+              let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
+
+              let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
               let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
               console.log("resultEdit label, penerima & telfon", resultsEdit)
 
               return res.status(200).send(resultsEdit);
-            } else {
-              let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
-              console.log("checkUtama[0]", checkUtama[0])
-              if (checkUtama[0] == undefined) {
-                let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
-
-                let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-                console.log("resultEdit label, penerima & telfon undefined", resultsEdit)
-
-                return res.status(200).send(resultsEdit);
-              } else {
-                let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
-
-                let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
-                let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-                console.log("resultEdit label, penerima & telfon", resultsEdit)
-
-                return res.status(200).send(resultsEdit);
-              }
             }
           }
         }
@@ -457,112 +442,106 @@ module.exports = {
 
       // EDIT RECEIVERNAME, RECEIVERPHONE & ADDRESS
       else if (req.body.label == '' && req.body.postalCode == '') {
-        if (req.body.city == '') {
-          if (req.body.isDefaultAddress == false) {
-            let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', address = '${req.body.address}' WHERE idAddress=${req.body.idAddress};`)
+        if (req.body.isDefaultAddress == false) {
+          let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', address = '${req.body.address}' WHERE idAddress=${req.body.idAddress};`)
+          let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+          console.log("resultEdit penerima, telfon & alamat", resultsEdit)
+
+          return res.status(200).send(resultsEdit);
+        } else {
+          let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
+          console.log("checkUtama[0]", checkUtama[0])
+          if (checkUtama[0] == undefined) {
+            let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', address = '${req.body.address}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
+
+            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+            console.log("resultEdit penerima, telfon & alamat undefined", resultsEdit)
+
+            return res.status(200).send(resultsEdit);
+          } else {
+            let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
+
+            let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', address = '${req.body.address}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
             let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
             console.log("resultEdit penerima, telfon & alamat", resultsEdit)
 
             return res.status(200).send(resultsEdit);
-          } else {
-            let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
-            console.log("checkUtama[0]", checkUtama[0])
-            if (checkUtama[0] == undefined) {
-              let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', address = '${req.body.address}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
-
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit penerima, telfon & alamat undefined", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            } else {
-              let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
-
-              let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', address = '${req.body.address}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit penerima, telfon & alamat", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            }
           }
         }
       }
 
       // EDIT RECEIVERNAME, RECEIVERPHONE & POSTALCODE
       else if (req.body.label == '' && req.body.address == '') {
-        if (req.body.city == '') {
-          if (req.body.isDefaultAddress == false) {
-            let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', postalCode = '${req.body.postalCode}' WHERE idAddress=${req.body.idAddress};`)
+        if (req.body.isDefaultAddress == false) {
+          let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', postalCode = '${req.body.postalCode}' WHERE idAddress=${req.body.idAddress};`)
+          let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+          console.log("resultEdit penerima, telfon & kode pos", resultsEdit)
+
+          return res.status(200).send(resultsEdit);
+        } else {
+          let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
+          console.log("checkUtama[0]", checkUtama[0])
+          if (checkUtama[0] == undefined) {
+            let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
+
+            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+            console.log("resultEdit penerima, telfon & kode pos undefined", resultsEdit)
+
+            return res.status(200).send(resultsEdit);
+          } else {
+            let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
+
+            let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
             let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
             console.log("resultEdit penerima, telfon & kode pos", resultsEdit)
 
             return res.status(200).send(resultsEdit);
-          } else {
-            let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
-            console.log("checkUtama[0]", checkUtama[0])
-            if (checkUtama[0] == undefined) {
-              let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
-
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit penerima, telfon & kode pos undefined", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            } else {
-              let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
-
-              let edit = await dbQuery(`UPDATE address SET receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', postalCode = '${req.body.postalCode}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
-              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-              console.log("resultEdit penerima, telfon & kode pos", resultsEdit)
-
-              return res.status(200).send(resultsEdit);
-            }
           }
         }
       }
 
       // EDIT LABEL, RECEIVERNAME, RECEIVERPHONE & ADDRESS
       else if (req.body.postalCode == '') {
-        if (req.body.city == '') {
-          let checkLabel = await dbQuery(`SELECT label FROM address WHERE label = ${dbConf.escape(req.body.label)} AND idUser = ${req.dataUser.idUser};`)
-          console.log("checkLabel.length", checkLabel.length)
+        let checkLabel = await dbQuery(`SELECT label FROM address WHERE label = ${dbConf.escape(req.body.label)} AND idUser = ${req.dataUser.idUser};`)
+        console.log("checkLabel.length", checkLabel.length)
 
-          if (checkLabel.length > 0) {
-            let message = 'Label sudah terdaftar, Mohon isi dengan nama lain'
-            return res.status(404).send({
-              message
-            });
+        if (checkLabel.length > 0) {
+          let message = 'Label sudah terdaftar, Mohon isi dengan nama lain'
+          return res.status(404).send({
+            message
+          });
+        } else {
+          if (req.body.isDefaultAddress == false) {
+            let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', address = '${req.body.address}' WHERE idAddress=${req.body.idAddress};`)
+            let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+            console.log("resultEdit label, penerima, telfon & alamat", resultsEdit)
+
+            return res.status(200).send(resultsEdit);
           } else {
-            if (req.body.isDefaultAddress == false) {
-              let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', address = '${req.body.address}' WHERE idAddress=${req.body.idAddress};`)
+            let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
+            console.log("checkUtama[0]", checkUtama[0])
+            if (checkUtama[0] == undefined) {
+              let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', address = '${req.body.address}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
+
+              let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
+              console.log("resultEdit label, penerima, telfon & alamat undefined", resultsEdit)
+
+              return res.status(200).send(resultsEdit);
+            } else {
+              let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
+
+              let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', address = '${req.body.address}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
               let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
               console.log("resultEdit label, penerima, telfon & alamat", resultsEdit)
 
               return res.status(200).send(resultsEdit);
-            } else {
-              let checkUtama = await dbQuery(`SELECT idAddress FROM address WHERE isDefaultAddress = '${req.body.isDefaultAddress}' AND idUser = ${req.dataUser.idUser};`)
-              console.log("checkUtama[0]", checkUtama[0])
-              if (checkUtama[0] == undefined) {
-                let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', address = '${req.body.address}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress=${req.body.idAddress};`)
-
-                let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-                console.log("resultEdit label, penerima, telfon & alamat undefined", resultsEdit)
-
-                return res.status(200).send(resultsEdit);
-              } else {
-                let updateUtama = await dbQuery(`UPDATE address SET isDefaultAddress= 'false' WHERE idAddress=${checkUtama[0].idAddress};`)
-
-                let edit = await dbQuery(`UPDATE address SET label = '${req.body.label}', receiverName = '${req.body.receiverName}', receiverPhone = '${req.body.receiverPhone}', address = '${req.body.address}', isDefaultAddress = '${req.body.isDefaultAddress}' WHERE idAddress = ${req.body.idAddress};`)
-                let resultsEdit = await dbQuery(`Select * FROM address WHERE idUser = ${req.dataUser.idUser};`);
-                console.log("resultEdit label, penerima, telfon & alamat", resultsEdit)
-
-                return res.status(200).send(resultsEdit);
-              }
             }
           }
         }
       }
 
       // EDIT LABEL, RECEIVERNAME, RECEIVERPHONE, ADDRESS & POSTAL CODE
-      else if (req.body.city == '') {
+      else if (req.body.editPostalCode == true) {
         let checkLabel = await dbQuery(`SELECT label FROM address WHERE label = ${dbConf.escape(req.body.label)} AND idUser = ${req.dataUser.idUser};`)
         console.log("checkLabel.length", checkLabel.length)
 

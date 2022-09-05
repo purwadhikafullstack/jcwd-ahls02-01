@@ -97,6 +97,7 @@ const ResetPassword=(props)=>{
           })
           setLoadingStat(false)
         } else {
+          console.log("reset password jalannnn")
           let res = await Axios.patch(`${API_URL}/users/reset`, { newPassword: password },
           {
             headers: {

@@ -9,6 +9,13 @@ export const getCityActions = (data) => {
     payload: data
   }
 }
+export const getCityActions2 = (data) => {
+  console.log("data GETCITY dari component UI", data)
+  return {
+    type: "GET_CITY2",
+    payload: data
+  }
+}
 
 export const getCityRajaOngkir = (provinceid) => {
   return async (dispatch) => {

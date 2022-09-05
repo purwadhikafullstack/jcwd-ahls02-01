@@ -18,6 +18,7 @@ import obat4 from "../../Assets/DevImage/Enervon-C.jpg";
 import obat5 from "../../Assets/DevImage/Derma.jpg";
 import NavbarComponent from "../../Components/Users/Navbar";
 import Modal from "../../Components/Users/ModalLogin";
+import FooterComponent from "../../Components/Users/Footer";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useToastHook } from "../../Components/CustomToast";
@@ -442,11 +443,7 @@ const LandingPage = (props) =>{
         <br/>
         <br/>
       </div>
-      <div style={{backgroundColor:"#586BB1"}}>
-        <div class="container text-center">
-          <Text class="h6" style={{paddingTop:"20px", paddingBottom:"20px", color:"#FFFFFF"}}>Group 1 Final Project - JCWDAHLS01</Text>
-        </div>
-      </div>
+        <FooterComponent />
     </>
   )
 }

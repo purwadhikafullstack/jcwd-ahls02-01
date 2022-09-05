@@ -135,7 +135,7 @@ const Register=()=>{
         newToast({
           title: 'Password Lemah.',
           description: 'Disarankan untuk merubah password yang kuat. setidaknya memiliki 8 huruf yang terdiri dari huruf kapital dan angka',
-          status: 'error',
+          status: 'warning',
         })
   }
 }
@@ -235,6 +235,7 @@ const checkNumbers=()=>{
         <div class="col-md-1"></div>
       </div>
     </div>
+    
     </>
   )
 }
