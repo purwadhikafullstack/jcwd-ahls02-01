@@ -110,7 +110,7 @@ const CartItemComponent = (props) => {
 
         if (token) {
             // if (isDeletedClicked == 1) {
-                Axios.patch(`${API_URL}/cart/${idCart}`, {
+                Axios.patch(`${API_URL}/cart/delete/${idCart}`, {
                     "idProduct": selectedIdProduct,
                     "cartQuantity": currentQty
                   }, {
@@ -119,13 +119,13 @@ const CartItemComponent = (props) => {
                     }
                 }).then((res) => {
                     console.log("isi res.data pas delete diklik", res.data);
+                    dispatch(getCartAction());
                     newToast({
                         title: "Delete item",
                         description: "Item keranjang terpilih berhasil didelete",
                         status: 'info'
                     });
                     // setIsDeletedClicked(0);
-                    dispatch(getCartAction());
                 }).catch((err) => {
                     // setIsDeletedClicked(0);
                     console.log(err)
@@ -322,6 +322,7 @@ const CartItemComponent = (props) => {
                                         <Image
                                             borderRadius='xl'
                                             boxSize='80px'
+                                            // src={`${API_URL}${value.productPicture}`}
                                             src={value.productPicture}
                                             alt='...'
                                             className="d-md-flex d-none"

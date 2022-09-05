@@ -161,10 +161,10 @@ module.exports = {
                 getStock = getStock[0];
 
                 //* isi getStock
-                console.log(`getStock`, getStock);
+                // console.log(`getStock`, getStock);
                 console.log(`getStock.idStock`, getStock.idStock);
-                console.log(`getStock.stockQuantity`, getStock.stockQuantity);
-                console.log(`getStock.priceSale`, getStock.priceSale);
+                // console.log(`getStock.stockQuantity`, getStock.stockQuantity);
+                // console.log(`getStock.priceSale`, getStock.priceSale);
 
                 //^ cek query stock sebelum ke database
                 console.log(`UPDATE stocks SET stockQuantity = ${dbConf.escape(getStock.stockQuantity + req.body.cartQuantity)} WHERE idStock = ${dbConf.escape(getStock.idStock)};`)
