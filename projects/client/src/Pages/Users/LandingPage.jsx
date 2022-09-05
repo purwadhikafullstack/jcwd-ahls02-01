@@ -18,6 +18,7 @@ import obat4 from "../../Assets/DevImage/Enervon-C.jpg";
 import obat5 from "../../Assets/DevImage/Derma.jpg";
 import NavbarComponent from "../../Components/Users/Navbar";
 import Modal from "../../Components/Users/ModalLogin";
+import FooterComponent from "../../Components/Users/Footer";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useToastHook } from "../../Components/CustomToast";
@@ -56,11 +57,6 @@ const LandingPage = (props) =>{
         })
         setLoadingStat(false);
       } else {
-        newToast({
-          title: 'Anda Belum Login',
-          description: 'Anda harus login agar bisa transaksi di Medhika',
-          status: 'warning',
-        })
         setShow(!show)
         setLoadingStat(false);
       }
@@ -194,7 +190,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                           <Modal style={{color: "#000000"}} onClose={() => setShow(!show)} show={show} />
                         </div>
@@ -212,7 +208,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                         </div>
                       </Box>
@@ -229,7 +225,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                         </div>
                       </Box>
@@ -246,7 +242,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                         </div>
                       </Box>
@@ -263,7 +259,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                         </div>
                       </Box>
@@ -337,7 +333,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                           <Modal style={{color: "#000000"}} onClose={() => setShow(!show)} show={show} />
                         </div>
@@ -355,7 +351,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                           <Modal style={{color: "#000000"}} onClose={() => setShow(!show)} show={show} />
                         </div>
@@ -373,7 +369,7 @@ const LandingPage = (props) =>{
                           </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2">
-                          <Button isLoading={loadingStat} loadingText='Loading'
+                          <Button isLoading={loadingStat}
                             class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
                           <Modal style={{color: "#000000"}} onClose={() => setShow(!show)} show={show} />
                         </div>
@@ -447,11 +443,7 @@ const LandingPage = (props) =>{
         <br/>
         <br/>
       </div>
-      <div style={{backgroundColor:"#586BB1"}}>
-        <div class="container text-center">
-          <Text class="h6" style={{paddingTop:"20px", paddingBottom:"20px", color:"#FFFFFF"}}>Group 1 Final Project - JCWDAHLS01</Text>
-        </div>
-      </div>
+        <FooterComponent />
     </>
   )
 }

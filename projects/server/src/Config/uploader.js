@@ -6,7 +6,7 @@ const fs = require('fs')
 module.exports = {
   uploader: (directory, fileNamePrefix) => {
     // mendefine lokasi penyimpanan utama
-    let defaultDir = './Public/Produk/images'
+    let defaultDir = './src/Public'
 
     // konfigurasi multer
     // diskStorage untuk menyimpan file

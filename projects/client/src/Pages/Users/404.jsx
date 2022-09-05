@@ -13,7 +13,7 @@ const NotFoundPage=(props)=>{
       <div class="col-4">
         <Text class="h5b mt-5">404 Not Found</Text>
         <Button class="btn-def_second mt-3" onClick={() => navigate("/")}
-          >Back to Home</Button>
+          >Back to Landing Page</Button>
       </div>
       <div class="col-4">
 
