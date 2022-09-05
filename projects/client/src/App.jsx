@@ -11,7 +11,7 @@ import NotFoundPage from "./Pages/Users/404";
 import ChangePassword from "./Pages/Users/ChangePassword";
 import ForgotPassword from './Pages/Users/ForgotPassword';
 import ResetPassword from "./Pages/Users/ResetPassword";
-import Cart from "./Pages/Users/Cart";
+import CartPage from "./Pages/Users/Cart";
 import Dashboard from "./Pages/Admin/Dashboard";
 import Category from "./Pages/Admin/Category";
 import EditProfile from "./Pages/Users/EditProfile";
@@ -57,7 +57,7 @@ function App() {
                 <Route path='/verification/:token' element={<Verification />} />
                 <Route path='/changePassword' element={<ChangePassword />} />
                 <Route path='/resetPassword/:token' element={<ResetPassword />} />
-                <Route path='/cart' element={<Cart />} />
+                <Route path='/cart' element={<CartPage />} />
                 <Route path='/editProfile' element={<EditProfile />} />
               </>
             }
