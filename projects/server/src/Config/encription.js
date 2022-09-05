@@ -7,26 +7,30 @@ module.exports = {
     return Crypto.createHmac("sha256", process.env.JWT_PASS).update(pass).digest("hex");
   },
   // payload mengirim data apa saja yang akan dijadikan token
-  createToken: (payload, time = "24h") => {
+  createToken: (payload) => {
     let token = jwt.sign(payload, process.env.JWT_PASS, {
-      expiresIn: time
+      expiresIn: "12h"
     })
 
     return token;
   },
   readToken: async (req, res, next) => {
-    console.log('req.token!', req.token);
+    console.log('req.token!!', req.token);
     // console.log('checkToken!', checkToken[0].token);
     if (req.token) {
       jwt.verify(req.token, process.env.JWT_PASS, (err, decode) => {
         if (err) {
           res.status(401).send({
-            message: "Users Authentication"
+            message: `Users Authentication ${err}`
           })
+          
         }
-        req.dataUser = decode;
+        else{
+          req.dataUser = decode;
 
-        next();
+          next();
+        }
+      
       })
     } else {
       let message = "token not found!"

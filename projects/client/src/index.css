@@ -273,7 +273,7 @@ nav ul li a:hover {
 
 @media (max-width:768px){
   .sidebarAdmin {
-    position: fixed;
+    position: relative;
     width: 140px;
     height: 100%;
     left: 0;
