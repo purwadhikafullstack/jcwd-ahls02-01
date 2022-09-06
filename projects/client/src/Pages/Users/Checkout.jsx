@@ -7,6 +7,9 @@ import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
 import { getCartAction } from "../../Redux/Actions/cartActions";
 import { API_URL } from "../../helper";
+import { getAddress, getAddressActions } from "../../Redux/Actions/addressActions";
+import { getProvinceRajaOngkir, getProvinceActions2 } from "../../Redux/Actions/getProvinceActions";
+import { getCityRajaOngkir, getCityActions2 } from "../../Redux/Actions/getCityActions";
 import {
     Box,
     Divider,
@@ -53,7 +56,7 @@ const CheckoutPage = (props) => {
     //^ STATE MANAGEMENT
     const { databaseCart } = useSelector((state) => {
         return {
-            databaseCart: state.cartReducers.cart.filter(val=>val.isActive=="false"),
+            databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
         }
     })
 
@@ -218,6 +221,8 @@ const CheckoutPage = (props) => {
     // & component did mount
     useEffect(() => {
         handleSubTotal();
+        dispatch(getAddress())
+        dispatch(getProvinceRajaOngkir())
 
         // fungsi untuk get ongkir rajaongkir via idProvince dan idCity dari AccorAddress
 
@@ -260,7 +265,7 @@ const CheckoutPage = (props) => {
     // }
 
     // & untuk show subTotal dan total berdasarkan CartItem yang dicentang / checkout
-    const handleSubTotal = () => { 
+    const handleSubTotal = () => {
         // & untuk show subTotal dan total berdasarkan CartItem yang dicentang / checkout
         let temp = 0
         databaseCart.map((valueCart, indexCart) => {
