@@ -36,6 +36,7 @@ import {
   Link,
   extendTheme,
 } from "@chakra-ui/react";
+import ModalConversion from "../../Components/Admin/ModalConversion";
 
 const LandingPage = (props) => {
   const navigate = useNavigate();
@@ -94,6 +95,8 @@ const LandingPage = (props) => {
     <>
       <div>
         <NavbarComponent />
+       
+        
       </div>
       <div class="HeaderBG" style={{ height: "100%" }}>
         <div class="Vector">
