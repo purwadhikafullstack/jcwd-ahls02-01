@@ -282,13 +282,13 @@ const CheckoutPage = (props) => {
 
     // & untuk ambil alamat terpilih dari AccorAddressComponent
     const handleCallbackToChild = (idAddress, address, idProvince, idCity, receiverName, receiverPhone, label) => {
+        setLabelForOngkir(label);
+        setReceiverNameForOngkir(receiverName);
+        setReceiverPhoneForOngkir(receiverPhone);
         setIdAddressForOngkir(idAddress);
         setAddressForOngkir(address);
         setIdProvinceForOngkir(idProvince);
         setIdCityForOngkir(idCity);
-        setReceiverNameForOngkir(receiverName);
-        setReceiverPhoneForOngkir(receiverPhone);
-        setLabelForOngkir(label);
     }
 
     // & untuk ambil idAddress kalau ada alamat yg diedit

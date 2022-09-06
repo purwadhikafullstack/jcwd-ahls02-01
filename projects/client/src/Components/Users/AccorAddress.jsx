@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Axios from 'axios';
-// import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToastHook } from "../CustomToast";
+import { API_URL } from "../../helper";
+import { getAddress, getAddressActions } from "../../Redux/Actions/addressActions";
+import { getProvinceRajaOngkir, getProvinceActions2 } from "../../Redux/Actions/getProvinceActions";
+import { getCityRajaOngkir, getCityActions2 } from "../../Redux/Actions/getCityActions";
 import {
     Box,
     Text,
@@ -13,7 +17,8 @@ import {
     AccordionItem,
     AccordionButton,
     AccordionPanel,
-    AccordionIcon
+    AccordionIcon,
+    Select
 } from "@chakra-ui/react";
 
 import { FaEdit } from "react-icons/fa";
@@ -24,13 +29,15 @@ const AccorAddressComponent = (props) => {
 
     //* assign function
     const navigate = useNavigate();
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
     // const { state, search } = useLocation();
 
     //& component did mount
     useEffect(() => {
         //❗❗❗ fungsi untuk get province dan city dr rajaongkir biar bisa edit alamat & create alamat baru
-
+        dispatch(getAddress())
+        dispatch(getProvinceRajaOngkir())
+        // getProvinceRajaOngkir2()
     }, [])
 
     //^ STATE MANAGEMENT
@@ -41,14 +48,29 @@ const AccorAddressComponent = (props) => {
     const [newReceiverName, setNewReceiverName] = useState("");
     const [newReceiverPhone, setNewReceiverPhone] = useState("");
     const [newAddress, setNewAddress] = useState("");
-    const [newProvice, setNewProvince] = useState("");
+    const [newProvince, setNewProvince] = useState("");
+    const [newIdProvince, setNewIdProvince] = useState(0);
     const [newCity, setNewCity] = useState("");
-    const [newDistrict, setNewDistrict] = useState("");
+    const [newIdCity, setNewIdCity] = useState(0);
     const [newPostalCode, setNewPostalCode] = useState("");
     const [newLabel, setNewLabel] = useState("");
     const [accordionIndex, setAccordionIndex] = useState(null);
 
     //TODO ❗❗❗ ambil dari reducer address
+    const { address, phone, idUser, name, token, getProvince, getProvince2, getCity, getCity2 } = useSelector((state) => {
+        return {
+            address: state.addressReducers.address,
+            phone: state.userReducers.phone,
+            idUser: state.userReducers.idUser,
+            name: state.userReducers.name,
+            token: state.userReducers.token,
+            getProvince: state.getProvinceReducers.getProvince,
+            getProvince2: state.getProvinceReducers.getProvince2,
+            getCity: state.getCityReducers.getCity,
+            getCity2: state.getCityReducers.getCity2
+        }
+    });
+
     const [dbAddress, setDbAddress] = useState([
         {
             idAddress: 1,
@@ -60,7 +82,6 @@ const AccorAddressComponent = (props) => {
             idProvince: 9,
             city: "Bogor",
             idCity: 79,
-            district: null,
             postalCode: "16134",
             isDefaultAddress: "true",
             label: "rumah",
@@ -75,7 +96,6 @@ const AccorAddressComponent = (props) => {
             idProvince: 6,
             city: "Jakarta Pusat",
             idCity: 152,
-            district: null,
             postalCode: "10540",
             isDefaultAddress: "false",
             label: "kantor",
@@ -84,7 +104,7 @@ const AccorAddressComponent = (props) => {
 
     //& untuk print list address per user, kalau user decide edit salah 1 address, input forms diprint di sini jg
     const printAddress = () => {
-        return dbAddress.map((valueAddress, indexAddress) => {
+        return address.map((valueAddress, indexAddress) => {
             if (editedIdAddress == valueAddress.idAddress) {
                 return (
                     <AccordionItem
@@ -107,7 +127,7 @@ const AccorAddressComponent = (props) => {
                                 justifyContent="space-between"
                             >
                                 <InputGroup size="sm">
-                                    <InputLeftAddon children="Name" width={150} />
+                                    <InputLeftAddon children="Nama Penerima" width={200} />
                                     <Input
                                         placeholder={valueAddress.receiverName}
                                         defaultValue={valueAddress.receiverName}
@@ -131,7 +151,7 @@ const AccorAddressComponent = (props) => {
                             </Box>
 
                             <InputGroup size="sm">
-                                <InputLeftAddon children="Mobile Phone" width={150} />
+                                <InputLeftAddon children="Nomor Telfon Penerima" width={200} />
                                 <Input
                                     placeholder={valueAddress.receiverPhone}
                                     defaultValue={valueAddress.receiverPhone}
@@ -141,7 +161,7 @@ const AccorAddressComponent = (props) => {
                             </InputGroup>
 
                             <InputGroup size="sm">
-                                <InputLeftAddon children="Address" width={150} />
+                                <InputLeftAddon children="Alamat" width={200} />
                                 <Input
                                     placeholder={valueAddress.address}
                                     defaultValue={valueAddress.address}
@@ -150,46 +170,94 @@ const AccorAddressComponent = (props) => {
                                 />
                             </InputGroup>
 
-                            {/* ❗❗❗ dalam bentuk dropdown provinsi ??? ❗❗❗ */}
+                            {/* ❗❗❗ dalam bentuk dropdown provinsi ❗❗❗ */}
                             <InputGroup size="sm">
-                                <InputLeftAddon children="Province" width={150} />
-                                <Input
-                                    placeholder={valueAddress.province}
-                                    defaultValue={valueAddress.province}
-                                    width="fit-content"
-                                    onChange={(e) => handleProvince(e.target.value)}
-                                />
+                                <InputLeftAddon children="Provinsi" width={200} />
+                                <Box
+                                    w='185px'
+                                >
+                                    <Select
+                                        placeholder="Pilih Provinsi"
+                                        onChange={(e) => handleProvince(e.target.value)}
+                                        size='sm'
+                                    >
+                                        {getProvince.data.map((p) => (
+                                            <option
+                                                key={p.province}
+                                                id={p.province}
+                                                value={p.province_id}
+                                            >
+                                                {p.province}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                </Box>
                             </InputGroup>
 
-                            {/* ❗❗❗ dalam bentuk dropdown city ??? ❗❗❗ */}
+                            {/* ❗❗❗ dalam bentuk dropdown city ❗❗❗ */}
                             <InputGroup size="sm">
-                                <InputLeftAddon children="City" width={150} />
-                                <Input
-                                    placeholder={valueAddress.city}
-                                    defaultValue={valueAddress.city}
-                                    width="fit-content"
-                                    onChange={(e) => handleCity(e.target.value)}
-                                />
+                                <InputLeftAddon children="Kota" width={200} />
+                                {
+                                    newIdProvince > 0 ?
+                                        <Box
+                                            w='185px'
+                                        >
+                                            <Select
+                                                placeholder='Pilih Kota'
+                                                onChange={(e) => handleCity(e.target.value)}
+                                                size='sm'
+                                            >
+                                                {
+                                                    getCity.data && getCity.data.map((k) => (
+                                                        <option
+                                                            key={k.city_id}
+                                                            value={k.city_id}
+                                                        >
+                                                            {k.city_name}
+                                                        </option>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </Box>
+                                        :
+                                        <Box
+                                            w='185px'
+                                        >
+                                            <Select
+                                                isDisabled
+                                                placeholder='Pilih Kota'
+                                                size='sm'
+                                            >
+                                            </Select>
+                                        </Box>
+                                }
                             </InputGroup>
-
                             <InputGroup size="sm">
-                                <InputLeftAddon children="District" width={150} />
-                                <Input
-                                    placeholder={valueAddress.district}
-                                    defaultValue={valueAddress.district}
-                                    width="fit-content"
-                                    onChange={(e) => setNewDistrict(e.target.value)}
-                                />
-                            </InputGroup>
-
-                            <InputGroup size="sm">
-                                <InputLeftAddon children="Postal Code" width={150} />
-                                <Input
-                                    placeholder={valueAddress.postalCode}
-                                    defaultValue={valueAddress.postalCode}
-                                    width="fit-content"
-                                    onChange={(e) => setNewPostalCode(e.target.value)}
-                                />
+                                <InputLeftAddon children="Kode Pos" width={200} />
+                                {
+                                    newIdCity > 0 ?
+                                        <>
+                                            <Input
+                                                placeholder={valueAddress.postalCode}
+                                                defaultValue={valueAddress.postalCode}
+                                                width="fit-content"
+                                                onChange={(e) => setNewPostalCode(e.target.value)}
+                                                size='sm'
+                                            // onClick={handleCityName}
+                                            />
+                                        </>
+                                        :
+                                        <>
+                                            <Input
+                                                placeholder={valueAddress.postalCode}
+                                                defaultValue={valueAddress.postalCode}
+                                                width="fit-content"
+                                                onChange={(e) => setNewPostalCode(e.target.value)}
+                                                size='sm'
+                                                isDisabled
+                                            />
+                                        </>
+                                }
                             </InputGroup>
 
                         </AccordionPanel>
@@ -254,7 +322,7 @@ const AccorAddressComponent = (props) => {
                                 className="font-brand"
                                 as="i"
                             >
-                                {valueAddress.address}, {valueAddress.province}, {valueAddress.city}{valueAddress.district ? `, ${valueAddress.district}` : null}, {valueAddress.postalCode}
+                                {valueAddress.address}, {valueAddress.province}, {valueAddress.city}, {valueAddress.postalCode}
                             </Text>
                         </AccordionPanel>
 
@@ -323,10 +391,6 @@ const AccorAddressComponent = (props) => {
         setNewCity(value);
     }
 
-    // const handleDistrict = (value) => {
-    //     console.log(`district baru ${value}`);
-    // }
-
     // const handlePostalCode = (value) => {
     //     console.log(`postalCode baru ${value}`);
     // }
@@ -334,7 +398,7 @@ const AccorAddressComponent = (props) => {
     //& onClick akan save address yg sudah diedit
     //TODO ❗❗❗ untuk save address terupdate
     const btnSaveEdit = () => {
-        console.log(`${newReceiverName},${newReceiverPhone},${newAddress},${newProvice},${newCity},${newDistrict},${newPostalCode}`);
+        console.log(`${newReceiverName},${newReceiverPhone},${newAddress},${newProvince},${newCity},${newPostalCode}`);
 
         setEditedIdAddress(null);
         setIsAccordionDisabled(!isAccordionDisabled);
@@ -351,14 +415,14 @@ const AccorAddressComponent = (props) => {
     //& onClick akan save address baru yg dimasukkan
     const btnSaveNewAddress = () => {
 
-        if (!newReceiverName || !newReceiverName || !newAddress || !newProvice || !newCity || !newDistrict || !newPostalCode || !newLabel) {
+        if (!newReceiverName || !newReceiverName || !newAddress || !newProvince || !newCity || !newPostalCode || !newLabel) {
             newToast({
                 title: `Alamat Baru Belum Lengkap`,
                 description: "Lengkapi dahulu form alamat baru sebelum melakukan penyimpanan",
                 status: 'error'
             })
         } else {
-            console.log(`${newReceiverName},${newReceiverPhone},${newAddress},${newProvice},${newCity},${newDistrict},${newPostalCode},${newLabel}`);
+            console.log(`${newReceiverName},${newReceiverPhone},${newAddress},${newProvince},${newCity},${newPostalCode},${newLabel}`);
 
             props.handleSendingToParentNewAddress();
             setAccordionIndex(null);
@@ -374,7 +438,7 @@ const AccorAddressComponent = (props) => {
 
     return (<Accordion
         onChange={setAccordionIndex}
-        index={props.isTambahAlamat == 1 ? dbAddress.length : accordionIndex}
+        index={props.isTambahAlamat == 1 ? address.length : accordionIndex}
     >
 
         {printAddress()}
@@ -401,7 +465,7 @@ const AccorAddressComponent = (props) => {
                         justifyContent="space-between"
                     >
                         <InputGroup size="sm">
-                            <InputLeftAddon children="Name" width={150} />
+                            <InputLeftAddon children="Nama Penerima" width={200} />
                             <Input
                                 placeholder="Nama lengkap penerima"
                                 width="fit-content"
@@ -424,7 +488,7 @@ const AccorAddressComponent = (props) => {
                     </Box>
 
                     <InputGroup size="sm">
-                        <InputLeftAddon children="Mobile Phone" width={150} />
+                        <InputLeftAddon children="Nomor Telfon Penerima" width={200} />
                         <Input
                             placeholder="Nomor handphone aktif"
                             width="fit-content"
@@ -433,7 +497,7 @@ const AccorAddressComponent = (props) => {
                     </InputGroup>
 
                     <InputGroup size="sm">
-                        <InputLeftAddon children="Address" width={150} />
+                        <InputLeftAddon children="Alamat" width={200} />
                         <Input
                             placeholder="Alamat yang dituju"
                             width="fit-content"
@@ -441,47 +505,97 @@ const AccorAddressComponent = (props) => {
                         />
                     </InputGroup>
 
-                    {/* ❗❗❗ dalam bentuk dropdown provinsi ??? ❗❗❗ */}
+                    {/* ❗❗❗ dalam bentuk dropdown provinsi ❗❗❗ */}
                     <InputGroup size="sm">
-                        <InputLeftAddon children="Province" width={150} />
-                        <Input
-                            placeholder="Provinsi tujuan"
-                            width="fit-content"
-                            onChange={(e) => handleProvince(e.target.value)}
-                        />
+                        <InputLeftAddon children="Provinsi" width={200} />
+                        <Box
+                            w='185px'
+                        >
+                            <Select
+                                placeholder="Pilih Provinsi"
+                                onChange={(e) => handleProvince(e.target.value)}
+                                size='sm'
+                            >
+                                {getProvince.data.map((p) => (
+                                    <option
+                                        key={p.province}
+                                        id={p.province}
+                                        value={p.province_id}
+                                    >
+                                        {p.province}
+                                    </option>
+                                ))}
+                            </Select>
+                        </Box>
                     </InputGroup>
 
-                    {/* ❗❗❗ dalam bentuk dropdown city ??? ❗❗❗ */}
+                    {/* ❗❗❗ dalam bentuk dropdown city ❗❗❗ */}
                     <InputGroup size="sm">
-                        <InputLeftAddon children="City" width={150} />
-                        <Input
-                            placeholder="Kota tujuan"
-                            width="fit-content"
-                            onChange={(e) => handleCity(e.target.value)}
-                        />
+                        <InputLeftAddon children="Kota" width={200} />
+                        {
+                            newIdProvince > 0 ?
+                                <Box
+                                    w='185px'
+                                >
+                                    <Select
+                                        placeholder="Pilih Kota"
+                                        onChange={(e) => handleCity(e.target.value)}
+                                        size='sm'
+                                    >
+                                        {getCity.data && getCity.map((k) => (
+                                            <option
+                                                key={k.city_id}
+                                                value={k.city_id}
+                                            >
+                                                {k.city_name}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                </Box>
+                                :
+                                <Box
+                                    w='185px'
+                                >
+                                    <Select
+                                        isDisabled
+                                        placeholder='Pilih Kota'
+                                        size='sm'
+                                    >
+                                    </Select>
+                                </Box>
+                        }
                     </InputGroup>
 
                     <InputGroup size="sm">
-                        <InputLeftAddon children="District" width={150} />
-                        <Input
-                            placeholder="Kecamatan tujuan"
-                            width="fit-content"
-                            onChange={(e) => setNewDistrict(e.target.value)}
-                        />
+                        <InputLeftAddon children="Kode Pos" width={200} />
+                        {
+                            newIdCity > 0 ?
+                                <>
+                                    <Input
+                                        placeholder="Kode pos alamat tujuan"
+                                        width="fit-content"
+                                        onChange={(e) => setNewPostalCode(e.target.value)}
+                                        size='sm'
+                                    // onClick={handleCityName}
+                                    />
+                                </>
+                                :
+                                <>
+                                    <Input
+                                        placeholder="Kode pos alamat tujuan"
+                                        width="fit-content"
+                                        onChange={(e) => setNewPostalCode(e.target.value)}
+                                        size='sm'
+                                        isDisabled
+                                        />
+                                </>
+                        }
                     </InputGroup>
 
                     <InputGroup size="sm">
-                        <InputLeftAddon children="Postal Code" width={150} />
+                        <InputLeftAddon children="Label" width={200} />
                         <Input
-                            placeholder="Kode pos alamat tujuan"
-                            width="fit-content"
-                            onChange={(e) => setNewPostalCode(e.target.value)}
-                        />
-                    </InputGroup>
-
-                    <InputGroup size="sm">
-                        <InputLeftAddon children="Label" width={150} />
-                        <Input
+                            size='sm'
                             placeholder="Label alamat baru"
                             width="fit-content"
                             onChange={(e) => setNewLabel(e.target.value)}
