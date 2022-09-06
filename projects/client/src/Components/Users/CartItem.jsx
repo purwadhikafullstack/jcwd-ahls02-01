@@ -43,7 +43,6 @@ const CartItemComponent = (props) => {
     //& component did mount
     useEffect(() => {
         handleToParent();
-        // setIsDeletedClicked(0);
         dispatch(getAllMainStockAction());
 
     }, [checkedCartIds])
@@ -72,7 +71,6 @@ const CartItemComponent = (props) => {
         console.log(`handleQty tokenIdUser`, token);
 
         if (token) {
-            // if (isDeletedClicked == 0) {
                 Axios.patch(`${API_URL}/cart/${idCart}`, {
                     idProduct: selectedIdProduct,
                     cartQuantity: newQty
@@ -86,16 +84,12 @@ const CartItemComponent = (props) => {
                 }).catch((err) => {
                     console.log(err)
                 })
-            // }
         }
     }
 
     //& onClick untuk delete 1 cart item
     const btnDeleteItem = (currentQty, idCart, idStock) => {
 
-        // setIsDeletedClicked(1);
-
-        // console.log(`isDeletedClicked`, isDeletedClicked);
         console.log(`btnDeleteItem diklik`)
 
         //^ cari idProduct untuk di transfer ke BE in case product list ga return idStock
@@ -109,7 +103,6 @@ const CartItemComponent = (props) => {
         console.log(`handleQty tokenIdUser`, token);
 
         if (token) {
-            // if (isDeletedClicked == 1) {
                 Axios.patch(`${API_URL}/cart/delete/${idCart}`, {
                     "idProduct": selectedIdProduct,
                     "cartQuantity": currentQty
@@ -125,20 +118,15 @@ const CartItemComponent = (props) => {
                         description: "Item keranjang terpilih berhasil didelete",
                         status: 'info'
                     });
-                    // setIsDeletedClicked(0);
                 }).catch((err) => {
-                    // setIsDeletedClicked(0);
                     console.log(err)
                 })
-            // }
         }
     }
 
     //& onClick akan kurangi jumlah unit per item
     const btnDecreaseQuantity = (currentQty, idCart, idStock) => {
         console.log(`btnDecreaseQuantity diklik`)
-
-        // setIsDeletedClicked(0);
 
         let temp = currentQty;
         if (temp > 0) {
@@ -184,8 +172,6 @@ const CartItemComponent = (props) => {
     //& onClick akan tambah jumlah unit per item
     const btnIncreaseQuantity = (currentQty, idCart, idStock) => {
         console.log(`btnIncreaseQuantity diklik`)
-
-        // setIsDeletedClicked(0);
 
         let quantityMax = dbMainStock.filter(val => val.idStock == idStock)[0];
         quantityMax = quantityMax.stockQuantity;

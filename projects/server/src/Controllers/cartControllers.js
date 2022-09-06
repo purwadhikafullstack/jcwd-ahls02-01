@@ -221,65 +221,37 @@ module.exports = {
 
                         //^ cek query cart sebelum ke database
                         console.log(`inactiveCartQuery`, inactiveCartQuery);
+
                     } else if (selectedCart.length == 1) {
                         inactiveCartQuery = `UPDATE cart SET isActive = "false" WHERE idCart = ${selectedCart[0].idCart};`
                     }
 
                     let inactiveCart = await dbQuery(inactiveCartQuery);
 
-                    //* susun query umtuk update stock
-                    let decreaseStockQuantityQuery1 = `UPDATE stocks SET stockQuantity = `;
-                    if (selectedCart.length > 1) {
+                    //* susun query untuk update stock
+                    let selectedStock = getStock.filter((val1) => selectedCart.some((val2) => val1.idStock === val2.idStock));
+                    let arrayStockQuery = [];
+                    if (selectedCart.length >= 1) {
                         for (var j = 0; j < selectedCart.length; j++) {
-                            for (var k = 0; k < getStock.length; k++) {
+                            for (var k = 0; k < selectedStock.length; k++) {
 
-                                if (selectedCart[j].idStock == getStock[k].idStock) {
+                                if(selectedStock[k].idStock == selectedCart[j].idStock){
+                                    
+                                    arrayStockQuery.push(`update stocks set stockQuantity = ${dbConf.escape(selectedStock[k].stockQuantity - selectedCart[j].cartQuantity)} where idStock = ${dbConf.escape(selectedStock[k].idStock)};`)
 
-                                    decreaseStockQuantityQuery1 += `${dbConf.escape(getStock[k].stockQuantity - selectedCart[j].cartQuantity)} WHERE idStock = ${dbConf.escape(selectedCart[j].idStock)};`;
-
-                                    arrayStockQuery.push(decreaseStockQuantityQuery1);
                                 }
+
+                                await Promise.all(arrayStockQuery.map(async(valArray)=>{
+                                    let contents = await dbQuery(valArray);
+                                    console.log(`contents`, contents);
+                                }));
+
                             }
                         }
 
-                        console.log(arrayStockQuery);
+                        return res.status(200).send({ success: true, message: 'Cart item berhasil dicheckout' });
 
-                        decreaseStockQuantityQuery = arrayStockQuery.split('')
-
-                    } else if (selectedCart.length == 1) {
-
-                        let getStockFiltered = getStock.filter(valStock => valStock.idStock == selectedCart[0].idStock)[0];
-
-                        decreaseStockQuantityQuery = `UPDATE stocks SET stockQuantity = ${dbConf.escape(getStockFiltered.stockQuantity - selectedCart[0].cartQuantity)} WHERE idStock = ${selectedCart[0].idStock};`
-
-                    }
-
-                    // let decreaseStockId = ``
-                    // if (getStock.findIndex(selectedCart[selectedCart.length - 1].idStock) != -1) {
-                    //     let decreaseStockQuantityQuery = `${decreaseStockQuantityQuery1}${decreaseStockId}${selectedCart[selectedCart.length - 1].idStock});`
-                    // } else {
-                    //     let decreaseStockQuantityQuery = `${decreaseStockQuantityQuery1}${decreaseStockId.substring(0, decreaseStockId.length - 2)});`
-                    // }
-
-                    //^ cek query stock sebelum ke database
-                    console.log(`decreaseStockQuantityQuery`, decreaseStockQuantityQuery);
-
-                    let decreaseStockQuantity = await dbQuery(decreaseStockQuantityQuery);
-
-                    // selectedCart.map((valcart, idxcart) => {
-                    //     for (i = 0; i < getStock.length - 1; i++) {
-                    //         if (valcart.idStock == getStock[i].idStock) {
-
-                    //             console.log(`idStock di cart bertemu idstock di getStock`, valcart.idStock, getStock[i].idStock);
-
-                    //             console.log(`UPDATE stocks SET stockQuantity = ${dbConf.escape(getStock[i].stockQuantity - valcart.cartQuantity)} WHERE idStock = ${dbConf.escape(getStock[i].idStock)};`);
-
-                    //             decreaseStockQuantityQuery = `UPDATE stocks SET stockQuantity = ${dbConf.escape(getStock[i].stockQuantity - valcart.cartQuantity)} WHERE idStock = ${dbConf.escape(getStock[i].idStock)};`
-                    //         }
-                    //     }
-                    // })
-
-                    return res.status(200).send({ success: true, message: 'Cart item berhasil dicheckout' });
+                    } 
 
                 } else {
 
@@ -292,66 +264,66 @@ module.exports = {
             return next(error);
         }
     },
-    returnStock: async (req, res, next) => {
-        try {
-            //* isi params & body
-            //? idProduct = 2 >> idStock = 3 >> sudah ada di cart use 6
-            console.log(`req.body.arrayIdCart`, req.body.arrayIdCart);
+    // returnStock: async (req, res, next) => {
+    //     try {
+    //         //* isi params & body
+    //         //? idProduct = 2 >> idStock = 3 >> sudah ada di cart use 6
+    //         console.log(`req.body.arrayIdCart`, req.body.arrayIdCart);
 
-            if (req.dataUser.idUser) {
+    //         if (req.dataUser.idUser) {
 
-                if (req.body.arrayIdCart.length > 0) {
+    //             if (req.body.arrayIdCart.length > 0) {
 
-                    let getAllCart = await dbQuery(`select c.idCart, c.idStock, p.productName, p.productPicture, c.cartQuantity, s.stockType, s.priceSale, c.subTotal from cart c left join stocks s on c.idStock = s.idStock left join products p on s.idProduct = p.idProduct where c.idUser = ${dbConf.escape(req.dataUser.idUser)} and c.isActive = "true";`);
+    //                 let getAllCart = await dbQuery(`select c.idCart, c.idStock, p.productName, p.productPicture, c.cartQuantity, s.stockType, s.priceSale, c.subTotal from cart c left join stocks s on c.idStock = s.idStock left join products p on s.idProduct = p.idProduct where c.idUser = ${dbConf.escape(req.dataUser.idUser)} and c.isActive = "true";`);
 
-                    //* isi getAllCart
-                    console.log(`getAllCart`, getAllCart);
+    //                 //* isi getAllCart
+    //                 console.log(`getAllCart`, getAllCart);
 
-                    let selectedCart = getAllCart.filter((val1) => req.body.arrayIdCart.every((val2) => val1.idCart === val2));
+    //                 let selectedCart = getAllCart.filter((val1) => req.body.arrayIdCart.every((val2) => val1.idCart === val2));
 
-                    //* isi cart yg terseleksi untuk dicheckout
-                    console.log(`selectedCart`, selectedCart);
+    //                 //* isi cart yg terseleksi untuk dicheckout
+    //                 console.log(`selectedCart`, selectedCart);
 
-                    let getStock = await dbQuery(`select s.idStock, s.stockQuantity, s.priceSale from stocks s where s.isMain = "true";`);
+    //                 let getStock = await dbQuery(`select s.idStock, s.stockQuantity, s.priceSale from stocks s where s.isMain = "true";`);
 
-                    //* isi getStock
-                    // console.log(`getStock`, getStock);
+    //                 //* isi getStock
+    //                 // console.log(`getStock`, getStock);
 
-                    //* susun query untuk update cart
-                    let activateCartQuery1 = `UPDATE cart SET isActive = "true" WHERE idCart = ${dbConf.escape(valcart.idCart)};`
-                    let activateCartQuery = '';
-                    let increaseStockQuantityQuery = '';
-                    selectedCart.map((valcart, idxcart) => {
-                        for (i = 0; i < getStock.length; i++) {
-                            if (valcart.idStock == getStock[i].idStock) {
+    //                 //* susun query untuk update cart
+    //                 let activateCartQuery1 = `UPDATE cart SET isActive = "true" WHERE idCart = ${dbConf.escape(valcart.idCart)};`
+    //                 let activateCartQuery = '';
+    //                 let increaseStockQuantityQuery = '';
+    //                 selectedCart.map((valcart, idxcart) => {
+    //                     for (i = 0; i < getStock.length; i++) {
+    //                         if (valcart.idStock == getStock[i].idStock) {
 
-                                console.log(`idStock di cart bertemu idstock di getStock`, valcart.idStock, getStock[i].idStock);
+    //                             // console.log(`idStock di cart bertemu idstock di getStock`, valcart.idStock, getStock[i].idStock);
 
-                                //^ cek query cart sebelum ke database
-                                console.log(`UPDATE cart SET isActive = "true" WHERE idCart = ${dbConf.escape(valcart.idCart)};`);
+    //                             //^ cek query cart sebelum ke database
+    //                             console.log(`UPDATE cart SET isActive = "true" WHERE idCart = ${dbConf.escape(valcart.idCart)};`);
 
-                                activateCartQuery = `UPDATE cart SET isActive = "true" WHERE idCart = ${dbConf.escape(valcart.idCart)};`
+    //                             activateCartQuery = `UPDATE cart SET isActive = "true" WHERE idCart = ${dbConf.escape(valcart.idCart)};`
 
-                                //^ cek query stock sebelum ke database
-                                console.log(`UPDATE stocks SET stockQuantity = ${dbConf.escape(getStock[i].stockQuantity + valcart.cartQuantity)} WHERE idStock = ${dbConf.escape(getStock[i].idStock)};`);
+    //                             //^ cek query stock sebelum ke database
+    //                             console.log(`UPDATE stocks SET stockQuantity = ${dbConf.escape(getStock[i].stockQuantity + valcart.cartQuantity)} WHERE idStock = ${dbConf.escape(getStock[i].idStock)};`);
 
-                                increaseStockQuantityQuery = `UPDATE stocks SET stockQuantity = ${dbConf.escape(getStock[i].stockQuantity + valcart.cartQuantity)} WHERE idStock = ${dbConf.escape(getStock[i].idStock)};`
-                            }
-                        }
-                    })
+    //                             increaseStockQuantityQuery = `UPDATE stocks SET stockQuantity = ${dbConf.escape(getStock[i].stockQuantity + valcart.cartQuantity)} WHERE idStock = ${dbConf.escape(getStock[i].idStock)};`
+    //                         }
+    //                     }
+    //                 })
 
-                    let activateCart = await dbQuery(activateCartQuery);
-                    let increaseStockQuantity = await dbQuery(increaseStockQuantityQuery);
+    //                 let activateCart = await dbQuery(activateCartQuery);
+    //                 let increaseStockQuantity = await dbQuery(increaseStockQuantityQuery);
 
-                    return res.status(200).send({ success: true, message: 'Cart item berhasil direturn' });
+    //                 return res.status(200).send({ success: true, message: 'Cart item berhasil direturn' });
 
-                }
-            }
+    //             }
+    //         }
 
-        } catch (error) {
-            return next(error);
-        }
-    },
+    //     } catch (error) {
+    //         return next(error);
+    //     }
+    // },
     getAllMainStock: async (req, res, next) => {
         try {
 

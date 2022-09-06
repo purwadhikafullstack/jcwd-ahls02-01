@@ -12,6 +12,7 @@ import ChangePassword from "./Pages/Users/ChangePassword";
 import ForgotPassword from './Pages/Users/ForgotPassword';
 import ResetPassword from "./Pages/Users/ResetPassword";
 import CartPage from "./Pages/Users/Cart";
+import CheckoutPage from "./Pages/Users/Checkout";
 import Dashboard from "./Pages/Admin/Dashboard";
 import Category from "./Pages/Admin/Category";
 import EditProfile from "./Pages/Users/EditProfile";
@@ -58,6 +59,7 @@ function App() {
                 <Route path='/changePassword' element={<ChangePassword />} />
                 <Route path='/resetPassword/:token' element={<ResetPassword />} />
                 <Route path='/cart' element={<CartPage />} />
+                <Route path='/checkout' element={<CheckoutPage />} />
                 <Route path='/editProfile' element={<EditProfile />} />
               </>
             }
