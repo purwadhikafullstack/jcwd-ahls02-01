@@ -26,6 +26,6 @@ getAvailableUnit: async (req, res) => {
       data: hasil,
     });
     // convertedquantity = netto
-    // the REAL stock quantity is in stocks table (had a hardtime figuring this out)
+    // the REAL stock quantity is in stocks table (had a hardtime figuring this out)//
   },
 }

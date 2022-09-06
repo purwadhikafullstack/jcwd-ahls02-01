@@ -43,7 +43,7 @@ const ModalCreate = (props) => {
     warning: "",
     composition: "",
     dosage: "",
-    stockQuantity: "",
+    stockQuantity: 0,
   });
   const onValueChange = (name, value, target) => {
     if (name === "gambar") value = target.files[0];
@@ -85,13 +85,13 @@ const ModalCreate = (props) => {
       <ModalHeader>Tambah Produk</ModalHeader>
       <ModalBody>
         <FormControl>
-          <FormLabel>Product Name</FormLabel>
+          <FormLabel>Nama Produk</FormLabel>
           <Input
             onChange={(event) => {
               onValueChange("name", event.target.value);
             }}
           />
-          <FormLabel>Price</FormLabel>
+          <FormLabel>Harga</FormLabel>
           <Input
             onChange={(event) => {
               onValueChange("price", event.target.value);
@@ -105,20 +105,20 @@ const ModalCreate = (props) => {
             }}
             type="number"
           />
-          <FormLabel>Category</FormLabel>
+          <FormLabel>Kategori</FormLabel>
           <Selectcategory
             onValueChange={onValueChange}
             categoryList={categoryList}
             formState={formState}
           />
-          <FormLabel>Picture</FormLabel>
+          <FormLabel>Gambar</FormLabel>
           <Input
             type={"file"}
             onChange={(event) => {
               onValueChange("gambar", event.target.value, event.target);
             }}
           />
-          <FormLabel>Description</FormLabel>
+          <FormLabel>Deskripsi</FormLabel>
           <Input
             onChange={(event) => {
               onValueChange("description", event.target.value);
@@ -131,7 +131,7 @@ const ModalCreate = (props) => {
               onValueChange("defaultUnit", event.target.value);
             }}
           />
-          <FormLabel>Composition</FormLabel>
+          <FormLabel>Komposisi</FormLabel>
           <Input
             onChange={(event) => {
               onValueChange("composition", event.target.value);
@@ -143,15 +143,14 @@ const ModalCreate = (props) => {
               onValueChange("warning", event.target.value);
             }}
           />
-          <FormLabel>Dosage</FormLabel>
+          <FormLabel>Dosis</FormLabel>
           <Input
             onChange={(event) => {
               onValueChange("dosage", event.target.value);
             }}
           />
-          <FormLabel>Stock</FormLabel>
+          <FormLabel>Stok</FormLabel>
           <Input
-            value={formState.stockQuantity}
             onChange={(event) => {
               onValueChange("stock", event.target.value);
             }}
@@ -164,11 +163,12 @@ const ModalCreate = (props) => {
           Close
         </Button>
         <Button
+        style={{ backgroundColor: "#DE1B51" }}
           colorScheme="red"
           variant="solid"
           onClick={() => {
+            // props.onClose()
             props.add(formState);
-            // props.onClose();
           }}
         >
           Submit
@@ -177,6 +177,7 @@ const ModalCreate = (props) => {
     </ModalContent>
   );
 };
+///////////////EDIT/////////////////////
 const ModalEdit = (props) => {
   const [formState, setFormState] = test.useState({ ...props.selectedEdit });
   const onValueChange = (name, value, target) => {
@@ -220,14 +221,14 @@ const ModalEdit = (props) => {
       <ModalHeader>Product Page</ModalHeader>
       <ModalBody>
         <FormControl>
-          <FormLabel>Product Name</FormLabel>
+          <FormLabel>Nama Produk</FormLabel>
           <Input
             value={formState.name}
             onChange={(event) => {
               onValueChange("name", event.target.value);
             }}
           />
-          <FormLabel>Price</FormLabel>
+          <FormLabel>Harga</FormLabel>
           <Input
             value={formState.price}
             onChange={(event) => {
@@ -243,20 +244,20 @@ const ModalEdit = (props) => {
             }}
             type="number"
           />
-          <FormLabel>Category</FormLabel>
+          <FormLabel>Kategori</FormLabel>
           <Selectcategory
             onValueChange={onValueChange}
             categoryList={categoryList}
             formState={formState}
           />
-          <FormLabel>Picture</FormLabel>
+          <FormLabel>Gambar</FormLabel>
           <Input
             type={"file"}
             onChange={(event) => {
               onValueChange("gambar", event.target.value, event.target);
             }}
           />
-          <FormLabel>Description</FormLabel>
+          <FormLabel>Deskripsi</FormLabel>
           <Textarea
             value={formState.description}
             onChange={(event) => {
@@ -271,7 +272,7 @@ const ModalEdit = (props) => {
               onValueChange("defaultUnit", event.target.value);
             }}
           />
-          <FormLabel>Composition</FormLabel>
+          <FormLabel>Komposisi</FormLabel>
           <Textarea
             value={formState.composition}
             onChange={(event) => {
@@ -285,14 +286,14 @@ const ModalEdit = (props) => {
               onValueChange("warning", event.target.value);
             }}
           />
-          <FormLabel>Dosage</FormLabel>
+          <FormLabel>Dosis</FormLabel>
           <Textarea
             value={formState.dosage}
             onChange={(event) => {
               onValueChange("dosage", event.target.value);
             }}
           />
-          <FormLabel>Stock</FormLabel>
+          <FormLabel>Stok</FormLabel>
           <Input
             value={formState.stockQuantity}
             onChange={(event) => {
@@ -307,7 +308,8 @@ const ModalEdit = (props) => {
           Close
         </Button>
         <Button
-          className="btn-color"
+          style={{ backgroundColor: "#DE1B51" }}
+          colorScheme="red"
           onClick={() => {
             props.edit(formState);
             // props.onClose();
@@ -335,14 +337,14 @@ const Productpage = () => {
           <Thead>
             <Tr>
               <Th>No</Th>
-              <Th>Product Name</Th>
-              <Th>Price</Th>
-              <Th>Category</Th>
+              <Th>Nama Produk</Th>
+              <Th>Harga</Th>
+              <Th>Kategori</Th>
               {/* <Th>Description</Th> */}
-              <Th>Picture</Th>
+              <Th>Gambar</Th>
               <Th>Unit</Th>
               <Th>Netto</Th>
-              <Th>Stock</Th>
+              <Th>Stok</Th>
               <Th>Actions</Th>
               {/* <Th>Composition</Th> */}
             </Tr>
@@ -368,7 +370,7 @@ const Productpage = () => {
                       style={{ margin: "10px" }}
                       onClick={() => {
                         if (
-                          window.confirm("are you sure you wish to delete?")
+                          window.confirm("Anda Yakin Ingin Hapus?")
                         ) {
                           props.deleteProducts(value.idProduct);
                         }
