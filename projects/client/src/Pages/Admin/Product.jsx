@@ -43,6 +43,7 @@ const ModalCreate = (props) => {
     warning: "",
     composition: "",
     dosage: "",
+    stockQuantity: "",
   });
   const onValueChange = (name, value, target) => {
     if (name === "gambar") value = target.files[0];
@@ -390,7 +391,7 @@ const Productpage = () => {
                           composition: value.composition,
                           dosage: value.dosage,
                           warning: value.warning,
-                          stock: value.stockQuantity,
+                          stock: value.stockQuantity
                         });
                         props.setModalState("edit");
                       }}
