@@ -4,10 +4,10 @@ const mysql = require("mysql");
 const util = require("util");
 
 console.log(
-  // process.env.DB_HOST,
-  // process.env.DB_USER,
-  // process.env.DB_NAME,
-  // process.env.DB_PORT
+  process.env.DB_HOST,
+  process.env.DB_USER,
+  process.env.DB_NAME,
+  process.env.DB_PORT
 );
 const dbConf = mysql.createPool({
   connectionLimit: 1000,
