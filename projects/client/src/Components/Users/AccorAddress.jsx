@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useToastHook } from "../CustomToast";
 import { API_URL } from "../../helper";
 import { getAddress, getAddressActions } from "../../Redux/Actions/addressActions";
-import { getProvinceRajaOngkir, getProvinceActions2 } from "../../Redux/Actions/getProvinceActions";
+import { getProvinceRajaOngkir, getProvinceActions2, getProvinceRajaOngkir2 } from "../../Redux/Actions/getProvinceActions";
 import { getCityRajaOngkir, getCityActions2 } from "../../Redux/Actions/getCityActions";
 import {
     Box,
@@ -243,7 +243,7 @@ const AccorAddressComponent = (props) => {
                                                 width="fit-content"
                                                 onChange={(e) => setNewPostalCode(e.target.value)}
                                                 size='sm'
-                                            // onClick={handleCityName}
+                                                onClick={handleCityName}
                                             />
                                         </>
                                         :
@@ -386,9 +386,80 @@ const AccorAddressComponent = (props) => {
     }
 
     //TODO ❗❗❗ city baru yang dipilih bakal select idCity juga
-    const handleCity = (value) => {
-        console.log(`city baru ${value}`);
-        setNewCity(value);
+    const handleCity = async (value) => {
+        try {
+            console.log(`city baru ${value}`);
+            console.log(`newIdProvince`, newIdProvince);
+
+            if (newIdProvince > 0) {
+                let a = newIdProvince
+                let city = getCityRajaOngkir(a)
+                dispatch(city)
+                if (getCity) {
+                    setNewIdCity(value)
+                    { getProvinceRajaOngkir2() }
+                }
+            } else {
+                alert('else')
+            }
+
+        } catch (error) {
+            alert(error)
+        }
+    }
+
+    const handleCityName = async (e) => {
+        try {
+            console.log(`newIdCity`, newIdCity);
+            if (newIdCity > 0) {
+                { getCityRajaOngkir2() }
+            } else {
+                alert('else')
+            }
+        } catch (error) {
+            alert(error)
+        }
+    }
+
+    const getProvinceRajaOngkir2 = async () => {
+        try {
+            console.log(newIdProvince, 'newIdProvince');
+            if (newIdProvince > 0) {
+                console.log('Province jalan');
+                let res = await Axios.get(`${API_URL}/rajaOngkir/getProvince2`, {
+                    headers: {
+                        provinceid: newIdProvince
+                    }
+                })
+                if (res.data) {
+                    console.log("RES DATA GET PROVINCE RAJAONGKIR", res.data.namaProvinsi[0])
+                    dispatch(getProvinceActions2(res.data.namaProvinsi[0]))
+                }
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const getCityRajaOngkir2 = async () => {
+        try {
+            console.log("CITY_ID ACTIONS 2", newIdCity);
+            if (newIdCity > 0) {
+                console.log(`city2 jalan`);
+                let res = await Axios.get(`${API_URL}/rajaOngkir/getCity2`, {
+                    headers: {
+                        provinceid: newIdProvince,
+                        cityid: newIdCity
+                    }
+                })
+                if (res.data) {
+                    console.log("RES DATA GET CITY RAJAONGKIR", res.data.namaKota[0])
+                    dispatch(getCityActions2(res.data.namaKota[0]))
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     // const handlePostalCode = (value) => {
@@ -413,19 +484,64 @@ const AccorAddressComponent = (props) => {
     }
 
     //& onClick akan save address baru yg dimasukkan
-    const btnSaveNewAddress = () => {
+    const btnSaveNewAddress = async () => {
+        try {
+            if (!newReceiverName || !newReceiverPhone || !newAddress || !newProvince || !newCity || !newPostalCode || !newLabel || getProvince2 == undefined || getCity2 == undefined) {
+                newToast({
+                    title: `Alamat Baru Belum Lengkap`,
+                    description: "Lengkapi dahulu form alamat baru sebelum melakukan penyimpanan",
+                    status: 'error'
+                })
+            } else if (newReceiverPhone.length < 11) {
+                newToast({
+                    title: 'Tambah Alamat Tidak Berhasil.',
+                    description: 'Isi nomor telfon penerima dengan nomor telfon aktif',
+                    status: 'error',
+                })
+            } else {
+                console.log(`${newReceiverName},${newReceiverPhone},${newAddress},${newProvince},${newIdProvince},${newCity},${newIdCity},${newPostalCode},${newLabel}`);
 
-        if (!newReceiverName || !newReceiverName || !newAddress || !newProvince || !newCity || !newPostalCode || !newLabel) {
+                let token = localStorage.getItem('tokenIdUser');
+                let res = await Axios.post(`${API_URL}/address/addAddress`, {
+                    label: newLabel,
+                    address: newAddress,
+                    province: getProvince2,
+                    provinceid: newIdProvince,
+                    city: getCity2,
+                    cityid: newIdCity,
+                    postalCode: newPostalCode,
+                    receiverName: newReceiverName,
+                    receiverPhone: newReceiverPhone,
+                    isDefaultAddress: 'false'
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                if (res.data) {
+                    newToast({
+                        //   title: 'Tambah Alamat Berhasil.',
+                        description: 'Tambah Alamat Berhasil',
+                        status: 'success',
+                    })
+                    // console.log("res.data FE ADDRESS", res.data)
+                    dispatch(getAddressActions(res.data))
+                    // setAddAddress(!addAddress)
+                    // setAddUtama(false)
+                    // console.log("setAddUtama===>", addUtama)
+                    // setLoadingStat(false)
+                    props.handleSendingToParentNewAddress();
+                    setAccordionIndex(null);
+                }
+            }
+
+        } catch (error) {
             newToast({
-                title: `Alamat Baru Belum Lengkap`,
-                description: "Lengkapi dahulu form alamat baru sebelum melakukan penyimpanan",
-                status: 'error'
+                title: 'Tambah Alamat Tidak Berhasil.',
+                description: error.response.data.message,
+                status: 'error',
             })
-        } else {
-            console.log(`${newReceiverName},${newReceiverPhone},${newAddress},${newProvince},${newCity},${newPostalCode},${newLabel}`);
-
-            props.handleSendingToParentNewAddress();
-            setAccordionIndex(null);
         }
 
     }
@@ -576,7 +692,7 @@ const AccorAddressComponent = (props) => {
                                         width="fit-content"
                                         onChange={(e) => setNewPostalCode(e.target.value)}
                                         size='sm'
-                                    // onClick={handleCityName}
+                                        onClick={handleCityName}
                                     />
                                 </>
                                 :
@@ -587,7 +703,7 @@ const AccorAddressComponent = (props) => {
                                         onChange={(e) => setNewPostalCode(e.target.value)}
                                         size='sm'
                                         isDisabled
-                                        />
+                                    />
                                 </>
                         }
                     </InputGroup>
