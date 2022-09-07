@@ -25,7 +25,7 @@ const app = express();
 app.use(cors());
 app.use(bearerTokens());
 app.use(express.json());
-app.use(express.static('./src/Public'));
+app.use(express.static("./src/Public"));
 
 // DB Check Connection
 const { dbConf } = require("./Config/database");
@@ -42,12 +42,9 @@ dbConf.getConnection((err, connection) => {
 
 // ===========================
 // NOTE : Add your routes here
-// const { userRouters } = require('./Routers');
-// const { response } = require("express");
+
 const configRouter = require("./Routers")
 app.use('/api', configRouter);
-
-
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);

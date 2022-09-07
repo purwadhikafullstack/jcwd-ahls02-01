@@ -1,12 +1,12 @@
-const multer = require('multer');
+const multer = require("multer");
 
 // fs untuk mengecek lokasi penyimpanan data
-const fs = require('fs')
+const fs = require("fs");
 
 module.exports = {
   uploader: (directory, fileNamePrefix) => {
     // mendefine lokasi penyimpanan utama
-    let defaultDir = './src/Public'
+    let defaultDir = "./src/Public";
 
     // konfigurasi multer
     // diskStorage untuk menyimpan file
@@ -22,19 +22,19 @@ module.exports = {
           console.log(`Directory ${pathDir} exist`);
           cb(null, pathDir);
         } else {
-          fs.mkdir(pathDir, { recursive: true }, err => cb(err, pathDir));
+          fs.mkdir(pathDir, { recursive: true }, (err) => cb(err, pathDir));
           console.log(`Success Created ${pathDir}`);
         }
       },
       filename: (req, file, cb) => {
         // membaca tipe data file
-        let ext = file.originalname.split('.');
+        let ext = file.originalname.split(".");
 
         // membuat filename baru
-        let filename = fileNamePrefix + Date.now() + '.' + ext[ext.length - 1];
+        let filename = fileNamePrefix + Date.now() + "." + ext[ext.length - 1];
 
         cb(null, filename);
-      }
+      },
     });
 
     const fileFilter = (req, file, cb) => {
@@ -42,12 +42,12 @@ module.exports = {
       const extFilter = /\.(jpg|png|webp|svg|jpeg)/;
 
       if (!file.originalname.toLowerCase().match(extFilter)) {
-        return cb(new Error('Your file ext are denied', false))
+        return cb(new Error("Your file ext are denied", false));
       }
 
       cb(null, true);
-    }
+    };
 
     return multer({ storage: storageUploader, fileFilter });
-  }
-}
+  },
+};
