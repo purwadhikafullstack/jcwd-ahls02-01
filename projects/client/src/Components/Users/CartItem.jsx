@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 // import { Link, useNavigate, useLocation } from "react-router-dom";
 import { getCartAction } from "../../Redux/Actions/cartActions";
 import { getAllMainStockAction } from "../../Redux/Actions/cartActions";
-import { API_URL } from "../../helper";
+import { API_URL, BE_URL } from "../../helper";
 import { useToastHook } from "../../Components/CustomToast";
 import {
     Box,
@@ -308,9 +308,8 @@ const CartItemComponent = (props) => {
                                         <Image
                                             borderRadius='xl'
                                             boxSize='80px'
-                                            // src={`${API_URL}${value.productPicture}`}
-                                            src={value.productPicture}
-                                            alt='...'
+                                            src={BE_URL+value.productPicture}
+                                            alt={`IMG-${value.productName}`}
                                             className="d-md-flex d-none"
                                         />
                                     </Box>
