@@ -1,7 +1,7 @@
 const { dbConf, dbQuery } = require("../Config/database");
 const { hashPassword, createToken } = require("../Config/encription");
-const util = require("util");
-const query = db.dbQuery;
+// const util = require("util");
+// const query = db.dbQuery;
 const { transporter } = require("../Config/nodemailer");
 const { uploader } = require("../Config/uploader");
 const fs = require("fs");
@@ -313,90 +313,148 @@ module.exports = {
           to: email,
           subject: "Verifikasi Ulang Email Akun Medhika",
           html: `<div class="es-wrapper-color">
-          <table class="es-wrapper" width="100%" cellspacing="0" cellpadding="0">
-            <tbody>
-              <tr>
-                <td class="esd-email-paddings" valign="top">
-                  <table cellpadding="0" cellspacing="0" class="esd-header-popover es-header" align="center" >
-                    <tbody>
-                      <tr>
-                          <td align="center" valign="top" style="padding: 40px 10px 40px 10px;"> </td>                    
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td bgcolor="#DE1B51" align="center" style="padding: 0px 10px 0px 10px;">
-                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+              <table class="es-wrapper" width="100%" cellspacing="0" cellpadding="0">
+                <tbody>
+                  <tr>
+                    <td class="esd-email-paddings" valign="top">
+                      <table cellpadding="0" cellspacing="0" class="esd-header-popover es-header" align="center" >
+                        <tbody>
                           <tr>
-                              <td bgcolor="#ffffff" align="center" class="shadow" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; letter-spacing: 4px; line-height: 48px;">
-                                  <h1 style="font-size: 48px; font-weight: 400; margin: 2;">Hello, ${resultsLogin[0].name} !</h1>
-                              </td>
-                          </tr>
-                      </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td bgcolor="#f6f8fc" align="center" style="padding: 0px 10px 0px 10px;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
-                        <tr>
-                            <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 40px 30px; color: #333333; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                                <p style="margin: 0;">Tekan tombol untuk verifikasi akun medhika anda.</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td bgcolor="#ffffff" align="center">
-                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                    <tr>
-                                        <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
-                                            <table border="0" cellspacing="0" cellpadding="0">
+                            <td class="esd-stripe" align="center">
+                              <table class="es-header-body" align="center" cellpadding="0" cellspacing="0" width="600" style="background-color: transparent" >
+                                <tbody>
+                                  <tr>
+                                    <td class="esd-structure es-p20" align="left" style="border-radius: 10px 10px 0px 0px; background-color: #de1b51;" bgcolor="#4c8aa7" >
+                                      <table cellpadding="0" cellspacing="0" width="100%" >
+                                        <tr>
+                                          <td width="560" class="es-m-p0r esd-container-frame" valign="top" align="center" >
+                                            <table cellpadding="0" cellspacing="0" width="100%" style="border-radius: 1px; border-collapse: separate;" >
+                                              <tbody>
                                                 <tr>
-                                                    <td align="center" style="border-radius: 3px;" bgcolor="#586BB1">
-                                                    <a href="http://localhost:3000/verification/${token}" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #586BB1; display: inline-block;">Verifikasi Akun</a></td>
+                                                  <td align="center" class="esd-block-text es-m-txt-c es-p30t es-p20b" style="color: #FFFFFF; font-family: sans-serif; font-size: 20px; letter-spacing: 2px;">
+                                                    <h2>medhika</h2>
+                                                  </td>
                                                 </tr>
+                                              </tbody>
                                             </table>
-                                        </td>
-                                    </tr>
-                                </table>
+                                          </td>
+                                        </tr>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
                             </td>
-                        </tr>
-                        <tr>
-                            <td bgcolor="#ffffff" align="center" style="padding: 0px 30px 50px 30px; color: #333333; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                                <p style="margin: 0;">tombol verifikasi hanya aktif selama 1 jam</p>
-                            </td>
-                        </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td bgcolor="#f6f8fc" align="center" style="padding: 0px 0px 0px 0px;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                        <tr>
-                            <td bgcolor="#f6f8fc" align="center" style="padding: 0px 30px 30px 30px; color: #333333; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;"> <br>
-                                <p style="margin: 0;"></p>
-                            </td>
-                        </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td bgcolor="#f6f8fc" align="center" style="padding: 0px 0px 0px 0px;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                        <tr>
-                            <td bgcolor="#f6f8fc" align="center" style="padding: 0px 30px 30px 30px; color: #FFFFFF; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;"> <br>
-                                <p style="margin: 0;">www.medhika.com</p>
-                            </td>
-                        </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-            </div>`
+                          </tr>
+                        </tbody>
+                      </table>
+                      <table class="es-content" cellspacing="0" cellpadding="0" align="center" >
+                        <tbody>
+                          <tr>
+                            <td class="esd-stripe" align="center">
+                              <table class="es-content-body" style="border-left: 1px solid #de1b51; border-right: 1px solid #de1b51; background-color: #ffffff;"
+                                width="600" cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" >
+                                <tbody>
+                                  <tr>
+                                    <td class="esd-structure es-p30t es-p20r es-p20l" align="center" bgcolor="#ffffff" style="background-color: #ffffff" >
+                                      <table cellpadding="0" cellspacing="0" width="100%" >
+                                        <tbody>
+                                          <tr>
+                                            <td width="558" align="center" class="esd-container-frame" >
+                                              <table cellpadding="0" cellspacing="0" width="100%" >
+                                                <tbody>
+                                                  <tr>
+                                                    <td align="center" class="esd-block-text es-m-txt-c es-p30t es-p20b" style="color: #333333; font-family: sans-serif; font-size: 20px; letter-spacing: 2px;">
+                                                      <h2> Hallo, Selamat Datang <br/>${resultsLogin[0].name} !</h2>
+                                                    </td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td align="center" >
+                                                      <img src="https://img.freepik.com/free-vector/email-campaign-concept-illustration_114360-1633.jpg?w=1380&t=st=1661592502~exp=1661593102~hmac=6fa57b78ac55779ce62545794bc63cd48ec8b02c160f0e470b17dd190cfe63ac" style="display: block; margin-bottom: 20px; margin-left: 10px;" width="370" />
+                                                    </td>
+                                                  </tr>
+                                                </tbody>
+                                              </table>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="es-m-p0r esd-container-frame" width="558" valign="top" align="center" >
+                                              <table width="100%" cellspacing="0" cellpadding="0" >
+                                                <tbody>
+                                                  <table align="center" border="0" cellspacing="0" cellpadding="0">
+                                                    <tr>
+                                                      <td align="center" style="font-family: sans-serif; font-size: 15px; border-radius: 8px;" bgcolor="#586BB1">
+                                                        <a href="${process.env.FE_URL}/verification/${token}" target="_blank" style="font-size: 20px; font-family: sans-serif; color: #ffffff; text-decoration: none; padding: 15px 35px; border-radius: 2px; display: inline-block;">Verifikasi Akun</a>
+                                                      </td>
+                                                    </tr>
+                                                </table>
+                                                  <tr>
+                                                    <td align="center" class="esd-block-text es-p10t es-p20b es-p40r es-p40l" style="color: #333333; font-family: sans-serif; font-size: 15px;" >
+                                                      <p style="margin-top: 30px; margin-bottom: 30px;">
+                                                        dengan verifikasi akun memudahkan anda untuk transaksi di Medhika Apotek Online. Tombol verifikasi ini hanya berlaku selama 1 jam.
+                                                      </p>
+                                                      <br/>
+                                                    </td>
+                                                  </tr>
+                                                <table cellpadding="0" cellspacing="0" class="es-footer" align="center" >
+                                                  <tbody>
+                                                    <tr>
+                                                      <td class="esd-stripe" align="center">
+                                                        <table class="es-footer-body" align="center" cellpadding="0" cellspacing="0" width="600" style="background-color: transparent" >
+                                                          <tbody>
+                                                            <tr>
+                                                              <td class="esd-structure es-p25t es-p25b es-p20r es-p20l" align="center" style="border-radius: 0px 0px 10px 10px; background-color: #de1b51; color: #FFFFFF; font-family: sans-serif; font-size: 12px;">
+                                                              <p>Group 1 Final Project - JCWDAHLS01</p>
+                                                              <table align="center" cellpadding="0" cellspacing="0" width="100%" >
+                                                            </table>
+                                                          </td>
+                                                        </tr>
+                                                      </tbody>
+                                                    </table>
+                                                  </td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </td>
+                                </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>`
         })
         return res.status(200).send({ ...resultsLogin[0], token });
         // success: true,
         // message: "Reverification email link delivered"
         // })
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  getTokens: async (req, res, next) => {
+    try {
+      let checkToken = await dbQuery(`SELECT token FROM tokenlist where idUser=${req.dataUser.idUser};`)
+      console.log("1 ==>", checkToken[0].token)
+      console.log("2 ==>", req.dataUser)
+      console.log("3 ==>", req.body)
+      if (req.body.token == checkToken[0].token) {
+        return res.status(200).send({
+          success: true,
+          message: "token valid"
+        });
+      } else {
+        return res.status(200).send({
+          success: false,
+          message: "invalid token"
+        });
+
       }
     } catch (error) {
       return next(error)

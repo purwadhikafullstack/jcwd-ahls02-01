@@ -176,7 +176,7 @@ const NavbarComponent = (props) => {
                           </MenuGroup>
                           <MenuDivider />
                           <MenuGroup title='Transaction'>
-                            <MenuItem>Product List</MenuItem>
+                            <MenuItem onClick={()=> navigate("/productlist")}>Product List</MenuItem>
                             <MenuItem>Transaction List</MenuItem>
                           </MenuGroup>
                           <MenuDivider />
