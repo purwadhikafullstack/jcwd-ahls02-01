@@ -37,7 +37,7 @@ const AccorAddressComponent = (props) => {
         //❗❗❗ fungsi untuk get province dan city dr rajaongkir biar bisa edit alamat & create alamat baru
         dispatch(getAddress())
         dispatch(getProvinceRajaOngkir())
-        // getProvinceRajaOngkir2()
+        getProvinceRajaOngkir2()
     }, [])
 
     //^ STATE MANAGEMENT
@@ -138,7 +138,7 @@ const AccorAddressComponent = (props) => {
 
                                 {/* ❗❗❗ btnSaveEdit untuk save address terupdate */}
                                 <MdCheckCircle
-                                    onClick={btnSaveEdit}
+                                    onClick={() => btnSaveEdit(valueAddress.idAddress, valueAddress.label, valueAddress.isDefaultAddress)}
                                     className="iconFirst"
                                     size={25}
                                 />
@@ -204,7 +204,7 @@ const AccorAddressComponent = (props) => {
                                         >
                                             <Select
                                                 placeholder='Pilih Kota'
-                                                onChange={(e) => handleCity(e.target.value)}
+                                                onClick={handleCity}
                                                 size='sm'
                                             >
                                                 {
@@ -382,13 +382,13 @@ const AccorAddressComponent = (props) => {
     //TODO ❗❗❗ province baru yang dipilih bakal select idProvince juga
     const handleProvince = (value) => {
         console.log(`province baru ${value}`);
-        setNewProvince(value);
+        setNewIdProvince(value);
     }
 
     //TODO ❗❗❗ city baru yang dipilih bakal select idCity juga
-    const handleCity = async (value) => {
+    const handleCity = async (e) => {
         try {
-            console.log(`city baru ${value}`);
+            console.log(`city baru ${e.target.value}`);
             console.log(`newIdProvince`, newIdProvince);
 
             if (newIdProvince > 0) {
@@ -396,7 +396,7 @@ const AccorAddressComponent = (props) => {
                 let city = getCityRajaOngkir(a)
                 dispatch(city)
                 if (getCity) {
-                    setNewIdCity(value)
+                    setNewIdCity(e.target.value)
                     { getProvinceRajaOngkir2() }
                 }
             } else {
@@ -466,14 +466,55 @@ const AccorAddressComponent = (props) => {
     //     console.log(`postalCode baru ${value}`);
     // }
 
+    // console.log(`btnSaveEdit -- getProvince2 dan getCity2`, getProvince2, getCity2);
+    //     console.log(`btnSaveEdit -- newReceiverName, newReceiverPhone, newAddress, newPostalCode`, newReceiverName, newReceiverPhone, newAddress, newPostalCode, address);
+
     //& onClick akan save address yg sudah diedit
     //TODO ❗❗❗ untuk save address terupdate
-    const btnSaveEdit = () => {
-        console.log(`${newReceiverName},${newReceiverPhone},${newAddress},${newProvince},${newCity},${newPostalCode}`);
-
-        setEditedIdAddress(null);
-        setIsAccordionDisabled(!isAccordionDisabled);
-        props.handleSendingToParentEditedAddress(null);
+    const btnSaveEdit = async (idAddress, currentLabel, isDefaultAddress) => {
+        console.log(`btnSaveEdit -- getProvince2 dan getCity2`, getProvince2, getCity2);
+        console.log(`btnSaveEdit -- newReceiverName, newReceiverPhone, newAddress, newPostalCode`, newReceiverName, newReceiverPhone, newAddress, newPostalCode);
+        try {
+            if (editedIdAddress) {
+                let token = localStorage.getItem('tokenIdUser');
+                let res = await Axios.patch(`${API_URL}/address/editAddress`, {
+                    idAddress,
+                    label: '',
+                    address: newAddress,
+                    province: getProvince2,
+                    provinceid: newIdProvince,
+                    city: getCity2, //ga keambil
+                    cityid: newIdCity,
+                    postalCode: newPostalCode,
+                    //editPostalCode: postalCodeOn
+                    receiverName: newReceiverName,
+                    receiverPhone: newReceiverPhone,
+                    isDefaultAddress
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                if (res.data) {
+                    console.log(`RES DATA EDIT PROFILE`, res.data);
+                    dispatch(getAddressActions(res.data));
+                    newToast({
+                        title: 'Edit Alamat Berhasil.',
+                        description: 'Data pada alamat anda sudah terupdate.',
+                        status: 'success'
+                    })
+                    setEditedIdAddress(null);
+                    setIsAccordionDisabled(!isAccordionDisabled);
+                    props.handleSendingToParentEditedAddress(null);
+                }
+            }
+        } catch (error) {
+            newToast({
+                title: 'Edit alamat Tidak Berhasil.',
+                description: error.response.data.message,
+                status: 'error',
+            })
+        }
     }
 
     //& onClick akan cancel pengeditan
@@ -485,8 +526,10 @@ const AccorAddressComponent = (props) => {
 
     //& onClick akan save address baru yg dimasukkan
     const btnSaveNewAddress = async () => {
+        console.log(`getProvince2 dan getCity2`, getProvince2, getCity2);
+        console.log(`newReceiverName, newReceiverPhone, newAddress, newPostalCode, newLabel`, newReceiverName, newReceiverPhone, newAddress, newPostalCode, newLabel)
         try {
-            if (!newReceiverName || !newReceiverPhone || !newAddress || !newProvince || !newCity || !newPostalCode || !newLabel || getProvince2 == undefined || getCity2 == undefined) {
+            if (newReceiverName == '' || newReceiverPhone == '' || newAddress == '' || getProvince2 == undefined || getCity2 == undefined || newPostalCode == '' || newLabel == '') {
                 newToast({
                     title: `Alamat Baru Belum Lengkap`,
                     description: "Lengkapi dahulu form alamat baru sebelum melakukan penyimpanan",
@@ -499,7 +542,7 @@ const AccorAddressComponent = (props) => {
                     status: 'error',
                 })
             } else {
-                console.log(`${newReceiverName},${newReceiverPhone},${newAddress},${newProvince},${newIdProvince},${newCity},${newIdCity},${newPostalCode},${newLabel}`);
+                console.log(`${newReceiverName},${newReceiverPhone},${newAddress},${newIdProvince},${newIdCity},${newPostalCode},${newLabel},${getProvince2}, ${getCity2}`);
 
                 let token = localStorage.getItem('tokenIdUser');
                 let res = await Axios.post(`${API_URL}/address/addAddress`, {
@@ -529,8 +572,6 @@ const AccorAddressComponent = (props) => {
                     dispatch(getAddressActions(res.data))
                     // setAddAddress(!addAddress)
                     // setAddUtama(false)
-                    // console.log("setAddUtama===>", addUtama)
-                    // setLoadingStat(false)
                     props.handleSendingToParentNewAddress();
                     setAccordionIndex(null);
                 }
@@ -589,7 +630,7 @@ const AccorAddressComponent = (props) => {
                             />
                         </InputGroup>
 
-                        {/* ❗❗❗ btnSaveEdit untuk save address terupdate */}
+                        {/* ❗❗❗ btnSaveNewAddress untuk save new address */}
                         <MdCheckCircle
                             onClick={btnSaveNewAddress}
                             className="iconFirst"
@@ -655,10 +696,10 @@ const AccorAddressComponent = (props) => {
                                 >
                                     <Select
                                         placeholder="Pilih Kota"
-                                        onChange={(e) => handleCity(e.target.value)}
+                                        onClick={handleCity}
                                         size='sm'
                                     >
-                                        {getCity.data && getCity.map((k) => (
+                                        {getCity.data && getCity.data.map((k) => (
                                             <option
                                                 key={k.city_id}
                                                 value={k.city_id}
