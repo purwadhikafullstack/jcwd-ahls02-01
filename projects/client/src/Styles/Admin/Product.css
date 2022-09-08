@@ -1,0 +1,9 @@
+.btn-color{
+    background-color: #DE1B51;
+    /* background-color: #eef5f4; */
+    color: #FFF;
+    border-radius: 5px;
+    height: 30px;
+    width: 100px;
+    filter: drop-shadow(3px 3px 7px rgba(34, 34, 34, 0.329));
+  }

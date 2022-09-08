@@ -41,11 +41,12 @@ const ModalCreate = (props) => {
         />
       </ModalBody>
       <ModalFooter>
-        <Button colorScheme="blue" mr={3} onClick={props.onClose}>
+        <Button variant="ghost" mr={3} onClick={props.onClose}>
           Close
         </Button>
         <Button
-          variant="ghost"
+        style={{ backgroundColor: "#DE1B51" }}
+          
           onClick={() => {
             props.add(newCategory);
             props.onClose()
@@ -72,11 +73,11 @@ const ModalEdit = (props) => {
         />
       </ModalBody>
       <ModalFooter>
-        <Button colorScheme="blue" mr={3} onClick={props.onClose}>
+        <Button variant="ghost" mr={3} onClick={props.onClose}>
           Close
         </Button>
         <Button
-          variant="ghost"
+          style={{ backgroundColor: "#DE1B51" }}
           onClick={() => {
             props.edit([props.selectedEdit[0], editCategory]);
             props.onClose()
@@ -114,6 +115,7 @@ const Categorypage = () => {
                   <Td>{value.categoryName}</Td>
                   <Td>
                     <Button
+                    mr={3}
                       onClick={() => {
                         if (window.confirm("are you sure?")) {
                           props.deleteCategory([
@@ -126,6 +128,7 @@ const Categorypage = () => {
                       Delete
                     </Button>
                     <Button
+                    mr={3}
                       onClick={() => {
                         props.setSelectedEdit([
                           value.idCategory,

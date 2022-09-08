@@ -1,0 +1,16 @@
+module.exports=[{
+    defaultUnit:"saset",
+    measurementUnit:"tablet"
+},{
+    defaultUnit:"botol",
+    measurementUnit:"ml"
+},{
+    defaultUnit:"tube",
+    measurementUnit:"ml"
+},{
+    defaultUnit:"dus",
+    measurementUnit:"patch"
+},{
+    defaultUnit:"dus",
+    measurementUnit:"botol"
+}]

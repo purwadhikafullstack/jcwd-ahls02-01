@@ -7,7 +7,7 @@ const uploader = require("../../Config/uploader");
 const fs = require("fs");
 
 module.exports = {
-getAvailableUnit: async (req, res) => {
+  getAvailableUnit: async (req, res) => {
     const getUnit = `Select p.productName,s.stockQuantity from products as p join stocks as S on P.idproduct = s.idProduct WHERE s.isMain = 'false';`;
     let sql13 = await query(getUnit);
     return res.status(200).json({
@@ -25,5 +25,7 @@ getAvailableUnit: async (req, res) => {
     return res.status(200).json({
       data: hasil,
     });
+    // convertedquantity = netto
+    // the REAL stock quantity is in stocks table (had a hardtime figuring this out)//
   },
 }
