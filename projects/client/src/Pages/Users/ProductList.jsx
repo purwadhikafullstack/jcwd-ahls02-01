@@ -58,6 +58,7 @@ const ProductList = (props) => {
     }
   };
 
+  
   const printProduct = (value, index) => {
     // return product.map((value, index) =>{
     return (

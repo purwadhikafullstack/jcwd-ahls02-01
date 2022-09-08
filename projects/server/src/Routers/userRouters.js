@@ -19,4 +19,5 @@ router.get(
   readToken,
   userControllers.getproductDetail
 );
+
 module.exports = router;

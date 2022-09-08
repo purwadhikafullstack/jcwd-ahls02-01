@@ -5,5 +5,5 @@ const rajaOngkirControllers = require('./rajaOngkirControllers')
 
 module.exports = {
   userControllers, addressControllers, rajaOngkirControllers,
-  adminControllers,
+  adminControllers
 };

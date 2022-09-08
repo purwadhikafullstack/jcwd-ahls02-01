@@ -25,7 +25,7 @@ function ModalAddress(props) {
   const toast = useToast()
   const [currentToast, newToast]=useToastHook();
   const [editKota, setEditKota]=React.useState("")
-  const [postalCodeOn, setPostalCodeOn]=React.useState(false)
+  // const [postalCodeOn, setPostalCodeOn]=React.useState(false)
   const [editKotaId, setEditKotaId]=React.useState(0)
   const [editProvinsiId, setEditProvinsiId]=React.useState(0)
   const [loadingStat, setLoadingStat]=React.useState(false);
@@ -109,7 +109,7 @@ function ModalAddress(props) {
   const handleCityName = async(e) => {
     try {
       console.log("====addProvinsiId func", editKotaId)
-      setPostalCodeOn(!postalCodeOn)
+      // setPostalCodeOn(!postalCodeOn)
       if (editKotaId > 0){
         // setPostalCodeOn(!postalCodeOn)
         {getCityRajaOngkir2()}
@@ -170,7 +170,7 @@ function ModalAddress(props) {
     }
   }
 
-    console.log("EDIT ONN", postalCodeOn)
+    // console.log("EDIT ONN", postalCodeOn)
     console.log("getProvince2 & getCity2", getProvince2, getCity2)
   const handleEditAddress=async()=>{
     try {
@@ -187,7 +187,7 @@ function ModalAddress(props) {
           city: getCity2,
           cityid: editKotaId,
           postalCode: editKodePos,
-          editPostalCode: postalCodeOn,
+          // editPostalCode: postalCodeOn,
           receiverName: editPenerima,
           receiverPhone: editTelfon,
           isDefaultAddress: editUtama
@@ -280,7 +280,7 @@ function ModalAddress(props) {
   const handleCancelEdit =()=>{
     setEditAddress(!editAddress)
     setEditUtama(false)
-    setPostalCodeOn(false)
+    // setPostalCodeOn(false)
     setEditLabel("")
     setEditPenerima("")
     setEditTelfon("")
@@ -340,9 +340,19 @@ function ModalAddress(props) {
                 <Select isDisabled bgColor={"#FFFFFF"} boxShadow='md' placeholder={value.city}>
                 </Select>
               }
+              {
+                editKotaId > 0 ?
+                <>
                 <FormLabel mt={4}>Kode Pos</FormLabel>
                   <Input bgColor={"#FFFFFF"} boxShadow='md' defaultValue={value.postalCode} onChange={(e)=>setEditKodePos(e.target.value)}
                   onClick={handleCityName} />
+                </>
+              :
+                <>
+                <FormLabel mt={4}>Kode Pos</FormLabel>
+                  <Input isDisabled bgColor={"#FFFFFF"} boxShadow='md' placeholder={value.postalCode} />
+                </>
+              }
             </FormControl>
             <div class="d-flex justify-content-end">
               <ButtonGroup mt={6}>
@@ -401,9 +411,19 @@ function ModalAddress(props) {
                     <Select isDisabled bgColor={"#FFFFFF"} boxShadow='md' placeholder={value.city}>
                     </Select>
                   }
+                  {
+                    editKotaId > 0 ?
+                    <>
                     <FormLabel mt={4}>Kode Pos</FormLabel>
                       <Input bgColor={"#FFFFFF"} boxShadow='md' defaultValue={value.postalCode} onChange={(e)=>setEditKodePos(e.target.value)}
                       onClick={handleCityName} />
+                    </>
+                  :
+                    <>
+                    <FormLabel mt={4}>Kode Pos</FormLabel>
+                      <Input isDisabled bgColor={"#FFFFFF"} boxShadow='md' placeholder={value.postalCode} />
+                    </>
+                  }
                 </FormControl>
                   <Checkbox mt={5} checked={editUtama} onChange={(e)=> {setEditUtama(e.target.checked)}}>
                     Alamat Utama
