@@ -37,7 +37,6 @@ const ProductDetail = (props) => {
   const fetchProductDetail = () => {
     let token = localStorage.getItem("tokenIdUser");
     Axios.get(`${API_URL}/users/getproductdetail/${params.id}`, {
-      headers: { Authorization: `Bearer ${token}` },
     }).then((res) => {
       setProductDetail(res.data.data[0]);
       console.log(res.data);

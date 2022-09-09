@@ -74,6 +74,8 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot" element={<ForgotPassword />} />
+            <Route path="/productdetail/:id" element={<ProductDetail />} />
+            <Route path="/productList" element={<ProductList />} />
           </>
         )}
         <Route path="*" element={<NotFoundPage />} />
