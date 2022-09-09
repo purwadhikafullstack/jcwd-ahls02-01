@@ -44,7 +44,7 @@ function ModalConversion(props) {
         // memeriksa adanya token
         if (token) {
           let res = await Axios.post(`${API_URL}/admin/getProduct`,{
-            idProducts: 3
+            
           },{
             headers: {
               'Authorization': `Bearer ${token}`

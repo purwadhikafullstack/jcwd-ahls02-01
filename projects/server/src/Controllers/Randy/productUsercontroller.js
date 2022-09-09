@@ -8,7 +8,9 @@ const unitConversion = require("../../Helper/conversionHelper");
 
 module.exports = {
   getProducts: async (req, res) => {
-    const qGetProducts = `SELECT p.*,s.priceSale FROM products as p JOIN stocks as s ON p.idProduct=s.idProduct WHERE s.isMain="true"`;
+    const{page,limit}=req.body
+    const offset = (parseInt(page-1)*parseInt(limit))
+    const qGetProducts = `SELECT p.*,s.priceSale FROM products as p JOIN stocks as s ON p.idProduct=s.idProduct WHERE s.isMain="true" LIMIT ${offset},${limit}`;
     const xGetProducts = await query(qGetProducts);
     res.status(200).json({
       data: xGetProducts,
