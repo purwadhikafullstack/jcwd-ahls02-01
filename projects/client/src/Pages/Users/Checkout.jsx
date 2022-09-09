@@ -10,6 +10,7 @@ import { API_URL } from "../../helper";
 import { getAddress, getAddressActions } from "../../Redux/Actions/addressActions";
 import { getProvinceRajaOngkir, getProvinceActions2 } from "../../Redux/Actions/getProvinceActions";
 import { getCityRajaOngkir, getCityActions2 } from "../../Redux/Actions/getCityActions";
+import { getCostRajaOngkir, getCostActions2 } from "../../Redux/Actions/getCostActions";
 import {
     Box,
     Divider,
@@ -54,54 +55,6 @@ const CheckoutPage = (props) => {
     console.log(`checkout pg-state dari page cart ${state}`);
 
     //^ STATE MANAGEMENT
-    const { databaseCart } = useSelector((state) => {
-        return {
-            databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
-        }
-    })
-
-    //^ check isi databaseCart
-    console.log(`databaseCart`, databaseCart);
-
-    //! bisa didelete krn sudah diganti dr reducer
-    const [dbCart, setDbCart] = useState([
-        {
-            idCart: 1,
-            idStock: 15,
-            idUser: 6,
-            productName: "Derma AnGel Acne Patch Day",
-            productPicture: "https://d2qjkwm11akmwu.cloudfront.net/products/887201_27-6-2022_14-36-43.webp",
-            cartQuantity: 2,
-            stockType: "dus",
-            priceSale: 16500,
-            subTotal: 33000,
-            isActive: "true"
-        },
-        {
-            idCart: 2,
-            idStock: 7,
-            idUser: 6,
-            productName: "Enervon-C",
-            productPicture: "https://d2qjkwm11akmwu.cloudfront.net/products/263731_19-5-2022_13-22-8.png",
-            cartQuantity: 1,
-            stockType: "saset",
-            priceSale: 35000,
-            subTotal: 35000,
-            isActive: "true"
-        },
-        {
-            idCart: 3,
-            idStock: 3,
-            idUser: 7,
-            productName: "Decolgen",
-            productPicture: "https://d2qjkwm11akmwu.cloudfront.net/products/49b5c4d0-85c9-4dc0-b1e2-96574c106cd9_product_image_url.webp",
-            cartQuantity: 1,
-            stockType: "saset",
-            priceSale: 2300,
-            subTotal: 2300,
-            isActive: "true"
-        }
-    ]);
 
     //TODO ❗❗❗ axios rajaongkir untuk ambil delivery method dan ongkirnya berdasarkan alamat pengiriman yang dipilih
     const [deliveryMethod, setDeliveryMethod] = useState({
@@ -218,15 +171,39 @@ const CheckoutPage = (props) => {
     const [radioDelivery, setRadioDelivery] = useState("jne");
     const [deliveryDropdownValue, setDeliveryDropdownValue] = useState("null");
 
+    const { databaseCart, getCost, getCost2 } = useSelector((state) => {
+        if (idCityForOngkir > 0) {
+            return {
+                databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
+                // getCost: state.getCostReducers.getCost
+            }
+        } else if (idCityForOngkir > 0 && state.getCostReducer.getCost.length > 0) {
+            return {
+                databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
+                getCost2: state.getCostReducers.getCost2
+            }
+        } else {
+            return {
+                databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
+            }
+        }
+    })
+
+    //^ check isi databaseCart
+    console.log(`databaseCart`, databaseCart);
+
     // & component did mount
     useEffect(() => {
         handleSubTotal();
-        dispatch(getAddress())
-        dispatch(getProvinceRajaOngkir())
+        dispatch(getAddress());
+        dispatch(getProvinceRajaOngkir());
+        // dispatch(getCostRajaOngkir());
+        // handleCallbackToChild();
 
         // fungsi untuk get ongkir rajaongkir via idProvince dan idCity dari AccorAddress
 
     }, [ongkir, total])
+    // }, [idAddressForOngkir, ongkir, total])
 
     // & btn onclick kembali ke page Cart
     // const btnBackToCart = () => {
@@ -282,6 +259,8 @@ const CheckoutPage = (props) => {
 
     // & untuk ambil alamat terpilih dari AccorAddressComponent
     const handleCallbackToChild = (idAddress, address, idProvince, idCity, receiverName, receiverPhone, label) => {
+        console.log(`isi handleCallbackToChild`, idAddress, address, idProvince, idCity, receiverName, receiverPhone, label);
+
         setLabelForOngkir(label);
         setReceiverNameForOngkir(receiverName);
         setReceiverPhoneForOngkir(receiverPhone);
@@ -289,6 +268,30 @@ const CheckoutPage = (props) => {
         setAddressForOngkir(address);
         setIdProvinceForOngkir(idProvince);
         setIdCityForOngkir(idCity);
+
+        getCostRajaOngkir2();
+
+    }
+
+    const getCostRajaOngkir2 = async () => {
+        try {
+            console.log(`idCityForOngkir`, idCityForOngkir);
+
+            if (idCityForOngkir > 0) {
+                console.log(`getCostRajaOngkir 2 jalan`)
+                let res = await Axios.get(`${API_URL}/rajaOngkir/getCost2`, {
+                    headers: {
+                        kota: idCityForOngkir
+                    }
+                })
+                if (res.data) {
+                    console.log(`RES DATA GET COST RAJA ONGKIR`, res.data.dataOngkir);
+                    dispatch(getCostActions2(res.data.dataOngkir));
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     // & untuk ambil idAddress kalau ada alamat yg diedit
@@ -322,32 +325,53 @@ const CheckoutPage = (props) => {
     }
 
     // & onCLick untuk simpan alamat yang terpilih, kalau sudah pernah pilih alamat saat onCLick meskipun ga melakukan pemilihan lagi by default akan pilih alamat yg pernah dipilih itu
-    const btnSimpan = () => {
+    const btnSimpan = async () => {
+        try {
+            if (isEditedAlamat) {
+                newToast({
+                    title: `Update Anda Belum Tersimpan`,
+                    description: "Simpan dahulu pembaharuan alamat Anda",
+                    status: 'warning'
+                })
+            } else if (isTambahAlamat) {
+                newToast({
+                    title: `Alamat Baru Belum Tersimpan`,
+                    description: "Simpan dahulu alamat terbaru Anda",
+                    status: 'warning'
+                })
+            } else if (idAddressForOngkir) {
 
-        if (isEditedAlamat) {
-            newToast({
-                title: `Update Anda Belum Tersimpan`,
-                description: "Simpan dahulu pembaharuan alamat Anda",
-                status: 'warning'
-            })
-        } else if (isTambahAlamat) {
-            newToast({
-                title: `Alamat Baru Belum Tersimpan`,
-                description: "Simpan dahulu alamat terbaru Anda",
-                status: 'warning'
-            })
-        } else if (idAddressForOngkir) {
-            setIsTambahAlamat(0);
-            setIsModalAddressOpen(false);
+                console.log(`DARI ACCORDION idAddress ${idAddressForOngkir}, address ${addressForOngkir}, idProvince ${idProvinceForOngkir}, idCity ${idCityForOngkir}, receiverName ${receiverNameForOngkir}, receiverPhone ${receiverPhoneForOngkir}, label ${labelForOngkir}`);
 
-            console.log(`DARI ACCORDION idAddress ${idAddressForOngkir}, address ${addressForOngkir}, idProvince ${idProvinceForOngkir}, idCity ${idCityForOngkir}, receiverName ${receiverNameForOngkir}, receiverPhone ${receiverPhoneForOngkir}, label ${labelForOngkir}`);
+                setIsTambahAlamat(0);
+                setIsModalAddressOpen(false);
 
-        } else {
-            newToast({
-                title: `Alamat Belum Terpilih`,
-                description: "Pilih dahulu alamat yang ingin dituju",
-                status: 'warning'
-            })
+                if (idCityForOngkir) {
+                    console.log(`ada idCityForOngkir nya`);
+                    let res = await Axios.get(`${API_URL}/rajaOngkir/getCost2`, {
+                        headers: {
+                            kota: idCityForOngkir
+                        }
+                    })
+                    if (res.data) {
+                        console.log(`RES DATA GET COST RAJAONGKIR`, res.data);
+                        dispatch(getCostActions2(res.data));
+                    }
+                } else {
+                    alert('else')
+                }
+
+
+            } else {
+                console.log(`idAddressForOngkir`, idAddressForOngkir)
+                newToast({
+                    title: `Alamat Belum Terpilih`,
+                    description: "Pilih dahulu alamat yang ingin dituju",
+                    status: 'warning'
+                })
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -383,30 +407,35 @@ const CheckoutPage = (props) => {
 
     // & printList metode pengririman berdasarkan onChange radio button
     const printDelivery = (radioDelivery) => {
-        let arrayDelivery = deliveryMethod[radioDelivery];
-        return arrayDelivery.map((valueDelivery, indexDelivery) => {
-            return (<option
-                key={indexDelivery}
-                value={`${valueDelivery.description}-${valueDelivery.cost[0].value}`}
-            >
-                <Text
-                    className="font-brand"
+        if (getCost2) {
+
+            console.log(`isi getCost2`, getCost2);
+            let arrayDelivery = getCost2.radioDelivery;
+            console.log(`isi arrayDelivery`, arrayDelivery);
+            return arrayDelivery.map((valueDelivery, indexDelivery) => {
+                return (<option
+                    key={indexDelivery}
+                    value={`${valueDelivery.description}-${valueDelivery.cost[0].value}`}
                 >
-                    {
-                        valueDelivery.cost[0].etd.toLowerCase().includes("hari")
-                            ?
-                            <>
-                                {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()}
-                            </>
-                            :
-                            <>
-                                {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()} hari
-                            </>
-                    }
-                </Text>
-            </option>
-            )
-        })
+                    <Text
+                        className="font-brand"
+                    >
+                        {
+                            valueDelivery.cost[0].etd.toLowerCase().includes("hari")
+                                ?
+                                <>
+                                    {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()}
+                                </>
+                                :
+                                <>
+                                    {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()} hari
+                                </>
+                        }
+                    </Text>
+                </option>
+                )
+            })
+        }
     }
 
     //& onClick akan simpan info alamat dan ongkir terpilih, navigate ke transactionlist tab menunggu pembayaran

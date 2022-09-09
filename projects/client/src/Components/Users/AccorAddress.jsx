@@ -7,6 +7,7 @@ import { API_URL } from "../../helper";
 import { getAddress, getAddressActions } from "../../Redux/Actions/addressActions";
 import { getProvinceRajaOngkir, getProvinceActions2, getProvinceRajaOngkir2 } from "../../Redux/Actions/getProvinceActions";
 import { getCityRajaOngkir, getCityActions2 } from "../../Redux/Actions/getCityActions";
+import { getCostRajaOngkir, getCost2 } from "../../Redux/Actions/getCostActions";
 import {
     Box,
     Text,
@@ -55,20 +56,53 @@ const AccorAddressComponent = (props) => {
     const [newPostalCode, setNewPostalCode] = useState("");
     const [newLabel, setNewLabel] = useState("");
     const [accordionIndex, setAccordionIndex] = useState(null);
+    const [idCityForOngkir, setIdCityForOngkir] = useState(null);
 
     //TODO ❗❗❗ ambil dari reducer address
-    const { address, phone, idUser, name, token, getProvince, getProvince2, getCity, getCity2 } = useSelector((state) => {
-        return {
-            address: state.addressReducers.address,
-            phone: state.userReducers.phone,
-            idUser: state.userReducers.idUser,
-            name: state.userReducers.name,
-            token: state.userReducers.token,
-            getProvince: state.getProvinceReducers.getProvince,
-            getProvince2: state.getProvinceReducers.getProvince2,
-            getCity: state.getCityReducers.getCity,
-            getCity2: state.getCityReducers.getCity2
+    const { address, phone, idUser, name, token, getProvince, getProvince2, getCity, getCity2, getCost } = useSelector((state) => {
+
+        // return {
+        //     address: state.addressReducers.address,
+        //     phone: state.userReducers.phone,
+        //     idUser: state.userReducers.idUser,
+        //     name: state.userReducers.name,
+        //     token: state.userReducers.token,
+        //     getProvince: state.getProvinceReducers.getProvince,
+        //     getProvince2: state.getProvinceReducers.getProvince2,
+        //     getCity: state.getCityReducers.getCity,
+        //     getCity2: state.getCityReducers.getCity2,
+        //     getCost: state.getCostReducers.getCost,
+        //     getCost2: state.getCostReducers.getCost2,
+        // }
+
+        if (accordionIndex != null && idCityForOngkir > 0) {
+            return {
+                address: state.addressReducers.address,
+                phone: state.userReducers.phone,
+                idUser: state.userReducers.idUser,
+                name: state.userReducers.name,
+                token: state.userReducers.token,
+                getProvince: state.getProvinceReducers.getProvince,
+                getProvince2: state.getProvinceReducers.getProvince2,
+                getCity: state.getCityReducers.getCity,
+                getCity2: state.getCityReducers.getCity2,
+                getCost: state.getCostReducers.getCost,
+                getCost2: state.getCostReducers.getCost2,
+            }
+        } else {
+            return {
+                address: state.addressReducers.address,
+                phone: state.userReducers.phone,
+                idUser: state.userReducers.idUser,
+                name: state.userReducers.name,
+                token: state.userReducers.token,
+                getProvince: state.getProvinceReducers.getProvince,
+                getProvince2: state.getProvinceReducers.getProvince2,
+                getCity: state.getCityReducers.getCity,
+                getCity2: state.getCityReducers.getCity2,
+            }
         }
+
     });
 
     const [dbAddress, setDbAddress] = useState([
@@ -360,24 +394,29 @@ const AccorAddressComponent = (props) => {
         } else {
             setAccordionIndex(indexAddress);
 
-            //TODO ❗❗❗ get ongkir dr rajaongkir di sini??? ❗❗❗
+            //TODO ❗❗❗ get ongkir dr rajaongkir di sini ❗❗❗
+            dispatch(getCostRajaOngkir(idCity));
 
             //* kirim info2 alamat terpilih ke Checkout Page
-            props.handleSendingToParent(idAddress, address, idProvince, idCity, receiverName, receiverPhone, label);
+            if (getCost) {
+                setIdCityForOngkir(idCity);
+
+            }
+
+            if (idCityForOngkir == null) {
+
+                props.handleSendingToParent(idAddress, address, idProvince, idCity, receiverName, receiverPhone, label);
+
+            } else {
+                props.handleSendingToParent(idAddress, address, idProvince, idCityForOngkir, receiverName, receiverPhone, label);
+            }
+
+            // props.handleSendingToParent(idAddress, address, idProvince, idCity, receiverName, receiverPhone, label);
+            // else {
+            //     props.handleSendingToParent(idAddress, address, idProvince, idCity, receiverName, receiverPhone, label);
+            // }
         }
     }
-
-    // const handleReceiverName = (value) => {
-    //     console.log(`receiverName baru ${value}`);
-    // }
-
-    // const handleReceiverPhone = (value) => {
-    //     console.log(`receiverPhone baru ${value}`);
-    // }
-
-    // const handleAddress = (value) => {
-    //     console.log(`address baru ${value}`);
-    // }
 
     //TODO ❗❗❗ province baru yang dipilih bakal select idProvince juga
     const handleProvince = (value) => {
@@ -461,13 +500,6 @@ const AccorAddressComponent = (props) => {
             console.log(error);
         }
     }
-
-    // const handlePostalCode = (value) => {
-    //     console.log(`postalCode baru ${value}`);
-    // }
-
-    // console.log(`btnSaveEdit -- getProvince2 dan getCity2`, getProvince2, getCity2);
-    //     console.log(`btnSaveEdit -- newReceiverName, newReceiverPhone, newAddress, newPostalCode`, newReceiverName, newReceiverPhone, newAddress, newPostalCode, address);
 
     //& onClick akan save address yg sudah diedit
     //TODO ❗❗❗ untuk save address terupdate
