@@ -6,7 +6,7 @@ import AccorAddressComponent from "../../Components/Users/AccorAddress";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
 import { getCartAction } from "../../Redux/Actions/cartActions";
-import { API_URL } from "../../helper";
+import { API_URL, BE_URL } from "../../helper";
 import { getAddress, getAddressActions } from "../../Redux/Actions/addressActions";
 import { getProvinceRajaOngkir, getProvinceActions2 } from "../../Redux/Actions/getProvinceActions";
 import { getCityRajaOngkir, getCityActions2 } from "../../Redux/Actions/getCityActions";
@@ -206,40 +206,41 @@ const CheckoutPage = (props) => {
     // }, [idAddressForOngkir, ongkir, total])
 
     // & btn onclick kembali ke page Cart
-    // const btnBackToCart = () => {
+    const btnBackToCart = () => {
 
-    //     setLoadingStatus(true);
-    //     navigate("/cart");
-    //     setLoadingStatus(false);
+        setLoadingStatus(true);
 
-    //     console.log(`state onClick btnBackToCart`, state);
+        let arrayIdCart = state
+        console.log(`arrayIdCart onCLick btnBackToCart ${arrayIdCart}`)
 
-    //     if (state.length > 0) {
+        // navigate("/cart");
 
-    //         let token = localStorage.getItem("tokenIdUser");
+        if (arrayIdCart.length > 0) {
+            console.log(`arrayIdCart.length > 0`);
 
-    //         //^ cek ada token atau tidak
-    //         console.log(`btnBackToCart tokenIdUser`, token);
+            let token = localStorage.getItem("tokenIdUser");
 
-    //         if (token) {
-    //             Axios.post(`${API_URL}/cart/returnStock`, {
-    //                 arrayIdCart: state
-    //             }, {
-    //                 headers: {
-    //                     'Authorization': `Bearer ${token}`
-    //                 }
-    //             }).then((res) => {
-    //                 console.log("isi res.data pas onChange quantity", res.data);
-    //                 dispatch(getCartAction());
-    //                 setLoadingStatus(true);
-    //                 navigate("/cart");
-    //                 setLoadingStatus(false);
-    //             }).catch((err) => {
-    //                 console.log(err)
-    //             })
-    //         }
-    //     }
-    // }
+            //^ cek ada token atau tidak
+            console.log(`btnBackToCart tokenIdUser`, token);
+
+            if (token) {
+                Axios.post(`${API_URL}/cart/returnStock`, {
+                    arrayIdCart
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }).then((res) => {
+                    console.log("isi res.data pas returnToCart", res.data);
+                    dispatch(getCartAction());
+                    navigate("/cart");
+                    setLoadingStatus(false);
+                }).catch((err) => {
+                    console.log(err)
+                })
+            }
+        }
+    }
 
     // & untuk show subTotal dan total berdasarkan CartItem yang dicentang / checkout
     const handleSubTotal = () => {
@@ -459,7 +460,7 @@ const CheckoutPage = (props) => {
                     >
                         Checkout
                     </Text>
-                    {/* <Button
+                    <Button
                         className="col-12 col-md-6 d-none d-md-flex btn-def"
                         width={200}
                         isLoading={loadingStatus}
@@ -482,7 +483,7 @@ const CheckoutPage = (props) => {
                         <TiShoppingCart
                             style={iconStyles}
                         />
-                    </Box> */}
+                    </Box>
                 </div>
 
                 <Center>
@@ -513,7 +514,7 @@ const CheckoutPage = (props) => {
                                                     <Image
                                                         borderRadius='xl'
                                                         boxSize='50px'
-                                                        src={valueCart.productPicture}
+                                                        src={BE_URL+valueCart.productPicture}
                                                         alt='...'
                                                         className="d-md-flex d-none"
                                                     />

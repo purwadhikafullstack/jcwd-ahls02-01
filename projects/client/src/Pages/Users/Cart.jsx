@@ -134,7 +134,7 @@ const CartPage = (props) => {
                         'Authorization': `Bearer ${token}`
                     }
                 }).then((res) => {
-                    console.log("isi res.data pas onChange quantity", res.data);
+                    console.log("isi res.data pas checkout", res.data);
                     dispatch(getCartAction());
                     navigate("/checkout", { state: arrayIdCart });
                     setLoadingStatus(false);

@@ -7,7 +7,7 @@ router.post('/add', readToken, cartControllers.add);
 router.patch('/:idCart', readToken, cartControllers.edit);
 router.patch('/delete/:idCart', readToken, cartControllers.delete);
 router.post('/checkout', readToken, cartControllers.checkout);
-// router.post('/returnStock', readToken, cartControllers.returnStock);
+router.post('/returnStock', readToken, cartControllers.returnStock);
 router.get('/getAllMainStock', cartControllers.getAllMainStock);
 
 module.exports = router;
