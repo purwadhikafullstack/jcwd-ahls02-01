@@ -20,6 +20,8 @@ import Verification from "./Pages/Users/Verification";
 import Productpage from "./Pages/Admin/Product";
 import ProductList from "./Pages/Users/ProductList";
 import ProductDetail from "./Pages/Users/ProductDetail";
+import TransactionListPage from "./Pages/Users/TransactionList";
+import UploadResepPage from "./Pages/Users/UploadResep";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -68,6 +70,8 @@ function App() {
                 <Route path="/cart" element={<CartPage />} />
                 <Route path='/checkout' element={<CheckoutPage />} />
                 <Route path="/editProfile" element={<EditProfile />} />
+                <Route path='/transactionlist' element={<TransactionListPage />} />
+                <Route path='/uploadresep' element={<UploadResepPage />} />
               </>
             )}
           </>

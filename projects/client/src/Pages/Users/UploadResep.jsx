@@ -1,16 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
+// import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 import AccorAddressComponent from "../../Components/Users/AccorAddress";
 import NavbarComponent from "../../Components/Users/Navbar";
+import TransactionList from "./TransactionList";
 import { useToastHook } from "../../Components/CustomToast";
-import { getCartAction } from "../../Redux/Actions/cartActions";
-import { API_URL, BE_URL } from "../../helper";
-import { getAddress, getAddressActions } from "../../Redux/Actions/addressActions";
-import { getProvinceRajaOngkir, getProvinceActions2 } from "../../Redux/Actions/getProvinceActions";
-import { getCityRajaOngkir, getCityActions2 } from "../../Redux/Actions/getCityActions";
-import { getCostRajaOngkir, getCostActions2 } from "../../Redux/Actions/getCostActions";
 import {
     Box,
     Divider,
@@ -29,15 +24,14 @@ import {
     Select,
     Radio,
     RadioGroup,
-    useMediaQuery
+    useMediaQuery,
+    Input
 } from "@chakra-ui/react";
 
-import { TiArrowBack } from "react-icons/ti";
-import { TiShoppingCart } from "react-icons/ti";
 import { ImLocation2 } from "react-icons/im";
 import { MdDeliveryDining } from "react-icons/md";
 
-const CheckoutPage = (props) => {
+const UploadResepPage = (props) => {
 
     // * untuk warnain dan atur size icon kembali ke keranjang saat di mobile phone display
     let iconStyles = { color: "var(--colorSix)", fontSize: "1.5em" };
@@ -48,14 +42,13 @@ const CheckoutPage = (props) => {
     // * assign function
     const [currentToast, newToast] = useToastHook();
     const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const { state, search } = useLocation();
+    //const dispatch = useDispatch();
+    // const { state, search } = useLocation();
 
-    //^ check state dari hasil navigate
-    console.log(`checkout pg-state dari page cart ${state}`);
+    //^ check state
+    // console.log(`checkout pg-state dari page cart ${state}`);
 
     //^ STATE MANAGEMENT
-
     //TODO ❗❗❗ axios rajaongkir untuk ambil delivery method dan ongkirnya berdasarkan alamat pengiriman yang dipilih
     const [deliveryMethod, setDeliveryMethod] = useState({
         "jne": [
@@ -154,7 +147,7 @@ const CheckoutPage = (props) => {
         ]
     })
 
-    const [subTotalAllCartItems, setSubTotalAllCartItems] = useState(0);
+    // const [subTotalAllCartItems, setSubTotalAllCartItems] = useState(0);
     const [idAddressForOngkir, setIdAddressForOngkir] = useState(null);
     const [addressForOngkir, setAddressForOngkir] = useState("");
     const [idProvinceForOngkir, setIdProvinceForOngkir] = useState(null);
@@ -170,140 +163,27 @@ const CheckoutPage = (props) => {
     const [isEditedAlamat, setIsEditedAlamat] = useState(null);
     const [radioDelivery, setRadioDelivery] = useState("jne");
     const [deliveryDropdownValue, setDeliveryDropdownValue] = useState("null");
-
-    const { databaseCart, getCost, getCost2 } = useSelector((state) => {
-
-        // return {
-        //     databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
-        //     getCost: state.getCostReducers.getCost,
-        //     getCost2: state.getCostReducers.getCost2
-        // }
-
-        if (idCityForOngkir > 0) {
-            return {
-                databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
-                getCost: state.getCostReducers.getCost
-            }
-        } else if (idCityForOngkir > 0 && getCost.length > 0) {
-            return {
-                databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
-                getCost2: state.getCostReducers.getCost2
-            }
-        } else {
-            return {
-                databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
-            }
-        }
-    })
-
-    //^ check isi databaseCart
-    console.log(`isi state databaseCart`, databaseCart);
-    console.log(`isi state getCost`, getCost);
-    console.log(`isi state getCost2`, getCost2);
+    const [isUnggahResep, setIsUnggahResep] = useState(0);
+    const [newImageResep, setNewImageResep] = useState(null);
+    const inputIdImageRecipe = useRef(null);
 
     // & component did mount
     useEffect(() => {
-        handleSubTotal();
-        dispatch(getAddress());
-        dispatch(getProvinceRajaOngkir());
-        // dispatch(getCostRajaOngkir());
-        // handleCallbackToChild();
+        setIsUnggahResep(1);
 
         // fungsi untuk get ongkir rajaongkir via idProvince dan idCity dari AccorAddress
 
-    }, [idAddressForOngkir, ongkir, total])
-    // }, [idAddressForOngkir, ongkir, total])
-
-    // & btn onclick kembali ke page Cart
-    const btnBackToCart = () => {
-
-        setLoadingStatus(true);
-
-        let arrayIdCart = state
-        console.log(`arrayIdCart onCLick btnBackToCart ${arrayIdCart}`)
-
-        // navigate("/cart");
-
-        if (arrayIdCart.length > 0) {
-            console.log(`arrayIdCart.length > 0`);
-
-            let token = localStorage.getItem("tokenIdUser");
-
-            //^ cek ada token atau tidak
-            console.log(`btnBackToCart tokenIdUser`, token);
-
-            if (token) {
-                Axios.post(`${API_URL}/cart/returnStock`, {
-                    arrayIdCart
-                }, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                }).then((res) => {
-                    console.log("isi res.data pas returnToCart", res.data);
-                    dispatch(getCartAction());
-                    navigate("/cart");
-                    setLoadingStatus(false);
-                }).catch((err) => {
-                    console.log(err)
-                })
-            }
-        }
-    }
-
-    // & untuk show subTotal dan total berdasarkan CartItem yang dicentang / checkout
-    const handleSubTotal = () => {
-        // & untuk show subTotal dan total berdasarkan CartItem yang dicentang / checkout
-        let temp = 0
-        databaseCart.map((valueCart, indexCart) => {
-            for (let i = 0; i < state.length; i++) {
-                if (valueCart.idCart == state[i]) {
-                    temp += valueCart.subTotal
-                }
-            }
-            return temp
-        })
-        setSubTotalAllCartItems(temp);
-        handleTotalPaymentWithoutAdmin();
-    }
+    }, [])
 
     // & untuk ambil alamat terpilih dari AccorAddressComponent
     const handleCallbackToChild = (idAddress, address, idProvince, idCity, receiverName, receiverPhone, label) => {
-        console.log(`isi handleCallbackToChild`, idAddress, address, idProvince, idCity, receiverName, receiverPhone, label);
-
-        setLabelForOngkir(label);
-        setReceiverNameForOngkir(receiverName);
-        setReceiverPhoneForOngkir(receiverPhone);
         setIdAddressForOngkir(idAddress);
         setAddressForOngkir(address);
         setIdProvinceForOngkir(idProvince);
         setIdCityForOngkir(idCity);
-
-        if (idCity > 0) {
-            getCostRajaOngkir2();
-        }
-
-    }
-
-    const getCostRajaOngkir2 = async () => {
-        try {
-            console.log(`idCityForOngkir`, idCityForOngkir);
-
-            if (idCityForOngkir > 0) {
-                console.log(`getCostRajaOngkir 2 jalan`)
-                let res = await Axios.get(`${API_URL}/rajaOngkir/getCost2`, {
-                    headers: {
-                        kota: idCityForOngkir
-                    }
-                })
-                if (res.data) {
-                    console.log(`RES DATA GETCOST2 RAJA ONGKIR`, res.data.dataOngkir);
-                    dispatch(getCostActions2(res.data.dataOngkir));
-                }
-            }
-        } catch (error) {
-            console.log(error);
-        }
+        setReceiverNameForOngkir(receiverName);
+        setReceiverPhoneForOngkir(receiverPhone);
+        setLabelForOngkir(label);
     }
 
     // & untuk ambil idAddress kalau ada alamat yg diedit
@@ -337,53 +217,32 @@ const CheckoutPage = (props) => {
     }
 
     // & onCLick untuk simpan alamat yang terpilih, kalau sudah pernah pilih alamat saat onCLick meskipun ga melakukan pemilihan lagi by default akan pilih alamat yg pernah dipilih itu
-    const btnSimpan = async () => {
-        try {
-            if (isEditedAlamat) {
-                newToast({
-                    title: `Update Anda Belum Tersimpan`,
-                    description: "Simpan dahulu pembaharuan alamat Anda",
-                    status: 'warning'
-                })
-            } else if (isTambahAlamat) {
-                newToast({
-                    title: `Alamat Baru Belum Tersimpan`,
-                    description: "Simpan dahulu alamat terbaru Anda",
-                    status: 'warning'
-                })
-            } else if (idAddressForOngkir) {
+    const btnSimpan = () => {
 
-                console.log(`DARI ACCORDION idAddress ${idAddressForOngkir}, address ${addressForOngkir}, idProvince ${idProvinceForOngkir}, idCity ${idCityForOngkir}, receiverName ${receiverNameForOngkir}, receiverPhone ${receiverPhoneForOngkir}, label ${labelForOngkir}`);
+        if (isEditedAlamat) {
+            newToast({
+                title: `Update Anda Belum Tersimpan`,
+                description: "Simpan dahulu pembaharuan alamat Anda",
+                status: 'warning'
+            })
+        } else if (isTambahAlamat) {
+            newToast({
+                title: `Alamat Baru Belum Tersimpan`,
+                description: "Simpan dahulu alamat terbaru Anda",
+                status: 'warning'
+            })
+        } else if (idAddressForOngkir) {
+            setIsTambahAlamat(0);
+            setIsModalAddressOpen(false);
 
-                setIsTambahAlamat(0);
-                setIsModalAddressOpen(false);
+            console.log(`DARI ACCORDION idAddress ${idAddressForOngkir}, address ${addressForOngkir}, idProvince ${idProvinceForOngkir}, idCity ${idCityForOngkir}, receiverName ${receiverNameForOngkir}, receiverPhone ${receiverPhoneForOngkir}, label ${labelForOngkir}`);
 
-                if (idCityForOngkir) {
-                    console.log(`ada idCityForOngkir nya untuk dioper ke getCost2`);
-                    let res = await Axios.get(`${API_URL}/rajaOngkir/getCost2`, {
-                        headers: {
-                            kota: idCityForOngkir
-                        }
-                    })
-                    if (res.data) {
-                        console.log(`RES DATA GETCOST2 RAJAONGKIR`, res.data);
-                        dispatch(getCostActions2(res.data));
-                    }
-                } else {
-                    alert('else')
-                }
-
-
-            } else {
-                console.log(`idAddressForOngkir`, idAddressForOngkir)
-                newToast({
-                    title: `Alamat Belum Terpilih`,
-                    description: "Pilih dahulu alamat yang ingin dituju",
-                    status: 'warning'
-                })
-            }
-        } catch (error) {
-            console.log(error);
+        } else {
+            newToast({
+                title: `Alamat Belum Terpilih`,
+                description: "Pilih dahulu alamat yang ingin dituju",
+                status: 'warning'
+            })
         }
     }
 
@@ -393,7 +252,6 @@ const CheckoutPage = (props) => {
         setDeliveryDropdownValue("null");
         setOngkir(0);
         handleTotalPaymentWithoutAdmin();
-        getCostRajaOngkir2();
     }
 
     // & onChange dropdown metode pengiriman yg akan setState value dropdown dan ongkir per pergantian dropdown, aktifin hitung ulang angka total
@@ -415,77 +273,58 @@ const CheckoutPage = (props) => {
 
     // & hitung ulang angka total pembayaran
     const handleTotalPaymentWithoutAdmin = () => {
-        setTotal(subTotalAllCartItems + ongkir);
+        setTotal(0 + ongkir);
     }
 
     // & printList metode pengririman berdasarkan onChange radio button
     const printDelivery = (radioDelivery) => {
-        if (getCost){
-
-            console.log(`isi getCost di printDelivery`, getCost);
-            let arrayDelivery = getCost[radioDelivery];
-            console.log(`isi arrayDelivery`, arrayDelivery);
-            return arrayDelivery.map((valueDelivery, indexDelivery) => {
-                return (<option
-                    key={indexDelivery}
-                    value={`${valueDelivery.description}-${valueDelivery.cost[0].value}`}
+        let arrayDelivery = deliveryMethod[radioDelivery];
+        return arrayDelivery.map((valueDelivery, indexDelivery) => {
+            return (<option
+                key={indexDelivery}
+                value={`${valueDelivery.description}-${valueDelivery.cost[0].value}`}
+            >
+                <Text
+                    className="font-brand"
                 >
-                    <Text
-                        className="font-brand"
-                    >
-                        {
-                            valueDelivery.cost[0].etd.toLowerCase().includes("hari")
-                                ?
-                                <>
-                                    {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()}
-                                </>
-                                :
-                                <>
-                                    {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()} hari
-                                </>
-                        }
-                    </Text>
-                </option>
-                )
-            })
-
-        } else if (getCost2) {
-
-            console.log(`isi getCost2 di printDelivery`, getCost2);
-            let arrayDelivery = getCost2[radioDelivery];
-            console.log(`isi arrayDelivery`, arrayDelivery);
-            return arrayDelivery.map((valueDelivery, indexDelivery) => {
-                return (<option
-                    key={indexDelivery}
-                    value={`${valueDelivery.description}-${valueDelivery.cost[0].value}`}
-                >
-                    <Text
-                        className="font-brand"
-                    >
-                        {
-                            valueDelivery.cost[0].etd.toLowerCase().includes("hari")
-                                ?
-                                <>
-                                    {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()}
-                                </>
-                                :
-                                <>
-                                    {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()} hari
-                                </>
-                        }
-                    </Text>
-                </option>
-                )
-            })
-        }
+                    {
+                        valueDelivery.cost[0].etd.toLowerCase().includes("hari")
+                            ?
+                            <>
+                                {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()}
+                            </>
+                            :
+                            <>
+                                {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()} hari
+                            </>
+                    }
+                </Text>
+            </option>
+            )
+        })
     }
 
-    //& onClick akan simpan info alamat dan ongkir terpilih, navigate ke transactionlist tab menunggu pembayaran
-    const btnBayar = () => {
-        
+    //& onClick tombol file akan minta user pilih gambar resep, simpan value resep di state
+    const handleImageResep = (value) => {
+        console.log(`value handleImageResep`, value);
+        setNewImageResep(value);
+        setIsUnggahResep(1); //& untuk jaga2 di setstate = 1 jg disini
+    }
+
+    //& onClick akan simpan gambar resep, alamat terpilih, ongkir terpilih di tabel transaksi
+    const btnUnggahResep = () => {
+        console.log(`btnUnggahResep diklik`);
         navigate('/transactionlist');
-
-    }
+    };
+    // const btnUnggahResep = (idx=1,onClick) => {
+    //     console.log(`btnUnggahResep diklik`);
+    //     navigate('/transactionlist');
+    //     return (<button
+    //         type='button'
+    //         onClick={()=>onClick(idx)}
+    //         >
+    //         </button>)
+    // };
 
     return (
         <>
@@ -500,32 +339,8 @@ const CheckoutPage = (props) => {
                         className="col-6 col-md-6 h3"
                         py={{ base: 0, md: 2 }}
                     >
-                        Checkout
+                        Unggah Resep
                     </Text>
-                    <Button
-                        className="col-12 col-md-6 d-none d-md-flex btn-def"
-                        width={200}
-                        isLoading={loadingStatus}
-                        loadingText=""
-                        onClick={btnBackToCart}
-                    >
-                        Kembali ke Keranjang
-                    </Button>
-                    <Box
-                        width="auto"
-                        borderWidth={1}
-                        borderRadius={5}
-                        borderColor="var(--colorSix)"
-                        className="d-flex d-md-none col-6"
-                        onClick={() => navigate("/cart")}
-                    >
-                        <TiArrowBack
-                            style={iconStyles}
-                        />
-                        <TiShoppingCart
-                            style={iconStyles}
-                        />
-                    </Box>
                 </div>
 
                 <Center>
@@ -534,125 +349,46 @@ const CheckoutPage = (props) => {
                         className="shadow-sm"
                         style={{ backgroundColor: "var(--colorTwo)" }}
                     >
-                        {/* ❗❗❗ Obat-obat dari Cart page yang akan dibeli: productName, productPicture, purchaseQuantity, subTotal */}
-                        {databaseCart.map((valueCart, indexCart) => {
-                            for (let i = 0; i < state.length; i++) {
-                                if (valueCart.idCart == state[i]) {
-                                    return (
-                                        <Box
-                                            key={valueCart.idCart}
-                                            display="flex"
-                                            alignItems="center"
-                                            p={2}
-                                        >
-                                            <div
-                                                className="col-12 d-flex align-items-start justify-content-between"
-                                            >
-                                                <Box
-                                                    display="flex"
-                                                    alignItems="center"
-                                                    justifyContent="space-between"
-                                                >
-                                                    <Image
-                                                        borderRadius='xl'
-                                                        boxSize='50px'
-                                                        src={BE_URL + valueCart.productPicture}
-                                                        alt='...'
-                                                        className="d-md-flex d-none"
-                                                    />
-                                                    <Box>
-                                                        <Text
-                                                            className="font-brand"
-                                                        >
-                                                            {valueCart.productName}
-                                                        </Text>
-                                                        <Text
-                                                            className="font-brand"
-                                                            color='var(--colorFour)'
-                                                            fontSize={12}
-                                                        >
-                                                            {valueCart.cartQuantity}  {valueCart.stockType}
-                                                        </Text>
-                                                    </Box>
-                                                </Box>
-                                                <Text
-                                                    className="font-brand"
-                                                >
-                                                    Rp {valueCart.subTotal.toLocaleString()}
-                                                </Text>
-                                            </div>
-                                        </Box>
-                                    )
+                        <Box
+                            display='flex'
+                            alignItems='center'
+                            justifyContent='space-between'
+                            pe={6}
+                            pt={5}
+                        >
+                            <label
+                                className="ps-2"
+                                for='inputIdImageRecipe'
+                                style={{ width: "380px" }}
+                            >
+                                Unggah resep dokter disini (max 1MB, .jpg/.png)
+                            </label>
+                            <Input
+                                id='inputIdImageRecipe'
+                                ref={inputIdImageRecipe}
+                                type='file'
+                                accept='.jpg, .png, .jpeg'
+                                display='none'
+                                onChange={(e) => handleImageResep(e.target.files[0])}
+                            />
+                            <Image
+                                src={!newImageResep
+                                    ?
+                                    "https://images.vexels.com/media/users/3/131734/isolated/preview/05d86a9b63d1930d6298b27081ddc345-photo-preview-frame-icon.png"
+                                    :
+                                    URL.createObjectURL(newImageResep)
                                 }
-                            }
-                        })
-                        }
+                                for='inputIdImageRecipe'
+                                onClick={() => inputIdImageRecipe.current.click()}
+                                style={{ width: '40%', height: 'auto' }}
+                            />
+                        </Box>
                         <Divider
-                            variant="dashed"
+                            variant="solid"
                             borderColor={"var(--colorSeven)"}
                             my={2}
                         />
-                        <div
-                            className="col-12 d-flex align-items-start justify-content-between"
-                        >
-                            <Text
-                                className="font-brand"
-                                ps={2}
-                            >
-                                Sub total
-                            </Text>
-                            <Text
-                                className="font-brand"
-                                pe={2}
-                            >
-                                Rp {subTotalAllCartItems.toLocaleString()}
-                            </Text>
 
-                        </div>
-                        <div
-                            className="col-12 d-flex align-items-start justify-content-between"
-                        >
-                            <Text
-                                className="font-brand"
-                                ps={2}
-                            >
-                                Ongkos kirim
-                            </Text>
-                            <Text
-                                className="font-brand"
-                                pe={2}
-                            >
-                                Rp {ongkir.toLocaleString()}
-                            </Text>
-                        </div>
-                        <Divider
-                            variant="solid"
-                            borderColor={"var(--colorSeven)"}
-                            my={2}
-                        />
-                        <div
-                            className="col-12 d-flex align-items-start justify-content-between"
-                        >
-                            <Text
-                                className="font-brand"
-                                ps={2}
-                                as="b"
-                            >
-                                Total
-                            </Text>
-                            <Text
-                                className="font-brand"
-                                pe={2}
-                                as="b"
-                            >
-                                Rp {(subTotalAllCartItems + ongkir).toLocaleString()}
-                            </Text>
-                        </div>
-                        <Divider
-                            variant="solid"
-                            borderColor={"var(--colorSeven)"}
-                            my={2}
-                        />
                         {/*❗❗❗ Alamat Pengiriman */}
                         <Box>
 
@@ -677,7 +413,6 @@ const CheckoutPage = (props) => {
                                             handleSendingToParentEditedAddress={handleCallbackToChildEditedAddress}
                                             isTambahAlamat={isTambahAlamat}
                                         />
-
                                     </ModalBody>
                                     <ModalFooter>
                                         <Button
@@ -766,6 +501,7 @@ const CheckoutPage = (props) => {
                                 borderColor={"var(--colorSeven)"}
                                 my={2}
                             />
+
                             {/* ❗❗❗ Metode Pengiriman */}
                             <Box
                                 display="flex"
@@ -818,6 +554,7 @@ const CheckoutPage = (props) => {
                                 </option>
                                 {printDelivery(radioDelivery)}
                             </Select>
+                            {/* ❗❗❗ End of Metode Pengiriman */}
 
                             <Divider
                                 borderColor={"var(--colorSeven)"}
@@ -831,12 +568,13 @@ const CheckoutPage = (props) => {
                                 p={2}
                             >
                                 <Button
+                                    onClick={btnUnggahResep}
+                                    // onClick={()=>btnUnggahResep(1,handleTabIndex)}
                                     className="btn-def_second"
                                     width={150}
-                                    mb={2}
-                                    onClick={btnBayar}
+                                // me={2}
                                 >
-                                    Bayar
+                                    Unggah Resep
                                 </Button>
                             </Box>
 
@@ -850,4 +588,4 @@ const CheckoutPage = (props) => {
 
 }
 
-export default CheckoutPage;
+export default UploadResepPage;
