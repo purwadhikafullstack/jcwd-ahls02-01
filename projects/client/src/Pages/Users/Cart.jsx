@@ -179,7 +179,7 @@ const CartPage = (props) => {
                             <Button
                                 className="btn-def"
                                 width={250}
-                                onClick={() => navigate("/")}
+                                onClick={() => navigate("/productList")}
                             >
                                 Tambah Produk Lainnya
                             </Button>

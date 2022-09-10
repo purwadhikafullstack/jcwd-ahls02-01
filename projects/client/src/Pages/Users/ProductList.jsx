@@ -2,6 +2,7 @@ import Axios from "axios";
 import React from "react";
 import { API_URL, BE_URL } from "../../helper";
 import { useDispatch } from "react-redux";
+import { getCartAction } from "../../Redux/Actions/cartActions";
 // import { forgotPassword } from "../redux/action/usersAction";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -27,7 +28,7 @@ import obat1 from "../../Assets/DevImage/Panadol.jpg";
 
 const ProductList = (props) => {
   const [productData, setProductData] = React.useState([]);
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [currentToast, newToast] = useToastHook();
   const [loadingStat, setLoadingStat] = React.useState(false);
@@ -43,11 +44,33 @@ const ProductList = (props) => {
       console.log(res.data);
     });
   };
-  const btnCart = async () => {
+
+  const btnCart = async (idProduct) => {
     try {
       setLoadingStat(true);
-      setLoadingStat(false);
-      navigate("/cart");
+
+      let token = localStorage.getItem("tokenIdUser");
+
+      //^ cek ada token atau tidak
+      console.log(`btnCheckout tokenIdUser`, token);
+
+      if (token) {
+        let res = await Axios.post(`${API_URL}/cart/add`, {
+          idProduct
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+
+        if (res.data) {
+          console.log("isi res.data saat btnCart diklik", res.data);
+          dispatch(getCartAction());
+          setLoadingStat(false);
+          navigate("/cart");
+        }
+      }
+
     } catch (err) {
       newToast({
         title: "Error.",
@@ -58,7 +81,7 @@ const ProductList = (props) => {
     }
   };
 
-  
+
   const printProduct = (value, index) => {
     // return product.map((value, index) =>{
     return (
@@ -104,7 +127,7 @@ const ProductList = (props) => {
               <Button
                 isLoading={loadingStat}
                 class="btn-rekom"
-                onClick={btnCart}
+                onClick={() => btnCart(value.idProduct)}
               >
                 Add To Cart
               </Button>

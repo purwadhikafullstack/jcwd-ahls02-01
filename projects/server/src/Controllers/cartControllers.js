@@ -22,7 +22,9 @@ module.exports = {
             //* isi body
             //? idProduct = 3 >> idStock = 5, cartQuantity pasti 1 karena baru pertama masuk cart
             console.log(`req.body.idProduct`, req.body.idProduct);
-            console.log(`req.body.cartQuantity`, req.body.cartQuantity);
+            // console.log(`req.body.cartQuantity`, req.body.cartQuantity);
+
+            let cartQuantity = 1
 
             if (req.dataUser.idUser) {
 
@@ -45,12 +47,12 @@ module.exports = {
                 if (getAllCart.findIndex(valcart => valcart.idStock != getStock.idStock == -1)) {
                     console.log(`idStock ini baru`);
 
-                    if (req.body.cartQuantity <= getStock.stockQuantity) {
+                    if (cartQuantity <= getStock.stockQuantity) {
 
                         //^ cek query sebelum ke database
-                        console.log(`insert into cart (idUser, idStock, cartQuantity, subTotal) values (${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(getStock.idStock)}, ${dbConf.escape(req.body.cartQuantity)}, ${dbConf.escape(req.body.cartQuantity * getStock.priceSale)});`);
+                        console.log(`insert into cart (idUser, idStock, cartQuantity, subTotal) values (${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(getStock.idStock)}, ${dbConf.escape(cartQuantity)}, ${dbConf.escape(cartQuantity * getStock.priceSale)});`);
 
-                        let addCart = await dbQuery(`insert into cart (idUser, idStock, cartQuantity, subTotal) values (${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(getStock.idStock)}, ${dbConf.escape(req.body.cartQuantity)}, ${dbConf.escape(req.body.cartQuantity * getStock.priceSale)});`);
+                        let addCart = await dbQuery(`insert into cart (idUser, idStock, cartQuantity, subTotal) values (${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(getStock.idStock)}, ${dbConf.escape(cartQuantity)}, ${dbConf.escape(cartQuantity * getStock.priceSale)});`);
 
                         return res.status(200).send({ success: true, message: 'Tambah produk baru berhasil' });
 
