@@ -318,7 +318,7 @@ module.exports = {
                             for (var k = 0; k < selectedStock.length; k++) {
 
                                 if (selectedStock[k].idStock == selectedCart[j].idStock) {
-                                    arrayStockQuery.push(`update stocks set stockQuantity = ${dbConf.escape(selectedStock[k].stockQuantity - selectedCart[j].cartQuantity)} where idStock = ${dbConf.escape(selectedStock[k].idStock)};`)
+                                    arrayStockQuery.push(`update stocks set stockQuantity = ${dbConf.escape(selectedStock[k].stockQuantity + selectedCart[j].cartQuantity)} where idStock = ${dbConf.escape(selectedStock[k].idStock)};`)
                                 }
 
                                 await Promise.all(arrayStockQuery.map(async (valArray) => {
