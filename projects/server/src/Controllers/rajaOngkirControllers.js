@@ -1,7 +1,12 @@
 const axios = require('axios');
 
 const url = 'https://api.rajaongkir.com/starter';
-const key = 'f7e960f8b1d392519e77eb69c2d44a47';
+const key = '966ed2d62fc2929a5b38299f93e12063';
+
+//! backup key:
+//! key1 = f7e960f8b1d392519e77eb69c2d44a47
+//! key2 = 966ed2d62fc2929a5b38299f93e12063
+//! key3 = c5135c88894d2ee5289b477b1fe43e06
 
 module.exports = {
   getProvince: (req, res) => {

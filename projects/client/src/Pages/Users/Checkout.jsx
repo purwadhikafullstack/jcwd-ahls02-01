@@ -172,12 +172,19 @@ const CheckoutPage = (props) => {
     const [deliveryDropdownValue, setDeliveryDropdownValue] = useState("null");
 
     const { databaseCart, getCost, getCost2 } = useSelector((state) => {
+
+        // return {
+        //     databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
+        //     getCost: state.getCostReducers.getCost,
+        //     getCost2: state.getCostReducers.getCost2
+        // }
+
         if (idCityForOngkir > 0) {
             return {
                 databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
-                // getCost: state.getCostReducers.getCost
+                getCost: state.getCostReducers.getCost
             }
-        } else if (idCityForOngkir > 0 && state.getCostReducer.getCost.length > 0) {
+        } else if (idCityForOngkir > 0 && getCost.length > 0) {
             return {
                 databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
                 getCost2: state.getCostReducers.getCost2
@@ -190,7 +197,9 @@ const CheckoutPage = (props) => {
     })
 
     //^ check isi databaseCart
-    console.log(`databaseCart`, databaseCart);
+    console.log(`isi state databaseCart`, databaseCart);
+    console.log(`isi state getCost`, getCost);
+    console.log(`isi state getCost2`, getCost2);
 
     // & component did mount
     useEffect(() => {
@@ -202,7 +211,7 @@ const CheckoutPage = (props) => {
 
         // fungsi untuk get ongkir rajaongkir via idProvince dan idCity dari AccorAddress
 
-    }, [ongkir, total])
+    }, [idAddressForOngkir, ongkir, total])
     // }, [idAddressForOngkir, ongkir, total])
 
     // & btn onclick kembali ke page Cart
@@ -270,7 +279,9 @@ const CheckoutPage = (props) => {
         setIdProvinceForOngkir(idProvince);
         setIdCityForOngkir(idCity);
 
-        getCostRajaOngkir2();
+        if (idCity > 0) {
+            getCostRajaOngkir2();
+        }
 
     }
 
@@ -286,7 +297,7 @@ const CheckoutPage = (props) => {
                     }
                 })
                 if (res.data) {
-                    console.log(`RES DATA GET COST RAJA ONGKIR`, res.data.dataOngkir);
+                    console.log(`RES DATA GETCOST2 RAJA ONGKIR`, res.data.dataOngkir);
                     dispatch(getCostActions2(res.data.dataOngkir));
                 }
             }
@@ -348,14 +359,14 @@ const CheckoutPage = (props) => {
                 setIsModalAddressOpen(false);
 
                 if (idCityForOngkir) {
-                    console.log(`ada idCityForOngkir nya`);
+                    console.log(`ada idCityForOngkir nya untuk dioper ke getCost2`);
                     let res = await Axios.get(`${API_URL}/rajaOngkir/getCost2`, {
                         headers: {
                             kota: idCityForOngkir
                         }
                     })
                     if (res.data) {
-                        console.log(`RES DATA GET COST RAJAONGKIR`, res.data);
+                        console.log(`RES DATA GETCOST2 RAJAONGKIR`, res.data);
                         dispatch(getCostActions2(res.data));
                     }
                 } else {
@@ -382,6 +393,7 @@ const CheckoutPage = (props) => {
         setDeliveryDropdownValue("null");
         setOngkir(0);
         handleTotalPaymentWithoutAdmin();
+        getCostRajaOngkir2();
     }
 
     // & onChange dropdown metode pengiriman yg akan setState value dropdown dan ongkir per pergantian dropdown, aktifin hitung ulang angka total
@@ -408,10 +420,39 @@ const CheckoutPage = (props) => {
 
     // & printList metode pengririman berdasarkan onChange radio button
     const printDelivery = (radioDelivery) => {
-        if (getCost2) {
+        if (getCost){
 
-            console.log(`isi getCost2`, getCost2);
-            let arrayDelivery = getCost2.radioDelivery;
+            console.log(`isi getCost di printDelivery`, getCost);
+            let arrayDelivery = getCost[radioDelivery];
+            console.log(`isi arrayDelivery`, arrayDelivery);
+            return arrayDelivery.map((valueDelivery, indexDelivery) => {
+                return (<option
+                    key={indexDelivery}
+                    value={`${valueDelivery.description}-${valueDelivery.cost[0].value}`}
+                >
+                    <Text
+                        className="font-brand"
+                    >
+                        {
+                            valueDelivery.cost[0].etd.toLowerCase().includes("hari")
+                                ?
+                                <>
+                                    {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()}
+                                </>
+                                :
+                                <>
+                                    {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()} hari
+                                </>
+                        }
+                    </Text>
+                </option>
+                )
+            })
+
+        } else if (getCost2) {
+
+            console.log(`isi getCost2 di printDelivery`, getCost2);
+            let arrayDelivery = getCost2[radioDelivery];
             console.log(`isi arrayDelivery`, arrayDelivery);
             return arrayDelivery.map((valueDelivery, indexDelivery) => {
                 return (<option
@@ -514,7 +555,7 @@ const CheckoutPage = (props) => {
                                                     <Image
                                                         borderRadius='xl'
                                                         boxSize='50px'
-                                                        src={BE_URL+valueCart.productPicture}
+                                                        src={BE_URL + valueCart.productPicture}
                                                         alt='...'
                                                         className="d-md-flex d-none"
                                                     />
