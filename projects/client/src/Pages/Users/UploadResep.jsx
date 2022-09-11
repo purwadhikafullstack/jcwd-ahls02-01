@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import Axios from 'axios';
-// import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 import AccorAddressComponent from "../../Components/Users/AccorAddress";
 import NavbarComponent from "../../Components/Users/Navbar";
 import TransactionList from "./TransactionList";
 import { useToastHook } from "../../Components/CustomToast";
+import { API_URL, BE_URL } from "../../helper";
+import { getAddress, getAddressActions } from "../../Redux/Actions/addressActions";
+import { getProvinceRajaOngkir, getProvinceActions2 } from "../../Redux/Actions/getProvinceActions";
+import { getCityRajaOngkir, getCityActions2 } from "../../Redux/Actions/getCityActions";
+import { getCostRajaOngkir, getCostActions2 } from "../../Redux/Actions/getCostActions";
+import { getTransactionAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
     Divider,
@@ -42,7 +48,7 @@ const UploadResepPage = (props) => {
     // * assign function
     const [currentToast, newToast] = useToastHook();
     const navigate = useNavigate();
-    //const dispatch = useDispatch();
+    const dispatch = useDispatch();
     // const { state, search } = useLocation();
 
     //^ check state
@@ -167,13 +173,35 @@ const UploadResepPage = (props) => {
     const [newImageResep, setNewImageResep] = useState(null);
     const inputIdImageRecipe = useRef(null);
 
+    // const { getCost, getCost2 } = useSelector( (state) => {
+    //     if (idCityForOngkir > 0) {
+    //         return {
+    //             getCost: state.getCostReducers.getCost
+    //         }
+    //     } else if (idCityForOngkir > 0 && getCost.length > 0) {
+    //         return {
+    //             getCost2: state.getCostReducers.getCost2
+    //         }
+    //     }
+    // })
+    const { getCost, getCost2 } = useSelector((state) => {
+        return {
+            getCost: state.getCostReducers.getCost,
+            getCost2: state.getCostReducers.getCost2
+        }
+    })
+
+    //^ check isi databaseCart
+    console.log(`isi state getCost`, getCost);
+    console.log(`isi state getCost2`, getCost2);
+
     // & component did mount
     useEffect(() => {
         setIsUnggahResep(1);
+        dispatch(getAddress());
+        dispatch(getProvinceRajaOngkir());
 
-        // fungsi untuk get ongkir rajaongkir via idProvince dan idCity dari AccorAddress
-
-    }, [])
+    }, [idAddressForOngkir, ongkir])
 
     // & untuk ambil alamat terpilih dari AccorAddressComponent
     const handleCallbackToChild = (idAddress, address, idProvince, idCity, receiverName, receiverPhone, label) => {
@@ -184,6 +212,31 @@ const UploadResepPage = (props) => {
         setReceiverNameForOngkir(receiverName);
         setReceiverPhoneForOngkir(receiverPhone);
         setLabelForOngkir(label);
+
+        if (idCity > 0) {
+            getCostRajaOngkir2();
+        }
+    }
+
+    const getCostRajaOngkir2 = async () => {
+        try {
+            console.log(`idCityForOngkir`, idCityForOngkir);
+
+            if (idCityForOngkir > 0) {
+                console.log(`getCostRajaOngkir 2 jalan`)
+                let res = await Axios.get(`${API_URL}/rajaOngkir/getCost2`, {
+                    headers: {
+                        kota: idCityForOngkir
+                    }
+                })
+                if (res.data) {
+                    console.log(`RES DATA GETCOST2 RAJA ONGKIR`, res.data.dataOngkir);
+                    dispatch(getCostActions2(res.data.dataOngkir));
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     // & untuk ambil idAddress kalau ada alamat yg diedit
@@ -217,32 +270,52 @@ const UploadResepPage = (props) => {
     }
 
     // & onCLick untuk simpan alamat yang terpilih, kalau sudah pernah pilih alamat saat onCLick meskipun ga melakukan pemilihan lagi by default akan pilih alamat yg pernah dipilih itu
-    const btnSimpan = () => {
+    const btnSimpan = async () => {
 
-        if (isEditedAlamat) {
-            newToast({
-                title: `Update Anda Belum Tersimpan`,
-                description: "Simpan dahulu pembaharuan alamat Anda",
-                status: 'warning'
-            })
-        } else if (isTambahAlamat) {
-            newToast({
-                title: `Alamat Baru Belum Tersimpan`,
-                description: "Simpan dahulu alamat terbaru Anda",
-                status: 'warning'
-            })
-        } else if (idAddressForOngkir) {
-            setIsTambahAlamat(0);
-            setIsModalAddressOpen(false);
+        try {
+            if (isEditedAlamat) {
+                newToast({
+                    title: `Update Anda Belum Tersimpan`,
+                    description: "Simpan dahulu pembaharuan alamat Anda",
+                    status: 'warning'
+                })
+            } else if (isTambahAlamat) {
+                newToast({
+                    title: `Alamat Baru Belum Tersimpan`,
+                    description: "Simpan dahulu alamat terbaru Anda",
+                    status: 'warning'
+                })
+            } else if (idAddressForOngkir) {
+                console.log(`DARI ACCORDION idAddress ${idAddressForOngkir}, address ${addressForOngkir}, idProvince ${idProvinceForOngkir}, idCity ${idCityForOngkir}, receiverName ${receiverNameForOngkir}, receiverPhone ${receiverPhoneForOngkir}, label ${labelForOngkir}`);
 
-            console.log(`DARI ACCORDION idAddress ${idAddressForOngkir}, address ${addressForOngkir}, idProvince ${idProvinceForOngkir}, idCity ${idCityForOngkir}, receiverName ${receiverNameForOngkir}, receiverPhone ${receiverPhoneForOngkir}, label ${labelForOngkir}`);
+                setIsTambahAlamat(0);
+                setIsModalAddressOpen(false);
 
-        } else {
-            newToast({
-                title: `Alamat Belum Terpilih`,
-                description: "Pilih dahulu alamat yang ingin dituju",
-                status: 'warning'
-            })
+                if (idCityForOngkir) {
+                    console.log(`ada idCityForOngkir nya untuk dioper ke getCost2`);
+                    let res = await Axios.get(`${API_URL}/rajaOngkir/getCost2`, {
+                        headers: {
+                            kota: idCityForOngkir
+                        }
+                    })
+                    if (res.data) {
+                        console.log(`RES DATA GETCOST2 RAJAONGKIR`, res.data);
+                        dispatch(getCostActions2(res.data));
+                    }
+                } else {
+                    alert('else')
+                }
+
+            } else {
+                console.log(`idAddressForOngkir`, idAddressForOngkir)
+                newToast({
+                    title: `Alamat Belum Terpilih`,
+                    description: "Pilih dahulu alamat yang ingin dituju",
+                    status: 'warning'
+                })
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -252,6 +325,7 @@ const UploadResepPage = (props) => {
         setDeliveryDropdownValue("null");
         setOngkir(0);
         handleTotalPaymentWithoutAdmin();
+        getCostRajaOngkir2();
     }
 
     // & onChange dropdown metode pengiriman yg akan setState value dropdown dan ongkir per pergantian dropdown, aktifin hitung ulang angka total
@@ -278,30 +352,70 @@ const UploadResepPage = (props) => {
 
     // & printList metode pengririman berdasarkan onChange radio button
     const printDelivery = (radioDelivery) => {
-        let arrayDelivery = deliveryMethod[radioDelivery];
-        return arrayDelivery.map((valueDelivery, indexDelivery) => {
-            return (<option
-                key={indexDelivery}
-                value={`${valueDelivery.description}-${valueDelivery.cost[0].value}`}
-            >
-                <Text
-                    className="font-brand"
-                >
-                    {
-                        valueDelivery.cost[0].etd.toLowerCase().includes("hari")
-                            ?
-                            <>
-                                {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()}
-                            </>
-                            :
-                            <>
-                                {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()} hari
-                            </>
-                    }
-                </Text>
-            </option>
-            )
-        })
+        if (getCost != undefined) {
+            console.log(`isi getCost di printDelivery`, getCost);
+            console.log(`isi getCost2 di printDelivery`, getCost2);
+            let arrayDelivery = getCost[radioDelivery];
+            console.log(`isi arrayDelivery`, arrayDelivery);
+
+            if (arrayDelivery != undefined) {
+
+                return arrayDelivery.map((valueDelivery, indexDelivery) => {
+                    return (<option
+                        key={indexDelivery}
+                        value={`${valueDelivery.description}-${valueDelivery.cost[0].value}`}
+                    >
+                        <Text
+                            className="font-brand"
+                        >
+                            {
+                                valueDelivery.cost[0].etd.toLowerCase().includes("hari")
+                                    ?
+                                    <>
+                                        {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()}
+                                    </>
+                                    :
+                                    <>
+                                        {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()} hari
+                                    </>
+                            }
+                        </Text>
+                    </option>
+                    )
+                })
+            }
+        } else if (getCost2 != undefined) {
+
+            console.log(`isi getCost2 di printDelivery`, getCost2);
+            let arrayDelivery = getCost2[radioDelivery];
+            console.log(`isi arrayDelivery`, arrayDelivery);
+
+            if (arrayDelivery != undefined) {
+                return arrayDelivery.map((valueDelivery, indexDelivery) => {
+                    return (<option
+                        key={indexDelivery}
+                        value={`${valueDelivery.description}-${valueDelivery.cost[0].value}`}
+                    >
+                        <Text
+                            className="font-brand"
+                        >
+                            {
+                                valueDelivery.cost[0].etd.toLowerCase().includes("hari")
+                                    ?
+                                    <>
+                                        {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()}
+                                    </>
+                                    :
+                                    <>
+                                        {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()} hari
+                                    </>
+                            }
+                        </Text>
+                    </option>
+                    )
+                })
+            }
+        }
     }
 
     //& onClick tombol file akan minta user pilih gambar resep, simpan value resep di state
@@ -312,19 +426,53 @@ const UploadResepPage = (props) => {
     }
 
     //& onClick akan simpan gambar resep, alamat terpilih, ongkir terpilih di tabel transaksi
-    const btnUnggahResep = () => {
+    const btnUnggahResep = async () => {
+        setLoadingStatus(true);
         console.log(`btnUnggahResep diklik`);
-        navigate('/transactionlist');
+        console.log(`idAddressForOngkir`, idAddressForOngkir);
+        console.log(`ongkir`, ongkir);
+        console.log(`resepPicture`, newImageResep);
+
+        let token = localStorage.getItem("tokenIdUser");
+
+        //^ cek ada token atau tidak
+        console.log(`btnBayar tokenIdUser`, token);
+
+        try {
+            if (newImageResep.filename = "" || idAddressForOngkir == "null" || ongkir == 0) {
+                newToast({
+                    title: `Informasi Belum Lengkap`,
+                    description: "Lengkapi dahulu form nya",
+                    status: 'warning'
+                })
+            } else {
+
+                if (token) {
+                    let formData = new FormData();
+                    let data = {
+                        idAddress: idAddressForOngkir,
+                        freightCost: ongkir
+                    }
+                    console.log(`data`, data);
+                    formData.append('data', JSON.stringify(data));
+                    formData.append('resepPicture', newImageResep);
+
+                    let res = await Axios.post(`${API_URL}/transaction/addRecipeTransaction`, formData, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    console.log("isi res.data pas btnUnggahResep", res.data);
+                    dispatch(getTransactionAction());
+                    navigate('/transactionlist');
+                    setLoadingStatus(false);
+                }
+
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
-    // const btnUnggahResep = (idx=1,onClick) => {
-    //     console.log(`btnUnggahResep diklik`);
-    //     navigate('/transactionlist');
-    //     return (<button
-    //         type='button'
-    //         onClick={()=>onClick(idx)}
-    //         >
-    //         </button>)
-    // };
 
     return (
         <>
@@ -568,8 +716,8 @@ const UploadResepPage = (props) => {
                                 p={2}
                             >
                                 <Button
+                                    loadingStatus={loadingStatus}
                                     onClick={btnUnggahResep}
-                                    // onClick={()=>btnUnggahResep(1,handleTabIndex)}
                                     className="btn-def_second"
                                     width={150}
                                 // me={2}

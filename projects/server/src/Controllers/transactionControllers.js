@@ -222,12 +222,29 @@ module.exports = {
         try {
 
             if (req.dataUser.idUser) {
-                const uploadFile = uploader('/Resep', `RESEP-DOKTER`).array('media', 1);
+                const uploadFile = uploader('/Resep', `RESEP-DOKTER`).array('resepPicture', 1);
 
                 // console.log('pengecekan size file', req.files[0].size <= 1000000);
                 // if (req.files[0].size <= 1000000) {
                 uploadFile(req, res, async (error) => {
                     try {
+
+                        let currentDate = new Date();
+
+                        let year = currentDate.getFullYear();
+                        let month = currentDate.getMonth() + 1;
+                        console.log(`typeofmonth`, typeof (month))
+                        month = month.toString().length < 2 ? "0" + month.toString() : month.toString()
+                        console.log(`newmonth`, month);
+                        let day = currentDate.getDate();
+            
+                        let getTransaction = await dbQuery(`select t1.idTransaction, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, t1.addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress group by t1.idTransaction;`)
+            
+                        let docNoInNumber = Math.max(...getTransaction.map((item) => item.idTransaction));
+                        docNoInNumber++;
+                        console.log(`docNoInNumber`, docNoInNumber);
+                        let initialInvoiceNumber = `INV/${year}${month}${day}/RCK/${docNoInNumber.toString()}`
+
                         console.log(`isi body saat ngemulter resep`, req.body);
                         console.log(`isi req.files multer resep`, req.files);
 
@@ -237,7 +254,7 @@ module.exports = {
                         //* arrayIdCart = 0
                         //* transactionStatus = "Validasi Resep"
                         //* transferReceipt = "null"
-                        let insertResepTransaction = await dbQuery(`INSERT INTO transactions (idCart, idAddress, prescription, transactionStatus, transferReceipt, invoiceNumber, freightCost) VALUES (0, ${dbConf.escape(idAddress)}, ${dbConf.escape(`/Resep/${media}`)}, "Validasi Resep", "null", ${dbConf.escape(freightCost)});`);
+                        let insertResepTransaction = await dbQuery(`INSERT INTO transactions (idCart, idAddress, prescription, transactionStatus, transferReceipt, invoiceNumber, freightCost) VALUES (0, ${dbConf.escape(idAddress)}, ${dbConf.escape(`/Resep/${media}`)}, "Validasi Resep", "null", ${dbConf.escape(initialInvoiceNumber)}, ${dbConf.escape(freightCost)});`);
 
                         return res.status(200).send({ success: true, message: 'Resep berhasil diunggah' });
 
