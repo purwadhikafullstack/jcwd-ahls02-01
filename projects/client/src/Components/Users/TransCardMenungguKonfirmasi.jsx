@@ -4,6 +4,7 @@ import Axios from 'axios';
 import { useNavigate, useLocation } from "react-router-dom";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
+import { API_URL, BE_URL } from "../../helper";
 import {
     Box,
     Divider,
@@ -34,39 +35,10 @@ import {
 const TransCardMenungguKonfirmasiComponent = (props) => {
 
     //TODO axios get seluruh transaksi yang berstatus Menunggu Konfirmasi
-    //^ seluruh transaksi user yg login
-    const [dbTransaksi] = useState([
-        {
-            idTransaction: 3,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 3,
-                    productName: 'Renovit',
-                    productPicture: 'https://cf.shopee.co.id/file/bdb49a41e77413654fe1d71bb8ddc46a',
-                    stockType: 'saset',
-                    purchaseQuantity: 5,
-                    priceSale: 15000,
-                    subTotal: 75000,
-                }
-            ],
-            totalSale: 75000,
-            prescription: null,
-            transactionStatus: 'Menunggu Konfirmasi',
-            transferReceipt: 'https://mahirtransaksi.com/wp-content/uploads/2020/09/2-1-179x300.jpg',
-            invoiceNumber: 'INV/20220304/STN/00001',
-            addDate: '2022-03-04 21:10:00',
-            freightCost: 10000,
-            totalPayment: 85000,
-            recereceiverName: 'Aditya Dimas',
-            receiverAddress: 'Jl. Dimas',
-            receiverPhone: '081287907001',
-            postalCode: '77777'
-        }
-    ]);
 
     const printMenungguKonfirmasi = () => {
-        if (dbTransaksi.length > 0) {
-            return dbTransaksi.map((value, index) => {
+        if (props.dbMenungguKonfirmasi.length > 0) {
+            return props.dbMenungguKonfirmasi.map((value, index) => {
                 return (
                     <div
                         className="card mb-2" key={value.idTransaction}
@@ -122,7 +94,7 @@ const TransCardMenungguKonfirmasiComponent = (props) => {
                                                 <Image
                                                     borderRadius='xl'
                                                     boxSize='70px'
-                                                    src={valProduct.productPicture}
+                                                    src={BE_URL+valProduct.productPicture}
                                                     alt={`IMG-${valProduct.productName}`}
                                                     className="d-md-block d-none"
                                                 />

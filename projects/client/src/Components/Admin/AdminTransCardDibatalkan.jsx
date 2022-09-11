@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import Axios from 'axios';
 // import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
-import NavbarComponent from "../../Components/Users/Navbar";
-import { useToastHook } from "../../Components/CustomToast";
-import { API_URL, BE_URL } from "../../helper";
+import NavbarComponent from "../Users/Navbar";
+import { useToastHook } from "../CustomToast";
 import {
     Box,
     Divider,
@@ -32,13 +31,42 @@ import {
     TabPanel
 } from "@chakra-ui/react";
 
-const TransCardPesananDikonfirmasiComponent = (props) => {
+const AdminTransCardDibatalkanComponent = (props) => {
 
-    //TODO axios get seluruh transaksi yang berstatus Pesanan Dikonfirmasi
+    //TODO axios get seluruh transaksi yang berstatus Dibatalkan
+    //^ seluruh transaksi user yg login
+    const [dbTransaksi] = useState([
+        {
+            idTransaction: 8,
+            purchasedProducts: [
+                {
+                    idTransactionDetail: 9,
+                    productName: 'Renovit',
+                    productPicture: 'https://cf.shopee.co.id/file/bdb49a41e77413654fe1d71bb8ddc46a',
+                    stockType: 'tablet',
+                    purchaseQuantity: 5,
+                    priceSale: 3000,
+                    subTotal: 15000
+                }
+            ],
+            totalSale: 15000,
+            prescription: 'https://assets.kompasiana.com/items/album/2016/10/20/2016-10-20-21-00-22-pengantar-ilmu-farmasi-kedokteran-1-pdf-5808c571c823bd662a834f19.png?t=t&v=260',
+            transactionStatus: 'Dibatalkan',
+            transferReceipt: 'https://mahirtransaksi.com/wp-content/uploads/2020/09/2-1-179x300.jpg',
+            invoiceNumber: 'INV/20220411/RCK/00002',
+            addDate: '2022-04-11 9:00:00',
+            freightCost: 10000,
+            totalPayment: 25000,
+            receiverName: 'Margareth Devina',
+            receiverAddress: 'Jl. Aster VI No. 7',
+            receiverPhone: '081287907000',
+            postalCode: '16134'
+        }
+    ]);
 
-    const printPesananDikonfirmasi = () => {
-        if (props.dbPesananDikonfirmasi.length > 0) {
-            return props.dbPesananDikonfirmasi.map((value, index) => {
+    const printDibatalkan = () => {
+        if (dbTransaksi.length > 0) {
+            return dbTransaksi.map((value, index) => {
                 return (
                     <div
                         className="card mb-2" key={value.idTransaction}
@@ -70,7 +98,7 @@ const TransCardPesananDikonfirmasiComponent = (props) => {
                                 <Text
                                     textColor='var(--colorSix)'
                                 >
-                                    {value.transactionStatus} Diterima Pembeli
+                                    {value.transactionStatus}
                                 </Text>
                             </Box>
 
@@ -94,7 +122,7 @@ const TransCardPesananDikonfirmasiComponent = (props) => {
                                                 <Image
                                                     borderRadius='xl'
                                                     boxSize='70px'
-                                                    src={BE_URL+valProduct.productPicture}
+                                                    src={valProduct.productPicture}
                                                     alt={`IMG-${valProduct.productName}`}
                                                     className="d-md-block d-none"
                                                 />
@@ -147,11 +175,13 @@ const TransCardPesananDikonfirmasiComponent = (props) => {
                             >
                                 <Text
                                     ps={90}
+                                    as={"b"}
                                 >
                                     Total
                                 </Text>
                                 <Text
                                     className="me-1"
+                                    as={"b"}
                                 >
                                     Rp {value.totalPayment.toLocaleString()}
                                 </Text>
@@ -166,10 +196,10 @@ const TransCardPesananDikonfirmasiComponent = (props) => {
 
     return (
         <>
-            {printPesananDikonfirmasi()}
+            {printDibatalkan()}
         </>
     )
 
 }
 
-export default TransCardPesananDikonfirmasiComponent;
+export default AdminTransCardDibatalkanComponent;

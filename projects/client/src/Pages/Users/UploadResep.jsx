@@ -56,102 +56,102 @@ const UploadResepPage = (props) => {
 
     //^ STATE MANAGEMENT
     //TODO ❗❗❗ axios rajaongkir untuk ambil delivery method dan ongkirnya berdasarkan alamat pengiriman yang dipilih
-    const [deliveryMethod, setDeliveryMethod] = useState({
-        "jne": [
-            {
-                "service": "OKE",
-                "description": "Ongkos Kirim Ekonomis",
-                "cost": [
-                    {
-                        "value": 10000,
-                        "etd": "2-3",
-                        "note": ""
-                    }
-                ]
-            },
-            {
-                "service": "REG",
-                "description": "Layanan Reguler",
-                "cost": [
-                    {
-                        "value": 11000,
-                        "etd": "1-2",
-                        "note": ""
-                    }
-                ]
-            },
-            {
-                "service": "YES",
-                "description": "Yakin Esok Sampai",
-                "cost": [
-                    {
-                        "value": 24000,
-                        "etd": "1-1",
-                        "note": ""
-                    }
-                ]
-            }
-        ],
-        "pos": [
-            {
-                "service": "Pos Reguler",
-                "description": "Pos Reguler",
-                "cost": [
-                    {
-                        "value": 11000,
-                        "etd": "2 HARI",
-                        "note": ""
-                    }
-                ]
-            },
-            {
-                "service": "Pos Nextday",
-                "description": "Pos Nextday",
-                "cost": [
-                    {
-                        "value": 24000,
-                        "etd": "1 HARI",
-                        "note": ""
-                    }
-                ]
-            }
-        ],
-        "tiki": [
-            {
-                "service": "ECO",
-                "description": "Economy Service",
-                "cost": [
-                    {
-                        "value": 12000,
-                        "etd": "4",
-                        "note": ""
-                    }
-                ]
-            },
-            {
-                "service": "REG",
-                "description": "Regular Service",
-                "cost": [
-                    {
-                        "value": 14000,
-                        "etd": "3",
-                        "note": ""
-                    }
-                ]
-            },
-            {
-                "service": "ONS",
-                "description": "Over Night Service",
-                "cost": [
-                    {
-                        "value": 28000,
-                        "etd": "1",
-                        "note": ""
-                    }
-                ]
-            }
-        ]
-    })
+    // const [deliveryMethod, setDeliveryMethod] = useState({
+    //     "jne": [
+    //         {
+    //             "service": "OKE",
+    //             "description": "Ongkos Kirim Ekonomis",
+    //             "cost": [
+    //                 {
+    //                     "value": 10000,
+    //                     "etd": "2-3",
+    //                     "note": ""
+    //                 }
+    //             ]
+    //         },
+    //         {
+    //             "service": "REG",
+    //             "description": "Layanan Reguler",
+    //             "cost": [
+    //                 {
+    //                     "value": 11000,
+    //                     "etd": "1-2",
+    //                     "note": ""
+    //                 }
+    //             ]
+    //         },
+    //         {
+    //             "service": "YES",
+    //             "description": "Yakin Esok Sampai",
+    //             "cost": [
+    //                 {
+    //                     "value": 24000,
+    //                     "etd": "1-1",
+    //                     "note": ""
+    //                 }
+    //             ]
+    //         }
+    //     ],
+    //     "pos": [
+    //         {
+    //             "service": "Pos Reguler",
+    //             "description": "Pos Reguler",
+    //             "cost": [
+    //                 {
+    //                     "value": 11000,
+    //                     "etd": "2 HARI",
+    //                     "note": ""
+    //                 }
+    //             ]
+    //         },
+    //         {
+    //             "service": "Pos Nextday",
+    //             "description": "Pos Nextday",
+    //             "cost": [
+    //                 {
+    //                     "value": 24000,
+    //                     "etd": "1 HARI",
+    //                     "note": ""
+    //                 }
+    //             ]
+    //         }
+    //     ],
+    //     "tiki": [
+    //         {
+    //             "service": "ECO",
+    //             "description": "Economy Service",
+    //             "cost": [
+    //                 {
+    //                     "value": 12000,
+    //                     "etd": "4",
+    //                     "note": ""
+    //                 }
+    //             ]
+    //         },
+    //         {
+    //             "service": "REG",
+    //             "description": "Regular Service",
+    //             "cost": [
+    //                 {
+    //                     "value": 14000,
+    //                     "etd": "3",
+    //                     "note": ""
+    //                 }
+    //             ]
+    //         },
+    //         {
+    //             "service": "ONS",
+    //             "description": "Over Night Service",
+    //             "cost": [
+    //                 {
+    //                     "value": 28000,
+    //                     "etd": "1",
+    //                     "note": ""
+    //                 }
+    //             ]
+    //         }
+    //     ]
+    // })
 
     // const [subTotalAllCartItems, setSubTotalAllCartItems] = useState(0);
     const [idAddressForOngkir, setIdAddressForOngkir] = useState(null);
@@ -445,6 +445,7 @@ const UploadResepPage = (props) => {
                     description: "Lengkapi dahulu form nya",
                     status: 'warning'
                 })
+                setLoadingStatus(false);
             } else {
 
                 if (token) {

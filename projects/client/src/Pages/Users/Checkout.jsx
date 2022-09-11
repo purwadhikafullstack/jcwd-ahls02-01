@@ -771,6 +771,7 @@ const CheckoutPage = (props) => {
                                     className="btn-def_second"
                                     width={150}
                                     mb={2}
+                                    loadingStatus={loadingStatus}
                                     onClick={btnBayar}
                                 >
                                     Bayar

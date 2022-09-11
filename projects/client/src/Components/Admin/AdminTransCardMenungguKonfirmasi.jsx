@@ -1,106 +1,72 @@
 import React, { useState, useEffect } from "react";
 import Axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
+// import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
-import ModalPaymentProofComponent from "./ModalPaymentProof";
-import { getTransactionAction } from "../../Redux/Actions/transactionActions";
-import { API_URL, BE_URL } from "../../helper";
 import {
     Box,
+    Divider,
+    VStack,
+    Center,
+    Stack,
     Image,
     Text,
     Button,
+    ButtonGroup,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Input,
+    InputGroup,
+    InputLeftAddon,
+    Select,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel
 } from "@chakra-ui/react";
 
-const TransCardMenungguPembayaranComponent = (props) => {
+const AdminTransCardMenungguKonfirmasiComponent = (props) => {
 
-    //^ STATE MANAGEMENT
-    const [total, setTotal] = useState(0);
-    // const [isModalMetodeBayarOpen, setisModalPaymentProofOpen] = useState(false);
-    const [isModalPaymentProofOpen, setIsModalPaymentProofOpen] = useState(false);
-    const [selectedTransaction, setSelectedTransaction] = useState({});
-    const [isBtnUploadBuktiBayarClicked, setIsBtnUploadBuktiBayarClicked] = useState(0);
-
-    //^ cek state isModalPaymentProofOpen
-    console.log(`isModalPaymentProofOpen`, isModalPaymentProofOpen);
-
-    //TODO axios get seluruh transaksi yang berstatus Menunggu Pembayaran
-
-    //& component did mount
-    useEffect(() => {
-
-    }, [selectedTransaction, isModalPaymentProofOpen, isBtnUploadBuktiBayarClicked])
-
-    // & onClick btn back di modal pilih metode pembayaran akan mulangin user ke page Checkout
-    // const btnBackModalMetodeBayar = () => {
-    //     console.log(`btnBackModalMetodeBayar dipencet`)
-    //     setIsModalMetodeBayarOpen(!isModalMetodeBayarOpen);
-    //     setWhichBank("");
-    // }
-
-    // & onClick btn pilih ulang metode pembayaran akan mulangin user ke modal pilih metode pembayaran
-    // const handleCallbackToChildPaymentMethod = () => {
-    //     setIsModalMetodeBayarOpen(true);
-    //     setWhichBank("");
-    // }
-
-    // & onClick metode bayar bca akan buka modal payment method khusus bca
-    // const handleBca = () => {
-    //     setWhichBank('bca');
-    //     setIsModalMetodeBayarOpen(!isModalMetodeBayarOpen);
-    // }
-
-    // & onClick metode bayar mandiri akan buka modal payment method khusus bca
-    // const handleMandiri = () => {
-    //     setWhichBank('mandiri');
-    //     setIsModalMetodeBayarOpen(!isModalMetodeBayarOpen);
-    // }
-
-    const openModalPaymentProof = () => {
-        if (isBtnUploadBuktiBayarClicked == 0) {
-            setIsModalPaymentProofOpen(false);
-        } else {
-            setIsModalPaymentProofOpen(true);
+    //TODO axios get seluruh transaksi yang berstatus Menunggu Konfirmasi
+    //^ seluruh transaksi user yg login
+    const [dbTransaksi] = useState([
+        {
+            idTransaction: 3,
+            purchasedProducts: [
+                {
+                    idTransactionDetail: 3,
+                    productName: 'Renovit',
+                    productPicture: 'https://cf.shopee.co.id/file/bdb49a41e77413654fe1d71bb8ddc46a',
+                    stockType: 'saset',
+                    purchaseQuantity: 5,
+                    priceSale: 15000,
+                    subTotal: 75000,
+                }
+            ],
+            totalSale: 75000,
+            prescription: null,
+            transactionStatus: 'Menunggu Konfirmasi',
+            transferReceipt: 'https://mahirtransaksi.com/wp-content/uploads/2020/09/2-1-179x300.jpg',
+            invoiceNumber: 'INV/20220304/STN/00001',
+            addDate: '2022-03-04 21:10:00',
+            freightCost: 10000,
+            totalPayment: 85000,
+            recereceiverName: 'Aditya Dimas',
+            receiverAddress: 'Jl. Dimas',
+            receiverPhone: '081287907001',
+            postalCode: '77777'
         }
-    }
+    ]);
 
-    //& onClick akan deteksi transaksinya beresep atau ngga, beresep akan minta user pilih metode bayar, ga beresep akan langsung minta user upload bukti bayar
-    const btnUploadBuktiBayar = (selectedIdTransaction) => {
-        setIsBtnUploadBuktiBayarClicked(1);
-        setIsModalPaymentProofOpen(true);
-
-        let transaction = props.dbMenungguPembayaran.filter((val, idx) => val.idTransaction == selectedIdTransaction)[0]
-
-        setSelectedTransaction(transaction);
-        setTotal(transaction.totalPayment);
-
-        console.log(`selectedTransaction`, selectedTransaction);
-        console.log(`transaction.totalPayment`, total);
-
-        //TODO axios untuk patch add multer gambar bukti bayar untuk transaksi yang diklik upload bukti bayar nya
-    }
-
-    const handleCallbackToChildPaymentProof = () => {
-        setIsBtnUploadBuktiBayarClicked(0);
-        setIsModalPaymentProofOpen(false);
-    }
-
-    const handleCallbackToChildPaymentProofOVERLAY = () => {
-        setIsBtnUploadBuktiBayarClicked(0);
-        setIsModalPaymentProofOpen(false);
-    }
-
-    const handleCallbackToChildPaymentProofONCLOSE = () => {
-        setIsBtnUploadBuktiBayarClicked(0);
-        setIsModalPaymentProofOpen(false);
-    }
-
-    //& print list transaksi yg menunggu pembayaran
-    const printMenungguPembayaran = () => {
-        if (props.dbMenungguPembayaran.length > 0) {
-            return props.dbMenungguPembayaran.map((value, index) => {
+    const printMenungguKonfirmasi = () => {
+        if (dbTransaksi.length > 0) {
+            return dbTransaksi.map((value, index) => {
                 return (
                     <div
                         className="card mb-2" key={value.idTransaction}
@@ -132,7 +98,7 @@ const TransCardMenungguPembayaranComponent = (props) => {
                                 <Text
                                     textColor='var(--colorSix)'
                                 >
-                                    {value.transactionStatus}
+                                    {value.transactionStatus} Pembayaran
                                 </Text>
                             </Box>
 
@@ -156,7 +122,7 @@ const TransCardMenungguPembayaranComponent = (props) => {
                                                 <Image
                                                     borderRadius='xl'
                                                     boxSize='70px'
-                                                    src={BE_URL+valProduct.productPicture}
+                                                    src={valProduct.productPicture}
                                                     alt={`IMG-${valProduct.productName}`}
                                                     className="d-md-block d-none"
                                                 />
@@ -208,12 +174,14 @@ const TransCardMenungguPembayaranComponent = (props) => {
                                 textColor='var(--colorSix)'
                             >
                                 <Text
+                                    as={'b'}
                                     ps={90}
                                 >
                                     Total
                                 </Text>
                                 <Text
                                     className="me-1"
+                                    as={'b'}
                                 >
                                     Rp {value.totalPayment.toLocaleString()}
                                 </Text>
@@ -227,44 +195,27 @@ const TransCardMenungguPembayaranComponent = (props) => {
                                 mb={3}
                             >
                                 <Button
-                                    className="btn-def_second"
-                                    onClick={() => btnUploadBuktiBayar(value.idTransaction)}
+                                    className="btn-def"
+                                    width={180} ms={5}
                                 >
-                                    Upload Bukti Bayar
+                                    Cek Bukti Bayar
+                                </Button>
+                                <Button
+                                    className="btn-def"
+                                    width={180} ms={5}
+                                >
+                                    Tolak Pembayaran
+                                </Button>
+                                <Button
+                                    className="btn-def_second"
+                                    width={180} ms={5}
+                                >
+                                    <Text class="h6b" style={{color:"#FFFFFF"}}>
+                                        Konfirmasi Pembayaran
+                                    </Text>
                                 </Button>
                             </Box>
 
-                            {/* <Text
-                                fontSize={15}
-                                className='font-brand'
-                            >
-                                <span
-                                    className="me-1"
-                                >
-                                    *) Bukti bayar harus diunggah
-                                </span>
-                                <span
-                                    className="me-1"
-                                    style={{ color: 'var(--colorSix)' }}
-                                >
-                                    maksimal 1 hari dari tanggal pembayaran
-                                </span>
-                                <span
-                                >
-                                    , bila melewati batas waktu maka pesanan otomatis dibatalkan.
-                                </span>
-                            </Text> */}
-
-                            <Text
-                                fontSize={15}
-                                className='font-brand'
-                            >
-                                <span
-                                    className="me-1"
-                                >
-                                    **) Bukti bayar yang diunggah harus jelas, sesuai dengan jumlah yang harus dibayar dan akan divalidasi oleh penjual. Bila tidak tepat atau tidak jelas, penjual dapat meminta pengunggahan ulang.
-                                </span>
-                            </Text>
                         </div>
                     </div>
                 )
@@ -274,21 +225,10 @@ const TransCardMenungguPembayaranComponent = (props) => {
 
     return (
         <>
-            <ModalPaymentProofComponent
-                openModalPaymentProofFromCard={isModalPaymentProofOpen}
-                handleSendingToCardParentPaymentMethod={handleCallbackToChildPaymentProof}
-                handleSendingToCardParentPaymentMethodOVERLAY={handleCallbackToChildPaymentProofOVERLAY}
-                handleSendingToCardParentPaymentMethodONCLOSE = {handleCallbackToChildPaymentProofONCLOSE}
-
-                selectedTransaction={selectedTransaction}
-                totalPayment={total}
-            />
-
-            {printMenungguPembayaran()}
-
+            {printMenungguKonfirmasi()}
         </>
     )
 
 }
 
-export default TransCardMenungguPembayaranComponent;
+export default AdminTransCardMenungguKonfirmasiComponent;

@@ -5,7 +5,9 @@ const router = require('express').Router();
 router.get('/userGetAllTransaction', readToken, transactionControllers.userGetAllTransaction);
 router.post('/addNormalTransaction', readToken, transactionControllers.addNormalTransaction);
 router.post('/addRecipeTransaction', readToken, transactionControllers.addRecipeTransaction);
+router.patch('/addBuktiBayar', readToken, transactionControllers.addBuktiBayar);
 
+router.get('/adminGetAllTransaction', readToken, transactionControllers.adminGetAllTransaction);
 
 
 // router.get('/userGetValidasiResep', readToken, transactionControllers.userGetValidasiResep);

@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
+import Axios from 'axios';
 import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
 import bank1 from "../../Assets/DevImage/LogoBCA.png";
 import bank2 from "../../Assets/DevImage/LogoMandiri.png";
+import { getTransactionAction } from "../../Redux/Actions/transactionActions";
+import { API_URL, BE_URL } from "../../helper";
+import { useToastHook } from "../../Components/CustomToast";
 
 import {
     Box,
@@ -42,6 +47,8 @@ const ModalPaymentProofComponent = (props) => {
 
     //* assign function
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const [currentToast, newToast] = useToastHook();
 
     //* untuk warnain dan atur size icon kembali ke keranjang saat di mobile phone display
     let iconStyles = { color: "var(--colorFive)", fontSize: "0.5em" };
@@ -50,7 +57,7 @@ const ModalPaymentProofComponent = (props) => {
     const [isModalPaymentProofOpen, setIsModalPaymentProofOpen] = useState(false);
     const [newImageBukti, setNewImageBukti] = useState(null);
     const inputIdImageBukti = useRef(null);
-    const [selectedIdTransaction, setSelectedIdTransaction] = useState(null);
+    // const [selectedIdTransaction, setSelectedIdTransaction] = useState(null);
     const [accordionIndex, setAccordionIndex] = useState(null);
     // const [whichBank, setWhichBank] = useState("");
     const [paymentPlusAdminBank, setPaymentPlusAdminBank] = useState(0);
@@ -240,25 +247,62 @@ const ModalPaymentProofComponent = (props) => {
             setPaymentPlusAdminBank(props.totalPayment);
             setIsModalPaymentProofOpen(true);
         }
-
     }
-   
 
     const handleImageBukti = (value) => {
         console.log(`value handleImageBukti`, value);
         setNewImageBukti(value);
     }
 
-
     //& onClick akan upload bukti bayar ke tabel transaksi lalu tutup modal payment proof
-    const btnUnggahBukti = () => {
+    const btnUnggahBukti = async () => {
         console.log(`btnUnggahBukti diklik`);
+        console.log(`selectedTransaction yg masuk ke modal`, props.selectedTransaction);
 
-        props.handleSendingToCardParentPaymentMethod();
-        setIsModalPaymentProofOpen(false);
-        setAccordionIndex(null);
-    }
+        let { idTransaction } = props.selectedTransaction;
+        console.log(`idTransaction setelah dipecah objeknya props`, idTransaction)
 
+        let token = localStorage.getItem("tokenIdUser");
+
+        //^ cek ada token atau tidak
+        console.log(`btnBayar tokenIdUser`, token);
+
+        try {
+            if (newImageBukti.filename = "" || idTransaction == 0 || accordionIndex == null) {
+                newToast({
+                    title: `Informasi Belum Lengkap`,
+                    description: "Lengkapi dahulu form nya",
+                    status: 'warning'
+                })
+            } else {
+
+                if (token) {
+                    let formData = new FormData();
+                    let data = {
+                        idTransaction
+                    }
+                    console.log(`data`, data);
+                    formData.append('data', JSON.stringify(data));
+                    formData.append('buktiPicture', newImageBukti);
+
+                    let res = await Axios.patch(`${API_URL}/transaction/addBuktiBayar`, formData, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    console.log("isi res.data pas btnUnggahBukti", res.data);
+                    dispatch(getTransactionAction());
+                    props.handleSendingToCardParentPaymentMethod();
+                    setIsModalPaymentProofOpen(false);
+                    setAccordionIndex(null);
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    //& start -- handle modal open/not open, triggering state between parent-child
     const handleOverlayClicked = () => {
         props.handleSendingToCardParentPaymentMethodOVERLAY();
         setIsModalPaymentProofOpen(false);
@@ -270,6 +314,7 @@ const ModalPaymentProofComponent = (props) => {
         setIsModalPaymentProofOpen(false);
         setAccordionIndex(null);
     }
+    //& end -- handle modal open/not open, triggering state between parent-child
 
     return (
         <>
@@ -375,7 +420,7 @@ const ModalPaymentProofComponent = (props) => {
                                         bg="var(--colorTwo)"
                                         className="font-brand"
                                     >
-                                        <ListItem
+                                        {/* <ListItem
                                             display='flex'
                                             alignItems='baseline'
                                         >
@@ -385,7 +430,7 @@ const ModalPaymentProofComponent = (props) => {
                                             <Text>
                                                 Bukti bayar harus diunggah maksimal 1 hari dari tanggal pembayaran, bila melewati batas waktu maka pesanan otomatis dibatalkan.
                                             </Text>
-                                        </ListItem>
+                                        </ListItem> */}
                                         <ListItem
                                             display='flex'
                                             alignItems='baseline'
