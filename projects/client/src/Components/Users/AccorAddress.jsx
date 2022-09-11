@@ -7,7 +7,7 @@ import { API_URL } from "../../helper";
 import { getAddress, getAddressActions } from "../../Redux/Actions/addressActions";
 import { getProvinceRajaOngkir, getProvinceActions2, getProvinceRajaOngkir2 } from "../../Redux/Actions/getProvinceActions";
 import { getCityRajaOngkir, getCityActions2 } from "../../Redux/Actions/getCityActions";
-import { getCostRajaOngkir, getCost2 } from "../../Redux/Actions/getCostActions";
+import { getCostRajaOngkir } from "../../Redux/Actions/getCostActions";
 import {
     Box,
     Text,
@@ -59,7 +59,7 @@ const AccorAddressComponent = (props) => {
     const [idCityForOngkir, setIdCityForOngkir] = useState(null);
 
     //TODO ❗❗❗ ambil dari reducer address
-    const { address, phone, idUser, name, token, getProvince, getProvince2, getCity, getCity2, getCost } = useSelector((state) => {
+    const { address, phone, idUser, name, token, getProvince, getProvince2, getCity, getCity2, getCost, getCost2 } = useSelector((state) => {
 
         // return {
         //     address: state.addressReducers.address,

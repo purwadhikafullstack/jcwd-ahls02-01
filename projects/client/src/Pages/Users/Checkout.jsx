@@ -55,105 +55,6 @@ const CheckoutPage = (props) => {
     console.log(`checkout pg-state dari page cart ${state}`);
 
     //^ STATE MANAGEMENT
-
-    //TODO ❗❗❗ axios rajaongkir untuk ambil delivery method dan ongkirnya berdasarkan alamat pengiriman yang dipilih
-    const [deliveryMethod, setDeliveryMethod] = useState({
-        "jne": [
-            {
-                "service": "OKE",
-                "description": "Ongkos Kirim Ekonomis",
-                "cost": [
-                    {
-                        "value": 10000,
-                        "etd": "2-3",
-                        "note": ""
-                    }
-                ]
-            },
-            {
-                "service": "REG",
-                "description": "Layanan Reguler",
-                "cost": [
-                    {
-                        "value": 11000,
-                        "etd": "1-2",
-                        "note": ""
-                    }
-                ]
-            },
-            {
-                "service": "YES",
-                "description": "Yakin Esok Sampai",
-                "cost": [
-                    {
-                        "value": 24000,
-                        "etd": "1-1",
-                        "note": ""
-                    }
-                ]
-            }
-        ],
-        "pos": [
-            {
-                "service": "Pos Reguler",
-                "description": "Pos Reguler",
-                "cost": [
-                    {
-                        "value": 11000,
-                        "etd": "2 HARI",
-                        "note": ""
-                    }
-                ]
-            },
-            {
-                "service": "Pos Nextday",
-                "description": "Pos Nextday",
-                "cost": [
-                    {
-                        "value": 24000,
-                        "etd": "1 HARI",
-                        "note": ""
-                    }
-                ]
-            }
-        ],
-        "tiki": [
-            {
-                "service": "ECO",
-                "description": "Economy Service",
-                "cost": [
-                    {
-                        "value": 12000,
-                        "etd": "4",
-                        "note": ""
-                    }
-                ]
-            },
-            {
-                "service": "REG",
-                "description": "Regular Service",
-                "cost": [
-                    {
-                        "value": 14000,
-                        "etd": "3",
-                        "note": ""
-                    }
-                ]
-            },
-            {
-                "service": "ONS",
-                "description": "Over Night Service",
-                "cost": [
-                    {
-                        "value": 28000,
-                        "etd": "1",
-                        "note": ""
-                    }
-                ]
-            }
-        ]
-    })
-
     const [subTotalAllCartItems, setSubTotalAllCartItems] = useState(0);
     const [idAddressForOngkir, setIdAddressForOngkir] = useState(null);
     const [addressForOngkir, setAddressForOngkir] = useState("");
@@ -172,13 +73,6 @@ const CheckoutPage = (props) => {
     const [deliveryDropdownValue, setDeliveryDropdownValue] = useState("null");
 
     const { databaseCart, getCost, getCost2 } = useSelector((state) => {
-
-        // return {
-        //     databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
-        //     getCost: state.getCostReducers.getCost,
-        //     getCost2: state.getCostReducers.getCost2
-        // }
-
         if (idCityForOngkir > 0) {
             return {
                 databaseCart: state.cartReducers.cart.filter(val => val.isActive == "false"),
@@ -209,10 +103,7 @@ const CheckoutPage = (props) => {
         // dispatch(getCostRajaOngkir());
         // handleCallbackToChild();
 
-        // fungsi untuk get ongkir rajaongkir via idProvince dan idCity dari AccorAddress
-
     }, [idAddressForOngkir, ongkir, total])
-    // }, [idAddressForOngkir, ongkir, total])
 
     // & btn onclick kembali ke page Cart
     const btnBackToCart = () => {
@@ -420,69 +311,78 @@ const CheckoutPage = (props) => {
 
     // & printList metode pengririman berdasarkan onChange radio button
     const printDelivery = (radioDelivery) => {
-        if (getCost){
+        if (getCost != undefined) {
 
             console.log(`isi getCost di printDelivery`, getCost);
+            console.log(`isi getCost2 di printDelivery`, getCost2);
             let arrayDelivery = getCost[radioDelivery];
             console.log(`isi arrayDelivery`, arrayDelivery);
-            return arrayDelivery.map((valueDelivery, indexDelivery) => {
-                return (<option
-                    key={indexDelivery}
-                    value={`${valueDelivery.description}-${valueDelivery.cost[0].value}`}
-                >
-                    <Text
-                        className="font-brand"
-                    >
-                        {
-                            valueDelivery.cost[0].etd.toLowerCase().includes("hari")
-                                ?
-                                <>
-                                    {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()}
-                                </>
-                                :
-                                <>
-                                    {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()} hari
-                                </>
-                        }
-                    </Text>
-                </option>
-                )
-            })
 
-        } else if (getCost2) {
+            if (arrayDelivery != undefined) {
+
+                return arrayDelivery.map((valueDelivery, indexDelivery) => {
+                    return (<option
+                        key={indexDelivery}
+                        value={`${valueDelivery.description}-${valueDelivery.cost[0].value}`}
+                    >
+                        <Text
+                            className="font-brand"
+                        >
+                            {
+                                valueDelivery.cost[0].etd.toLowerCase().includes("hari")
+                                    ?
+                                    <>
+                                        {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()}
+                                    </>
+                                    :
+                                    <>
+                                        {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()} hari
+                                    </>
+                            }
+                        </Text>
+                    </option>
+                    )
+                })
+
+            }
+
+        } else if (getCost2 != undefined) {
 
             console.log(`isi getCost2 di printDelivery`, getCost2);
             let arrayDelivery = getCost2[radioDelivery];
             console.log(`isi arrayDelivery`, arrayDelivery);
-            return arrayDelivery.map((valueDelivery, indexDelivery) => {
-                return (<option
-                    key={indexDelivery}
-                    value={`${valueDelivery.description}-${valueDelivery.cost[0].value}`}
-                >
-                    <Text
-                        className="font-brand"
+
+            if (arrayDelivery != undefined) {
+                return arrayDelivery.map((valueDelivery, indexDelivery) => {
+                    return (<option
+                        key={indexDelivery}
+                        value={`${valueDelivery.description}-${valueDelivery.cost[0].value}`}
                     >
-                        {
-                            valueDelivery.cost[0].etd.toLowerCase().includes("hari")
-                                ?
-                                <>
-                                    {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()}
-                                </>
-                                :
-                                <>
-                                    {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()} hari
-                                </>
-                        }
-                    </Text>
-                </option>
-                )
-            })
+                        <Text
+                            className="font-brand"
+                        >
+                            {
+                                valueDelivery.cost[0].etd.toLowerCase().includes("hari")
+                                    ?
+                                    <>
+                                        {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()}
+                                    </>
+                                    :
+                                    <>
+                                        {valueDelivery.service}--Rp {valueDelivery.cost[0].value.toLocaleString()}--Estimasi terkirim dalam waktu {valueDelivery.cost[0].etd.toLowerCase()} hari
+                                    </>
+                            }
+                        </Text>
+                    </option>
+                    )
+                })
+            }
         }
     }
 
     //& onClick akan simpan info alamat dan ongkir terpilih, navigate ke transactionlist tab menunggu pembayaran
     const btnBayar = () => {
-        
+
         navigate('/transactionlist');
 
     }
@@ -816,7 +716,8 @@ const CheckoutPage = (props) => {
                                 >
                                     Pilih metode pengiriman
                                 </option>
-                                {printDelivery(radioDelivery)}
+                                {getCost != undefined || getCost2 != undefined ?
+                                    printDelivery(radioDelivery) : null}
                             </Select>
 
                             <Divider

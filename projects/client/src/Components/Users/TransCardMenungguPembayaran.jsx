@@ -44,7 +44,7 @@ const TransCardMenungguPembayaranComponent = (props) => {
             addDate: '2022-03-15 19:05:00',
             freightCost: 10000,
             totalPayment: 12300,
-            recereceiverName: 'Aditya Dimas',
+            receiverName: 'Aditya Dimas',
             receiverAddress: 'Jl. Dimas',
             receiverPhone: '081287907001',
             postalCode: '77777'
