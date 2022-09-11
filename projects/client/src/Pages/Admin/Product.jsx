@@ -199,7 +199,7 @@ const Productpage = () => {
               <div class="col-md-9 col-sm-8">
                 <div class="row">
                   <div class="mt-3">
-                    <Text class="h1b">Dashboard Inventory Medhika</Text>
+                    <Text class="h1b">Inventori Medhika</Text>
                     <Button onClick={() => setModalState("Create")}>
                       Tambah Produk
                     </Button>
@@ -221,7 +221,7 @@ const Productpage = () => {
               <div class="col-8">
                 <div class="row">
                   <div class="mt-3">
-                    <Text class="h1b">Dashboard Inventory Medhika</Text>
+                    <Text class="h1b">Inventori Medhika</Text>
                     <Button onClick={() => setModalState("Create")}>
                       Tambah Produk
                     </Button>
