@@ -11,6 +11,7 @@ import { getAddress, getAddressActions } from "../../Redux/Actions/addressAction
 import { getProvinceRajaOngkir, getProvinceActions2 } from "../../Redux/Actions/getProvinceActions";
 import { getCityRajaOngkir, getCityActions2 } from "../../Redux/Actions/getCityActions";
 import { getCostRajaOngkir, getCostActions2 } from "../../Redux/Actions/getCostActions";
+import { getTransactionAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
     Divider,
@@ -381,9 +382,44 @@ const CheckoutPage = (props) => {
     }
 
     //& onClick akan simpan info alamat dan ongkir terpilih, navigate ke transactionlist tab menunggu pembayaran
-    const btnBayar = () => {
+    const btnBayar = async() => {
+        setLoadingStatus(true);
 
-        navigate('/transactionlist');
+        let arrayIdCart = state
+        console.log(`arrayIdCart onCLick btnBayar ${arrayIdCart}`)
+        console.log(`idAddressForOngkir`, idAddressForOngkir);
+        console.log(`ongkir`, ongkir)
+
+        if (arrayIdCart.length > 0) {
+            console.log(`arrayIdCart.length > 0`);
+
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`btnBayar tokenIdUser`, token);
+
+            if (token) {
+                Axios.post(`${API_URL}/transaction/addNormalTransaction`, {
+                    arrayIdCart,
+                    idAddress: idAddressForOngkir,
+                    prescription: "null",
+                    transactionStatus: "Menunggu Pembayaran",
+                    transferReceipt: "null",
+                    freightCost: ongkir
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }).then((res) => {
+                    console.log("isi res.data pas btnBayar", res.data);
+                    dispatch(getTransactionAction());
+                    navigate("/transactionlist");
+                    setLoadingStatus(false);
+                }).catch((err) => {
+                    console.log(err)
+                })
+            }
+        }
 
     }
 

@@ -4,6 +4,7 @@ const router = require('express').Router();
 
 router.get('/userGetAllTransaction', readToken, transactionControllers.userGetAllTransaction);
 router.post('/addNormalTransaction', readToken, transactionControllers.addNormalTransaction);
+router.post('/addRecipeTransaction', readToken, transactionControllers.addRecipeTransaction);
 
 
 

@@ -11,6 +11,7 @@ import TransCardDiprosesComponent from "../../Components/Users/TransCardDiproses
 import TransCardDikirimComponent from "../../Components/Users/TransCardDikirim";
 import TransCardPesananDikonfirmasiComponent from "../../Components/Users/TransCardPesananDikonfirmasi";
 import TransCardDibatalkanComponent from "../../Components/Users/TransCardDibatalkan";
+import { getTransactionAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
     Divider,
@@ -45,8 +46,8 @@ const TransactionListPage = (props) => {
 
     //* assign function
     const [currentToast, newToast] = useToastHook();
-    //const dispatch = useDispatch();
-    // const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     //^ STATE MANAGEMENT
     const [orderData, setOrderData] = useState("null");
@@ -59,6 +60,7 @@ const TransactionListPage = (props) => {
     //& component did mount
     useEffect(() => {
         { props.defaultTabIndex && setTabIndex(props.defaultTabIndex)}
+        dispatch(getTransactionAction());
     }, [])
 
     //TODO nanti ambil dr reducer transaksi
