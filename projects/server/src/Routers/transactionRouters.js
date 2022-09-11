@@ -8,9 +8,9 @@ router.post('/addRecipeTransaction', readToken, transactionControllers.addRecipe
 
 
 
-router.get('/userGetValidasiResep', readToken, transactionControllers.userGetValidasiResep);
-router.get('/userGetMenungguPembayaran', readToken, transactionControllers.userGetMenungguPembayaran);
-router.get('/userGetMenungguKonfirmasi', readToken, transactionControllers.userGetMenungguKonfirmasi);
+// router.get('/userGetValidasiResep', readToken, transactionControllers.userGetValidasiResep);
+// router.get('/userGetMenungguPembayaran', readToken, transactionControllers.userGetMenungguPembayaran);
+// router.get('/userGetMenungguKonfirmasi', readToken, transactionControllers.userGetMenungguKonfirmasi);
 
 
 module.exports = router;

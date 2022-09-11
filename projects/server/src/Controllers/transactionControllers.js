@@ -74,7 +74,7 @@ module.exports = {
             //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
             let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
 
-            console.log(`transactionDetail, ${transactionDetail}`);
+            // console.log(`transactionDetail, ${transactionDetail}`);
 
             transaction.forEach((val, idx) => {
                 val.purchasedProducts = [];
@@ -109,7 +109,7 @@ module.exports = {
             //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
             let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
 
-            console.log(`transactionDetail, ${transactionDetail}`);
+            // console.log(`transactionDetail, ${transactionDetail}`);
 
             transaction.forEach((val, idx) => {
                 val.purchasedProducts = [];
@@ -184,7 +184,7 @@ module.exports = {
                     newestInsertIdString += `${valNewIdTransaction1}, `
                 })
 
-                let getNewTransaction = await dbQuery(`select * from transactions where idTransaction in (${newestInsertIdString.substring(0, newestInsertIdString.length-2)});`);
+                let getNewTransaction = await dbQuery(`select * from transactions where idTransaction in (${newestInsertIdString.substring(0, newestInsertIdString.length - 2)});`);
 
                 console.log(`getNewTransaction query ===>`, getNewTransaction);
 
@@ -194,9 +194,9 @@ module.exports = {
                         getAllCart.forEach((valAllCart) => {
                             if (valNewTransaction.idCart == valAllCart.idCart) {
 
-                                    console.log(`addDetailQuery belum diisi IdCart itu`);
+                                console.log(`addDetailQuery belum diisi IdCart itu`);
 
-                                    addDetailQuery.push(`insert into transactionsdetail (idTransaction, idStock, idUser, productName, productPicture, stockType, purchaseQuantity, priceSale, subTotal) values (${dbConf.escape(valNewTransaction.idTransaction)}, ${dbConf.escape(valAllCart.idStock)}, ${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(valAllCart.productName)},${dbConf.escape(valAllCart.productPicture)},${dbConf.escape(valAllCart.stockType)},${dbConf.escape(valAllCart.cartQuantity)},${dbConf.escape(valAllCart.priceSale)},${dbConf.escape(valAllCart.subTotal)});`)
+                                addDetailQuery.push(`insert into transactionsdetail (idTransaction, idStock, idUser, productName, productPicture, stockType, purchaseQuantity, priceSale, subTotal) values (${dbConf.escape(valNewTransaction.idTransaction)}, ${dbConf.escape(valAllCart.idStock)}, ${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(valAllCart.productName)},${dbConf.escape(valAllCart.productPicture)},${dbConf.escape(valAllCart.stockType)},${dbConf.escape(valAllCart.cartQuantity)},${dbConf.escape(valAllCart.priceSale)},${dbConf.escape(valAllCart.subTotal)});`)
 
                             }
                         })
@@ -221,12 +221,33 @@ module.exports = {
     addRecipeTransaction: async (req, res, next) => {
         try {
 
-            if(req.dataUser.idUser){
+            if (req.dataUser.idUser) {
+                const uploadFile = uploader('/Resep', `RESEP-DOKTER`).array('media', 1);
 
+                // console.log('pengecekan size file', req.files[0].size <= 1000000);
+                // if (req.files[0].size <= 1000000) {
+                uploadFile(req, res, async (error) => {
+                    try {
+                        console.log(`isi body saat ngemulter resep`, req.body);
+                        console.log(`isi req.files multer resep`, req.files);
+
+                        let media = req.files[0].filename;
+                        let { idAddress, freightCost } = JSON.parse(req.body.data);
+
+                        //* arrayIdCart = 0
+                        //* transactionStatus = "Validasi Resep"
+                        //* transferReceipt = "null"
+                        let insertResepTransaction = await dbQuery(`INSERT INTO transactions (idCart, idAddress, prescription, transactionStatus, transferReceipt, invoiceNumber, freightCost) VALUES (0, ${dbConf.escape(idAddress)}, ${dbConf.escape(`/Resep/${media}`)}, "Validasi Resep", "null", ${dbConf.escape(freightCost)});`);
+
+                        return res.status(200).send({ success: true, message: 'Resep berhasil diunggah' });
+
+                    } catch (error) {
+                        req.files.forEach(val => fs.unlinkSync(`./Public/Resep/${val.filename}`));
+                        return next(error);
+                    }
+                })
+                // }
             }
-
-            return res.status(200).send({ success: true, message: 'Resep berhasil diunggah' });
-
         } catch (error) {
             return next(error);
         }
