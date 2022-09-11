@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
 import ModalPaymentProofComponent from "./ModalPaymentProof";
+import { getTransactionAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
     Image,
@@ -16,9 +17,13 @@ const TransCardMenungguPembayaranComponent = (props) => {
 
     //^ STATE MANAGEMENT
     const [total, setTotal] = useState(0);
-    const [isModalMetodeBayarOpen, setIsModalMetodeBayarOpen] = useState(false);
+    // const [isModalMetodeBayarOpen, setisModalPaymentProofOpen] = useState(false);
     const [isModalPaymentProofOpen, setIsModalPaymentProofOpen] = useState(false);
     const [selectedTransaction, setSelectedTransaction] = useState({});
+    const [isBtnUploadBuktiBayarClicked, setIsBtnUploadBuktiBayarClicked] = useState(0);
+
+    //^ cek state isModalPaymentProofOpen
+    console.log(`isModalPaymentProofOpen`, isModalPaymentProofOpen);
 
     //TODO axios get seluruh transaksi yang berstatus Menunggu Pembayaran
     //^ seluruh transaksi user yg login
@@ -115,7 +120,7 @@ const TransCardMenungguPembayaranComponent = (props) => {
     //& component did mount
     useEffect(() => {
 
-    }, [])
+    }, [selectedTransaction, isModalPaymentProofOpen, isBtnUploadBuktiBayarClicked])
 
     // & onClick btn back di modal pilih metode pembayaran akan mulangin user ke page Checkout
     // const btnBackModalMetodeBayar = () => {
@@ -142,8 +147,19 @@ const TransCardMenungguPembayaranComponent = (props) => {
     //     setIsModalMetodeBayarOpen(!isModalMetodeBayarOpen);
     // }
 
+    const openModalPaymentProof = () => {
+        if (isBtnUploadBuktiBayarClicked == 0) {
+            setIsModalPaymentProofOpen(false);
+        } else {
+            setIsModalPaymentProofOpen(true);
+        }
+    }
+
     //& onClick akan deteksi transaksinya beresep atau ngga, beresep akan minta user pilih metode bayar, ga beresep akan langsung minta user upload bukti bayar
     const btnUploadBuktiBayar = (selectedIdTransaction) => {
+        setIsBtnUploadBuktiBayarClicked(1);
+        setIsModalPaymentProofOpen(true);
+
         let transaction = dbTransaksi.filter((val, idx) => val.idTransaction == selectedIdTransaction)[0]
 
         setSelectedTransaction(transaction);
@@ -152,13 +168,21 @@ const TransCardMenungguPembayaranComponent = (props) => {
         console.log(`selectedTransaction`, selectedTransaction);
         console.log(`transaction.totalPayment`, total);
 
-        setIsModalPaymentProofOpen(true);
         //TODO axios untuk patch add multer gambar bukti bayar untuk transaksi yang diklik upload bukti bayar nya
-
-        
     }
 
     const handleCallbackToChildPaymentProof = () => {
+        setIsBtnUploadBuktiBayarClicked(0);
+        setIsModalPaymentProofOpen(false);
+    }
+
+    const handleCallbackToChildPaymentProofOVERLAY = () => {
+        setIsBtnUploadBuktiBayarClicked(0);
+        setIsModalPaymentProofOpen(false);
+    }
+
+    const handleCallbackToChildPaymentProofONCLOSE = () => {
+        setIsBtnUploadBuktiBayarClicked(0);
         setIsModalPaymentProofOpen(false);
     }
 
@@ -342,6 +366,8 @@ const TransCardMenungguPembayaranComponent = (props) => {
             <ModalPaymentProofComponent
                 openModalPaymentProofFromCard={isModalPaymentProofOpen}
                 handleSendingToCardParentPaymentMethod={handleCallbackToChildPaymentProof}
+                handleSendingToCardParentPaymentMethodOVERLAY={handleCallbackToChildPaymentProofOVERLAY}
+                handleSendingToCardParentPaymentMethodONCLOSE = {handleCallbackToChildPaymentProofONCLOSE}
                 selectedTransaction={selectedTransaction}
                 totalPayment={total}
             />

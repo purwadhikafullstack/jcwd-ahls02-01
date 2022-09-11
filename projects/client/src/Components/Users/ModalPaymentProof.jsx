@@ -242,11 +242,13 @@ const ModalPaymentProofComponent = (props) => {
         }
 
     }
+   
 
     const handleImageBukti = (value) => {
         console.log(`value handleImageBukti`, value);
         setNewImageBukti(value);
     }
+
 
     //& onClick akan upload bukti bayar ke tabel transaksi lalu tutup modal payment proof
     const btnUnggahBukti = () => {
@@ -257,15 +259,27 @@ const ModalPaymentProofComponent = (props) => {
         setAccordionIndex(null);
     }
 
+    const handleOverlayClicked = () => {
+        props.handleSendingToCardParentPaymentMethodOVERLAY();
+        setIsModalPaymentProofOpen(false);
+        setAccordionIndex(null);
+    }
+
+    const onCloseModalClicked = () => {
+        props.handleSendingToCardParentPaymentMethodONCLOSE();
+        setIsModalPaymentProofOpen(false);
+        setAccordionIndex(null);
+    }
+
     return (
         <>
             <Accordion
                 onChange={setAccordionIndex}
             >
                 <Modal
-                    isOpen={isModalPaymentProofOpen}
-                    onOverlayClick={() => setIsModalPaymentProofOpen(!isModalPaymentProofOpen)}
-                    onClose={() => setIsModalPaymentProofOpen(!isModalPaymentProofOpen)}
+                    isOpen={props.openModalPaymentProofFromCard}
+                    onOverlayClick={handleOverlayClicked}
+                    onClose={onCloseModalClicked}
                     isCentered
                     size="4xl"
                 >
