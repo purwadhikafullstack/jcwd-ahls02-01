@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Axios from 'axios';
-// import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
+import { API_URL, BE_URL } from "../../helper";
 import {
     Box,
     Divider,
@@ -28,45 +29,23 @@ import {
     TabList,
     Tab,
     TabPanels,
-    TabPanel
+    TabPanel,
+    Popover,
+    PopoverTrigger,
+    PopoverArrow,
+    PopoverHeader,
+    PopoverContent,
+    PopoverCloseButton,
+    PopoverBody
 } from "@chakra-ui/react";
 
 const AdminTransCardMenungguKonfirmasiComponent = (props) => {
 
     //TODO axios get seluruh transaksi yang berstatus Menunggu Konfirmasi
-    //^ seluruh transaksi user yg login
-    const [dbTransaksi] = useState([
-        {
-            idTransaction: 3,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 3,
-                    productName: 'Renovit',
-                    productPicture: 'https://cf.shopee.co.id/file/bdb49a41e77413654fe1d71bb8ddc46a',
-                    stockType: 'saset',
-                    purchaseQuantity: 5,
-                    priceSale: 15000,
-                    subTotal: 75000,
-                }
-            ],
-            totalSale: 75000,
-            prescription: null,
-            transactionStatus: 'Menunggu Konfirmasi',
-            transferReceipt: 'https://mahirtransaksi.com/wp-content/uploads/2020/09/2-1-179x300.jpg',
-            invoiceNumber: 'INV/20220304/STN/00001',
-            addDate: '2022-03-04 21:10:00',
-            freightCost: 10000,
-            totalPayment: 85000,
-            recereceiverName: 'Aditya Dimas',
-            receiverAddress: 'Jl. Dimas',
-            receiverPhone: '081287907001',
-            postalCode: '77777'
-        }
-    ]);
 
     const printMenungguKonfirmasi = () => {
-        if (dbTransaksi.length > 0) {
-            return dbTransaksi.map((value, index) => {
+        if (props.dbMenungguKonfirmasi.length > 0) {
+            return props.dbMenungguKonfirmasi.map((value, index) => {
                 return (
                     <div
                         className="card mb-2" key={value.idTransaction}
@@ -122,7 +101,7 @@ const AdminTransCardMenungguKonfirmasiComponent = (props) => {
                                                 <Image
                                                     borderRadius='xl'
                                                     boxSize='70px'
-                                                    src={valProduct.productPicture}
+                                                    src={BE_URL + valProduct.productPicture}
                                                     alt={`IMG-${valProduct.productName}`}
                                                     className="d-md-block d-none"
                                                 />
@@ -194,30 +173,55 @@ const AdminTransCardMenungguKonfirmasiComponent = (props) => {
                                 mt={2}
                                 mb={3}
                             >
-                                <Button
-                                    className="btn-def"
-                                    width={180} ms={5}
+
+                                <Popover
+                                    placement='left'
                                 >
-                                    Cek Bukti Bayar
-                                </Button>
-                                <Button
+                                    <PopoverTrigger>
+                                        <Button
+                                            className="btn-def"
+                                            width={180} ms={5}
+                                        >
+                                            Cek Bukti Bayar
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent>
+                                        <PopoverArrow />
+                                        <PopoverCloseButton />
+                                        <PopoverBody>
+                                            <Image
+                                                borderRadius='xl'
+                                                boxSize='500px'
+                                                src={value.transferReceipt.includes("http")
+                                                    ?
+                                                    value.transferReceipt
+                                                    :
+                                                    BE_URL + value.transferReceipt}
+                                                alt={`IMG-BUKTIBAYAR`}
+                                                className="d-md-block d-none"
+                                            />
+                                        </PopoverBody>
+                                    </PopoverContent>
+                                </Popover>
+
+                                < Button
                                     className="btn-def"
                                     width={180} ms={5}
                                 >
                                     Tolak Pembayaran
-                                </Button>
+                                </Button >
                                 <Button
                                     className="btn-def_second"
                                     width={180} ms={5}
                                 >
-                                    <Text class="h6b" style={{color:"#FFFFFF"}}>
+                                    <Text class="h6b" style={{ color: "#FFFFFF" }}>
                                         Konfirmasi Pembayaran
                                     </Text>
                                 </Button>
-                            </Box>
+                            </Box >
 
-                        </div>
-                    </div>
+                        </div >
+                    </div >
                 )
             })
         }

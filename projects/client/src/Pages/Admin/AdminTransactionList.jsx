@@ -309,36 +309,43 @@ const AdminTransactionListPage = (props) => {
                                         <TabPanels>
                                             <TabPanel>
                                                 <AdminTransCardValidasiResepComponent
+                                                dbValidasiResep={transactionList.filter(val => val.transactionStatus == "Menunggu Diproses Penjual")}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardMenungguPembayaranComponent
+                                                dbMenungguPembayaran={transactionList.filter(val => val.transactionStatus == "Menunggu Pembayaran")}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardMenungguKonfirmasiComponent
+                                                dbMenungguKonfirmasi={transactionList.filter(val => val.transactionStatus == "Menunggu Konfirmasi")}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardDiprosesComponent
+                                                dbDiproses={transactionList.filter(val => val.transactionStatus == "Diproses")}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardDikirimComponent
+                                                dbDikirim={transactionList.filter(val => val.transactionStatus == "Dikirim")}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardPesananDikonfirmasiComponent
+                                                dbPesananDikonfirmasi={transactionList.filter(val => val.transactionStatus == "Pesanan Dikonfirmasi")}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardDibatalkanComponent
+                                                dbDibatalkan={transactionList.filter(val => val.transactionStatus == "Dibatalkan")}
 
                                                 />
                                             </TabPanel>

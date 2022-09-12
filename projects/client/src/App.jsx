@@ -22,6 +22,8 @@ import ProductList from "./Pages/Users/ProductList";
 import ProductDetail from "./Pages/Users/ProductDetail";
 import TransactionListPage from "./Pages/Users/TransactionList";
 import UploadResepPage from "./Pages/Users/UploadResep";
+import AdminTransactionListPage from "./Pages/Admin/AdminTransactionList";
+import RacikResepPage from "./Pages/Admin/RacikResep";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -55,6 +57,8 @@ function App() {
                 <Route path="/admin/dashboard" element={<Dashboard />} />
                 <Route path="/admin/category" element={<Category />} />
                 <Route path="/admin/productpage" element={<Productpage />} />
+                <Route path="/admin/transactionList" element={<AdminTransactionListPage />} />
+                <Route path="/admin/racikResep" element={<RacikResepPage />} />
               </>
             ) : (
               <>

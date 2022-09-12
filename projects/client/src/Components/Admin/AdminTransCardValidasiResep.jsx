@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 // import NavbarComponent from "./Navbar";
 import { useToastHook } from "../CustomToast";
+import { API_URL, BE_URL } from "../../helper";
 import {
     Box,
     Flex,
@@ -291,52 +292,39 @@ const AdminTransCardValidasiResepComponent = (props) => {
         }
     ]);
 
-    
     const printProdukResep = () => {
-        if (dbTransaksi.length > 0) {
-            return dbTransaksi.map((value, index) => {
+        if (props.dbValidasiResep.length > 0) {
+            return props.dbValidasiResep.map((value, index) => {
                 if (value.prescription != null && value.transactionStatus == "Menunggu Diproses Penjual") {
                     return (
-                        <div class="row mt-3">
-                            <div class="col-md-2 d-flex justify-content-center">
-                                <Image
-                                    id={value.idTransaction}
-                                    src={value.prescription}
-                                    alt='Gambar resep dokter'
-                                    borderRadius='sm'
-                                    boxSize='90px'
-                                    className="imgResep"
-                                    />
-                            </div>
-                            <div class="col-md-10">
-                                <Box>
-                                    <div>
-                                        <Text class="h6b">
-                                            Paracetamol
+                        <div class="col-md-10">
+                            <Box>
+                                <div>
+                                    <Text class="h6b">
+                                        Paracetamol
+                                    </Text>
+                                </div>
+                                <div>
+                                    <Box
+                                        display='flex'
+                                        flexDirection={{ base: 'column', md: 'row' }}
+                                        alignItems={{ base: 'start', md: 'center' }}
+                                        justifyContent='space-between'
+                                        className="font-brand"
+                                        pb={3}
+                                    >
+                                        <Text class="h6">
+                                            10 Kapsul x Rp 1.300
                                         </Text>
-                                    </div>
-                                    <div>
-                                        <Box
-                                            display='flex'
-                                            flexDirection={{ base: 'column', md: 'row' }}
-                                            alignItems={{ base: 'start', md: 'center' }}
-                                            justifyContent='space-between'
-                                            className="font-brand"
-                                            pb={3}
+                                        <Text
+                                            as='b'
+                                            textColor='var(--colorSix)'
                                         >
-                                            <Text class="h6">
-                                                10 Kapsul x Rp 1.300
-                                            </Text>
-                                            <Text
-                                                as='b'
-                                                textColor='var(--colorSix)'
-                                            >
-                                                Rp 13.000
-                                            </Text>
-                                        </Box>
-                                    </div>
-                                </Box>
-                            </div>
+                                            Rp 13.000
+                                        </Text>
+                                    </Box>
+                                </div>
+                            </Box>
                         </div>
                     )
                 }
@@ -344,9 +332,12 @@ const AdminTransCardValidasiResepComponent = (props) => {
             )
         }
     }
+
+    //! pending list product dr hasil konversi / validasi resep
+    //! pending handling subtotal
     const printSemuaTransaksi = () => {
-        if (dbTransaksi.length > 0) {
-            return dbTransaksi.map((value, index) => {
+        if (props.dbValidasiResep.length > 0) {
+            return props.dbValidasiResep.map((value, index) => {
                 if (value.prescription != null && value.transactionStatus == "Menunggu Diproses Penjual") {
                     return (
                         <div
@@ -384,13 +375,56 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                 </Box>
                                 <Button
                                     className="btn-def_second"
-                                    onClick={()=> navigate("/admin/racikResep")}
-                                    >
+                                    onClick={() => navigate("/admin/racikResep")}
+                                >
                                     Validasi Resep
                                 </Button>
-                                {printProdukResep()}
-                                {printProdukResep()}
-                                <Divider mt={4}/>
+                                <div class="row mt-3" key={value.idTransaction}>
+                                    <div class="col-md-2 d-flex justify-content-center">
+                                        <Image
+                                            id={value.idTransaction}
+                                            src={value.prescription.includes("http")
+                                                ?
+                                                value.prescription
+                                                :
+                                                `${BE_URL}${value.prescription}`}
+                                            alt='Gambar resep dokter'
+                                            borderRadius='sm'
+                                            boxSize='80px'
+                                            className="imgResep"
+                                        />
+                                    </div>
+                                    <div class="col-md-10">
+                                        <Box>
+                                            <div>
+                                                <Text class="h6b">
+                                                    Paracetamol
+                                                </Text>
+                                            </div>
+                                            <div>
+                                                <Box
+                                                    display='flex'
+                                                    flexDirection={{ base: 'column', md: 'row' }}
+                                                    alignItems={{ base: 'start', md: 'center' }}
+                                                    justifyContent='space-between'
+                                                    className="font-brand"
+                                                    pb={3}
+                                                >
+                                                    <Text class="h6">
+                                                        10 Kapsul x Rp 1.300
+                                                    </Text>
+                                                    <Text
+                                                        as='b'
+                                                        textColor='var(--colorSix)'
+                                                    >
+                                                        Rp 13.000
+                                                    </Text>
+                                                </Box>
+                                            </div>
+                                        </Box>
+                                    </div>
+                                </div>
+                                <Divider mt={4} />
                                 <div class="row">
                                     <div class="col-md-2"></div>
                                     <div class="col-md-10">
@@ -411,7 +445,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                                 as='b'
                                                 textColor='var(--colorSix)'
                                             >
-                                                Rp 9.000
+                                                Rp {value.freightCost.toLocaleString()}
                                             </Text>
                                         </Box>
                                         <Box
@@ -423,9 +457,9 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                             pb={3}
                                         >
                                             <Box>
-                                            <Text class="h6">
-                                                Total
-                                            </Text>
+                                                <Text class="h6">
+                                                    Total
+                                                </Text>
                                             </Box>
                                             <Text
                                                 as='b'
@@ -439,7 +473,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                 <div class="d-flex justify-content-end mt-2">
                                     <Button
                                         className="btn-def_second"
-                                      // onClick={() => btnUploadBuktiBayar(value.idTransaction)}
+                                    // onClick={() => btnUploadBuktiBayar(value.idTransaction)}
                                     >
                                         Tagih Pembayaran
                                     </Button>
