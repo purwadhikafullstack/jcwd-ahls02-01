@@ -315,3 +315,29 @@ nav ul li a:hover {
   }
 
 }
+
+.iconFirst {
+  cursor: pointer;
+  color: var(--colorSix);
+  /* background-color: var(--colorOne); */
+}
+
+.iconFirst:hover {
+  color: var(--colorSeven);
+  /* background-color: var(--colorOne); */
+}
+
+.iconSecond {
+  color: var(--colorFour);
+  /* background-color: var(--colorOne); */
+}
+
+.iconSecond:hover {
+  color: var(--colorFive);
+  /* background-color: var(--colorOne); */
+}
+
+.imgResep:hover {
+  transform: scale(5);
+  z-index: 99;
+}

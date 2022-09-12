@@ -1,7 +1,8 @@
 import Axios from "axios";
 import React from "react";
 import { API_URL, BE_URL } from "../../helper";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getCartAction } from "../../Redux/Actions/cartActions";
 // import { forgotPassword } from "../redux/action/usersAction";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -26,6 +27,7 @@ import { useToastHook } from "../../Components/CustomToast";
 import obat1 from "../../Assets/DevImage/Panadol.jpg";
 
 const ProductDetail = (props) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [currentToast, newToast] = useToastHook();
   const [loadingStat, setLoadingStat] = React.useState(false);
@@ -33,6 +35,7 @@ const ProductDetail = (props) => {
   const params = useParams();
   React.useEffect(() => {
     fetchProductDetail();
+    dispatch(getCartAction());
   }, []);
   const fetchProductDetail = () => {
     let token = localStorage.getItem("tokenIdUser");
@@ -42,11 +45,70 @@ const ProductDetail = (props) => {
       console.log(res.data);
     });
   };
-  const btnCart = async () => {
+
+  const { databaseCart } = useSelector((state) => {
+    return {
+      databaseCart: state.cartReducers.cart.filter(val => val.isActive == "true"),
+    }
+  })
+
+  //^ check isi databaseCart
+  console.log(`databaseCart di productlist`, databaseCart);
+
+  const btnCart = async (idProduct, productName) => {
     try {
       setLoadingStat(true);
-      setLoadingStat(false);
-      navigate("/cart");
+
+      let token = localStorage.getItem("tokenIdUser");
+
+      //^ cek ada token atau tidak
+      console.log(`btnCheckout tokenIdUser`, token);
+
+      if (token) {
+        if ((databaseCart.findIndex(val => val.productName == productName)) == -1) {
+
+          let res = await Axios.post(`${API_URL}/cart/add`, {
+            idProduct
+          }, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+
+          if (res.data) {
+            console.log("isi res.data saat btnCart diklik", res.data);
+            dispatch(getCartAction());
+            setLoadingStat(false);
+            navigate("/cart");
+          }
+
+        } else {
+
+          let idxInDatabaseCart = databaseCart.findIndex(val => val.productName == productName);
+
+          let idCart = databaseCart[idxInDatabaseCart].idCart;
+          let previousCartQuantity = databaseCart[idxInDatabaseCart].cartQuantity;
+          let newQuantity = previousCartQuantity + 1;
+
+          let res = await Axios.patch(`${API_URL}/cart/idCart`, {
+            idProduct,
+            cartQuantity: newQuantity
+          }, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+
+          if (res.data) {
+            console.log("isi res.data saat btnCart diklik", res.data);
+            dispatch(getCartAction());
+            setLoadingStat(false);
+            navigate("/cart");
+          }
+
+        }
+      }
+
     } catch (err) {
       newToast({
         title: "Error.",
@@ -62,7 +124,7 @@ const ProductDetail = (props) => {
       <Box
         w="100%"
         h="100%"
-        // bgGradient='linear(#f6f8fc, #FFFFFF)'
+      // bgGradient='linear(#f6f8fc, #FFFFFF)'
       >
         <Box boxShadow="md">
           <NavbarComponent />
@@ -97,18 +159,19 @@ const ProductDetail = (props) => {
                 </Text>
               </Box>
               <div class="d-grid gap-2" style={{ marginLeft: "20px" }}>
-                <button
+                <Button
                   class="btn mt-5 mb-5"
                   style={{ backgroundColor: "#DE1B51" }}
                   type="button"
-                  onClick={btnCart}
+                  onClick={() => btnCart(productDetail.idProduct, productDetail.productName)}
+                  isLoading={loadingStat}
                 >
                   <Box>
                     <Text style={{ color: "#FFFFFF" }} class="h6b">
                       Add To Cart
                     </Text>
                   </Box>
-                </button>
+                </Button>
               </div>
               <Box class="mt-5">
                 <Text
