@@ -268,7 +268,7 @@ const ModalPaymentProofComponent = (props) => {
         console.log(`btnBayar tokenIdUser`, token);
 
         try {
-            if (newImageBukti.filename = "" || idTransaction == 0 || accordionIndex == null) {
+            if (newImageBukti == null || idTransaction == 0 || accordionIndex == null) {
                 newToast({
                     title: `Informasi Belum Lengkap`,
                     description: "Lengkapi dahulu form nya",

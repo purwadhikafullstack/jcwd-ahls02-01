@@ -222,6 +222,7 @@ module.exports = {
         try {
 
             if (req.dataUser.idUser) {
+
                 const uploadFile = uploader('/Resep', `RESEP-DOKTER`).array('resepPicture', 1);
 
                 // console.log('pengecekan size file', req.files[0].size <= 1000000);
@@ -237,9 +238,9 @@ module.exports = {
                         month = month.toString().length < 2 ? "0" + month.toString() : month.toString()
                         console.log(`newmonth`, month);
                         let day = currentDate.getDate();
-            
+
                         let getTransaction = await dbQuery(`select t1.idTransaction, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, t1.addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress group by t1.idTransaction;`)
-            
+
                         let docNoInNumber = Math.max(...getTransaction.map((item) => item.idTransaction));
                         docNoInNumber++;
                         console.log(`docNoInNumber`, docNoInNumber);
@@ -262,8 +263,9 @@ module.exports = {
                         req.files.forEach(val => fs.unlinkSync(`./Public/Resep/${val.filename}`));
                         return next(error);
                     }
+
                 })
-                // }
+
             }
         } catch (error) {
             return next(error);
@@ -388,5 +390,5 @@ module.exports = {
         } catch (error) {
             return next(error);
         }
-    }   
+    }
 }

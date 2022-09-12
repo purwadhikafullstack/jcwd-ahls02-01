@@ -439,7 +439,7 @@ const UploadResepPage = (props) => {
         console.log(`btnBayar tokenIdUser`, token);
 
         try {
-            if (newImageResep.filename = "" || idAddressForOngkir == "null" || ongkir == 0) {
+            if (newImageResep == null || idAddressForOngkir == null    || ongkir == 0) {
                 newToast({
                     title: `Informasi Belum Lengkap`,
                     description: "Lengkapi dahulu form nya",
