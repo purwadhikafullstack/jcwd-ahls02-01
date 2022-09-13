@@ -297,10 +297,10 @@ const AdminTransCardValidasiResepComponent = (props) => {
             return props.dbValidasiResep.map((value, index) => {
                 if (value.prescription != null && value.transactionStatus == "Menunggu Diproses Penjual") {
                     return (
-                        <div class="col-md-10">
+                        <div className="col-md-10">
                             <Box>
                                 <div>
-                                    <Text class="h6b">
+                                    <Text className="h6b">
                                         Paracetamol
                                     </Text>
                                 </div>
@@ -313,12 +313,13 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                         className="font-brand"
                                         pb={3}
                                     >
-                                        <Text class="h6">
+                                        <Text className="h6">
                                             10 Kapsul x Rp 1.300
                                         </Text>
                                         <Text
-                                            as='b'
-                                            textColor='var(--colorSix)'
+                                            className="h6"
+                                        // as='b'
+                                        // textColor='var(--colorSix)'
                                         >
                                             Rp 13.000
                                         </Text>
@@ -337,6 +338,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
     //! pending handling subtotal
     const printSemuaTransaksi = () => {
         if (props.dbValidasiResep.length > 0) {
+            console.log(`isi props.dbValidasiResep`, props.dbValidasiResep)
             return props.dbValidasiResep.map((value, index) => {
                 if (value.prescription != null && value.transactionStatus == "Menunggu Diproses Penjual") {
                     return (
@@ -375,12 +377,138 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                 </Box>
                                 <Button
                                     className="btn-def_second"
+                                    mb={3}
                                     onClick={() => navigate("/admin/racikResep")}
                                 >
                                     Validasi Resep
                                 </Button>
-                                <div class="row mt-3" key={value.idTransaction}>
-                                    <div class="col-md-2 d-flex justify-content-center">
+
+                                {/* UPDATE V2.0 */}
+                                <>
+                                    <Box
+                                        display='flex'
+                                        alignItems='start'
+                                        justifyContent='space-between'
+                                        className="font-brand"
+                                        pb={2}
+                                        
+                                    >
+                                        {value.purchasedProducts.length > 0
+                                            ?
+                                            value.purchasedProducts.map((valProduct, idxProduct) => {
+                                                return (
+                                                    <>
+                                                        <Box
+                                                            display='flex'
+                                                            alignItems='start'
+                                                            justifyContent='start'
+                                                            gap={5}
+                                                            key={valProduct.idTransactionDetail}
+                                                        >
+                                                            <Image
+                                                                borderRadius='xl'
+                                                                boxSize='70px'
+                                                                src={value.prescription.includes("http")
+                                                                    ?
+                                                                    value.prescription
+                                                                    :
+                                                                    `${BE_URL}${value.prescription}`}
+                                                                alt='Gambar resep dokter'
+                                                                className="d-md-block d-none imgResep"
+                                                            />
+                                                            <Text>
+                                                                <span>
+                                                                    {valProduct.productName}
+                                                                </span>
+                                                                <br />
+                                                                <span>
+                                                                    {valProduct.purchaseQuantity} {valProduct.stockType} x Rp {valProduct.priceSale.toLocaleString()}
+                                                                </span>
+                                                            </Text>
+                                                        </Box>
+                                                        <Text
+                                                            className="me-1"
+                                                        >
+                                                            Rp {valProduct.subTotal.toLocaleString()}
+                                                        </Text>
+                                                    </>
+                                                )
+                                            })
+                                            :
+                                            <>
+                                                <Box
+                                                    display='flex'
+                                                    alignItems='start'
+                                                    justifyContent='start'
+                                                    gap={5}
+                                                >
+                                                    <Image
+                                                        borderRadius='xl'
+                                                        boxSize='70px'
+                                                        src={value.prescription.includes("http")
+                                                            ?
+                                                            value.prescription
+                                                            :
+                                                            `${BE_URL}${value.prescription}`}
+                                                        alt='Gambar resep dokter'
+                                                        className="d-md-block d-none imgResep"
+                                                    />
+                                                </Box>
+                                            </>
+                                        }
+                                    </Box>
+
+
+                                    {/* <Box
+                                        display='flex'
+                                        alignItems='start'
+                                        justifyContent='space-between'
+                                        className="font-brand"
+                                        pb={2}
+                                        key={valProduct.idTransactionDetail}
+                                    >
+                                        <Box
+                                            display='flex'
+                                            alignItems='start'
+                                            justifyContent='start'
+                                            gap={5}
+                                        >
+                                            <Image
+                                                borderRadius='xl'
+                                                boxSize='70px'
+                                                src={value.prescription.includes("http")
+                                                    ?
+                                                    value.prescription
+                                                    :
+                                                    `${BE_URL}${value.prescription}`}
+                                                alt='Gambar resep dokter'
+                                                className="d-md-block d-none"
+                                            />
+                                            <Text>
+                                                <span>
+                                                    Paracetamol
+                                                    {valProduct.productName}
+                                                </span>
+                                                <br />
+                                                <span>
+                                                    10 Kapsul x Rp 1.300
+                                                    {valProduct.purchaseQuantity} {valProduct.stockType} x Rp {valProduct.priceSale.toLocaleString()}
+                                                </span>
+                                            </Text>
+                                        </Box>
+                                        <Text
+                                            className="me-1"
+                                        >
+                                            Rp 13.000
+                                            Rp {valProduct.subTotal.toLocaleString()}
+                                        </Text>
+                                    </Box> */}
+                                </>
+                                {/*  */}
+
+                                {/* V1.0 */}
+                                {/* <div className="row mt-3" key={value.idTransaction}>
+                                    <div className="col-md-2 d-flex justify-content-center">
                                         <Image
                                             id={value.idTransaction}
                                             src={value.prescription.includes("http")
@@ -394,10 +522,11 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                             className="imgResep"
                                         />
                                     </div>
-                                    <div class="col-md-10">
+                                    <div className="col-md-10">
                                         <Box>
                                             <div>
-                                                <Text class="h6b">
+                                                <Text className="font-brand"
+                                                >
                                                     Paracetamol
                                                 </Text>
                                             </div>
@@ -410,12 +539,11 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                                     className="font-brand"
                                                     pb={3}
                                                 >
-                                                    <Text class="h6">
+                                                    <Text className="font-brand">
                                                         10 Kapsul x Rp 1.300
                                                     </Text>
                                                     <Text
-                                                        as='b'
-                                                        textColor='var(--colorSix)'
+                                                        className="font-brand"
                                                     >
                                                         Rp 13.000
                                                     </Text>
@@ -423,11 +551,14 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                             </div>
                                         </Box>
                                     </div>
-                                </div>
+                                </div> */}
+                                {/*  */}
+
+
                                 <Divider mt={4} />
-                                <div class="row">
-                                    <div class="col-md-2"></div>
-                                    <div class="col-md-10">
+                                <div className="row">
+                                    <div className="col-md-2"></div>
+                                    <div className="col-md-10">
                                         <Box
                                             display='flex'
                                             flexDirection={{ base: 'column', md: 'row' }}
@@ -437,7 +568,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                             pb={3}
                                         >
                                             <Box mt={5}>
-                                                <Text class="h6">
+                                                <Text className="h6">
                                                     Ongkir
                                                 </Text>
                                             </Box>
@@ -457,7 +588,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                             pb={3}
                                         >
                                             <Box>
-                                                <Text class="h6">
+                                                <Text className="h6">
                                                     Total
                                                 </Text>
                                             </Box>
@@ -470,7 +601,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                         </Box>
                                     </div>
                                 </div>
-                                <div class="d-flex justify-content-end mt-2">
+                                <div className="d-flex justify-content-end mt-2">
                                     <Button
                                         className="btn-def_second"
                                     // onClick={() => btnUploadBuktiBayar(value.idTransaction)}
@@ -479,7 +610,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                     </Button>
                                 </div>
                             </div>
-                        </div>
+                        </div >
                     )
                 }
             }

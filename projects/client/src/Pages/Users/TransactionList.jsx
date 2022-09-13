@@ -69,6 +69,7 @@ const TransactionListPage = (props) => {
             transactionList: state.transactionReducers.transaction
         }
     })
+    
 
     const handleTabIndex = (idx) => {
         setTabIndex(idx);

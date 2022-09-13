@@ -21,6 +21,15 @@ export const savedTransactionAdminAction = (data) => {
     }
 }
 
+export const savedUserValidasiResepAction = (data) => {
+    console.log("savedTransactionAdminAction", data);
+
+    return {
+        type: "USER_VALIDASI_RESEP",
+        payload: data
+    }
+}
+
 //* initially get transaction's cart info
 //* also use for getting the latest user's transaction info
 export const getTransactionAction = () => {
@@ -68,6 +77,32 @@ export const getTransactionAdminAction = () => {
                 console.log(`res.data getTransactionAdminAction`, res.data);
 
                 dispatch(savedTransactionAdminAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+export const getUserValidasiResepAction = (page=1) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getUserValidasiResepAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/userGetValidasiResep?_page=${page}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getUserValidasiResepAction`, res.data);
+
+                dispatch(savedUserValidasiResepAction(res.data));
             }
         } catch (error) {
             console.log(error);
