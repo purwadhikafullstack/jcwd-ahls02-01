@@ -19,6 +19,7 @@ import Verification from "./Pages/Users/Verification";
 import Productpage from "./Pages/Admin/Product";
 import ProductList from "./Pages/Users/ProductList";
 import ProductDetail from "./Pages/Users/ProductDetail";
+import SalesReport from "./Pages/Admin/SalesReport";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -52,6 +53,7 @@ function App() {
                 <Route path="/admin/dashboard" element={<Dashboard />} />
                 <Route path="/admin/category" element={<Category />} />
                 <Route path="/admin/productpage" element={<Productpage />} />
+                <Route path="/admin/salesReport" element={<SalesReport />} />
               </>
             ) : (
               <>

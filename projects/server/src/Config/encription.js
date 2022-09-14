@@ -15,7 +15,7 @@ module.exports = {
     return token;
   },
   readToken: async (req, res, next) => {
-    console.log('req.token!!', req.token);
+    // console.log('req.token!!', req.token);
     // console.log('checkToken!', checkToken[0].token);
     if (req.token) {
       jwt.verify(req.token, process.env.JWT_PASS, (err, decode) => {
@@ -23,14 +23,14 @@ module.exports = {
           res.status(401).send({
             message: `Users Authentication ${err}`
           })
-          
+
         }
-        else{
+        else {
           req.dataUser = decode;
 
           next();
         }
-      
+
       })
     } else {
       let message = "token not found!"
