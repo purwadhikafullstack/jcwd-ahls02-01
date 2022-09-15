@@ -368,7 +368,7 @@ const handleEditProfile=async()=>{
           alert("else")
         }
       } catch (error) {
-        alert(error)
+        console.log(error)
       }
     }
 
@@ -381,7 +381,7 @@ const handleEditProfile=async()=>{
           alert("else")
         }
       } catch (error) {
-        alert(error)
+        console.log(error)
       }
     }
 
