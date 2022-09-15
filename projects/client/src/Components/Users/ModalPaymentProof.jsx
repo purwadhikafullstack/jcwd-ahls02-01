@@ -251,7 +251,23 @@ const ModalPaymentProofComponent = (props) => {
 
     const handleImageBukti = (value) => {
         console.log(`value handleImageBukti`, value);
-        setNewImageBukti(value);
+        console.log(`show value size image resep`, value.size);
+        
+        if (value.size <= 1000000) {
+            if(value.type == "image/png" || value.type=="image/jpeg"){
+                setNewImageBukti(value);
+            } else {
+                newToast({
+                    description: "Tipe gambar bukan jpg/jpeg/png",
+                    status: 'error'
+                })
+            }
+        } else {
+            newToast({
+                description: "Ukuran gambar melebihi 1M",
+                status: 'error'
+            })
+        }
     }
 
     //& onClick akan upload bukti bayar ke tabel transaksi lalu tutup modal payment proof
