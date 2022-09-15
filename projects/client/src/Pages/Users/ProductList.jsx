@@ -1,7 +1,8 @@
 import Axios from "axios";
 import React from "react";
 import { API_URL, BE_URL } from "../../helper";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getCartAction } from "../../Redux/Actions/cartActions";
 // import { forgotPassword } from "../redux/action/usersAction";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -27,27 +28,87 @@ import obat1 from "../../Assets/DevImage/Panadol.jpg";
 
 const ProductList = (props) => {
   const [productData, setProductData] = React.useState([]);
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [currentToast, newToast] = useToastHook();
   const [loadingStat, setLoadingStat] = React.useState(false);
   React.useEffect(() => {
     fetchProductList();
+    dispatch(getCartAction());
   }, []);
   const fetchProductList = () => {
     let token = localStorage.getItem("tokenIdUser");
     Axios.get(`${API_URL}/users/getproducts`, {
-      headers: { Authorization: `Bearer ${token}` },
+   
     }).then((res) => {
       setProductData(res.data.data);
       console.log(res.data);
     });
   };
-  const btnCart = async () => {
+
+  const { databaseCart } = useSelector((state) => {
+    return {
+      databaseCart: state.cartReducers.cart.filter(val => val.isActive == "true"),
+    }
+  })
+
+  //^ check isi databaseCart
+  console.log(`databaseCart di productlist`, databaseCart);
+
+  const btnCart = async (idProduct, productName) => {
     try {
       setLoadingStat(true);
-      setLoadingStat(false);
-      navigate("/cart");
+
+      let token = localStorage.getItem("tokenIdUser");
+
+      //^ cek ada token atau tidak
+      console.log(`btnCheckout tokenIdUser`, token);
+
+      if (token) {
+        if ((databaseCart.findIndex(val => val.productName == productName)) == -1) {
+
+          let res = await Axios.post(`${API_URL}/cart/add`, {
+            idProduct
+          }, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+
+          if (res.data) {
+            console.log("isi res.data saat btnCart diklik", res.data);
+            dispatch(getCartAction());
+            setLoadingStat(false);
+            navigate("/cart");
+          }
+
+        } else {
+
+          let idxInDatabaseCart = databaseCart.findIndex(val => val.productName == productName);
+
+          let idCart = databaseCart[idxInDatabaseCart].idCart;
+          let previousCartQuantity = databaseCart[idxInDatabaseCart].cartQuantity;
+          let newQuantity = previousCartQuantity + 1;
+
+          let res = await Axios.patch(`${API_URL}/cart/idCart`, {
+            idProduct,
+            cartQuantity: newQuantity
+          }, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+
+          if (res.data) {
+            console.log("isi res.data saat btnCart diklik", res.data);
+            dispatch(getCartAction());
+            setLoadingStat(false);
+            navigate("/cart");
+          }
+
+        }
+      }
+
     } catch (err) {
       newToast({
         title: "Error.",
@@ -58,7 +119,7 @@ const ProductList = (props) => {
     }
   };
 
-  
+
   const printProduct = (value, index) => {
     // return product.map((value, index) =>{
     return (
@@ -104,7 +165,7 @@ const ProductList = (props) => {
               <Button
                 isLoading={loadingStat}
                 class="btn-rekom"
-                onClick={btnCart}
+                onClick={() => btnCart(value.idProduct, value.productName)}
               >
                 Add To Cart
               </Button>

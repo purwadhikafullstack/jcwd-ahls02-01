@@ -38,7 +38,7 @@ const Sidebar=(props)=>{
       </div>
       <ul>
         <li><a href="#">Dashboard</a></li>
-        <li><a href="#">Transaction</a></li>
+        <li><a href="/admin/transactionList">Transaction</a></li>
         <li onClick={btninventory}><a href="">Inventory</a></li>
         <li onClick={btncategory}><a href="">Category</a></li>
         <li><a href="#">Sales Report</a></li>

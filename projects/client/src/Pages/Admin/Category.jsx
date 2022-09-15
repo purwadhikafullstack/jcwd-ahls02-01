@@ -222,7 +222,7 @@ const Categorypage = () => {
               <div class="col-md-9 col-sm-8">
                 <div class="row">
                   <div class="mt-3">
-                    <Text class="h1b">Dashboard Category Medhika</Text>
+                    <Text class="h1b">Kategori Medhika</Text>
                     <Button onClick={() => setModalState("Create")}>
                       Tambah Kategori
                     </Button>
@@ -244,7 +244,7 @@ const Categorypage = () => {
               <div class="col-8">
                 <div class="row">
                   <div class="mt-3">
-                    <Text class="h1b">Dashboard Category Medhika</Text>
+                    <Text class="h1b">Kategori Medhika</Text>
                     <Button onClick={() => setModalState("Create")}>
                       Tambah Kategori
                     </Button>
