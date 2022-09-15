@@ -26,8 +26,17 @@ router.get('/userFilterDibatalkan', readToken, transactionControllers.userFilter
 router.get('/adminGetAllTransaction', readToken, transactionControllers.adminGetAllTransaction);
 router.get('/adminGetValidasiResep', readToken, transactionControllers.adminGetValidasiResep);
 router.get('/adminFilterValidasiResep', readToken, transactionControllers.adminFilterValidasiResep);
-
-
-
+router.get('/adminGetMenungguPembayaran', readToken, transactionControllers.adminGetMenungguPembayaran);
+router.get('/adminFilterMenungguPembayaran', readToken, transactionControllers.adminFilterMenungguPembayaran);
+router.get('/adminGetMenungguKonfirmasi', readToken, transactionControllers.adminGetMenungguKonfirmasi);
+router.get('/adminFilterMenungguKonfirmasi', readToken, transactionControllers.adminFilterMenungguKonfirmasi);
+router.get('/adminGetDiproses', readToken, transactionControllers.adminGetDiproses);
+router.get('/adminFilterDiproses', readToken, transactionControllers.adminFilterDiproses);
+router.get('/adminGetDikirim', readToken, transactionControllers.adminGetDiproses);
+router.get('/adminFilterDikirim', readToken, transactionControllers.adminFilterDiproses);
+router.get('/adminGetPesananDikonfirmasi', readToken, transactionControllers.adminGetDiproses);
+router.get('/adminFilterPesananDikonfirmasi', readToken, transactionControllers.adminFilterDiproses);
+router.get('/adminGetDibatalkan', readToken, transactionControllers.adminGetDiproses);
+router.get('/adminFilterDibatalkan', readToken, transactionControllers.adminFilterDiproses);
 
 module.exports = router;

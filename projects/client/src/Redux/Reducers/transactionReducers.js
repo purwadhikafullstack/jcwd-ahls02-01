@@ -8,12 +8,12 @@ const INITIAL_STATE = {
     userdikirim: [], //? OK
     userpesanandikonfirmasi: [], //? OK
     userdibatalkan: [], //? OK
-    adminvalidasiresep: [], //^ PAGINATION FILTER SORT
-    adminmenunggupembayaran: [], //^ PAGINATION FILTER SORT
-    adminmenunggukonfirmasi: [], //^ PAGINATION FILTER SORT
-    admindiproses: [], //^ PAGINATION FILTER SORT
-    admindikirim: [], //^ PAGINATION FILTER SORT
-    adminpesanandikonfirmasi: [], //^ PAGINATION FILTER SORT
+    adminvalidasiresep: [], //^ OK
+    adminmenunggupembayaran: [], //^ OK
+    adminmenunggukonfirmasi: [], //^ OK
+    admindiproses: [], //^ OK
+    admindikirim: [], //^ OK
+    adminpesanandikonfirmasi: [], //^ OK
     admindibatalkan: [] //^ PAGINATION FILTER SORT
 }
 

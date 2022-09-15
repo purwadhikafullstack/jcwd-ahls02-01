@@ -284,7 +284,12 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                                 as='b'
                                                 textColor='var(--colorSix)'
                                             >
-                                                Rp 35.000
+                                                Rp {value.totalPayment != null
+                                                ?
+                                                value.totalPayment.toLocaleString()
+                                                :
+                                                value.freightCost.toLocaleString()
+                                                }
                                             </Text>
                                         </Box>
                                     </div>
@@ -292,7 +297,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                 <div className="d-flex justify-content-end mt-2">
                                     <Button
                                         className="btn-def_second"
-                                    // onClick={() => btnUploadBuktiBayar(value.idTransaction)}
+                                    // onClick={() => btnTagihPembayaran(value.idTransaction)}
                                     >
                                         Tagih Pembayaran
                                     </Button>

@@ -652,3 +652,323 @@ export const getAdminFilterValidasiResepAction = (query) => {
         }
     }
 }
+
+//* GET TRANSAKSI ADMIN MENUNGGU PEMBAYARAN -- GET A2A
+export const getAdminMenungguPembayaranAction = (page=1) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminMenungguPembayaranAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminGetMenungguPembayaran?_page=${page}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminMenungguPembayaranAction`, res.data);
+
+                dispatch(savedAdminMenungguPembayaranAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* GET TRANSAKSI ADMIN MENUNGGU PEMBAYARAN TERFILTER DAN TERSORTIR -- GET A2B
+export const getAdminFilterMenungguPembayaranAction = (query) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminFilterMenungguPembayaranAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminFilterMenungguPembayaran${query}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminFilterMenungguPembayaranAction`, res.data);
+
+                dispatch(savedAdminMenungguPembayaranAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* GET TRANSAKSI ADMIN MENUNGGU KONFIRMASI -- GET A3A
+export const getAdminMenungguKonfirmasiAction = (page=1) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminMenungguKonfirmasiAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminGetMenungguKonfirmasi?_page=${page}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminMenungguKonfirmasiAction`, res.data);
+
+                dispatch(savedAdminMenungguKonfirmasiAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* GET TRANSAKSI ADMIN MENUNGGU KONFIRMASI TERFILTER DAN TERSORTIR -- GET A3B
+export const getAdminFilterMenungguKonfirmasiAction = (query) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminFilterMenungguKonfirmasiAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminFilterMenungguKonfirmasi${query}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminFilterMenungguKonfirmasiAction`, res.data);
+
+                dispatch(savedAdminMenungguKonfirmasiAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* GET TRANSAKSI ADMIN DIPROSES -- GET A4A
+export const getAdminDiprosesAction = (page=1) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminDiprosesAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminGetDiproses?_page=${page}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminDiprosesAction`, res.data);
+                dispatch(savedAdminDiprosesAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* GET TRANSAKSI ADMIN MENUNGGU KONFIRMASI TERFILTER DAN TERSORTIR -- GET A4B
+export const getAdminFilterDiprosesAction = (query) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminFilterDiprosesiAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminFilterDiproses${query}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminFilterDiprosesiAction`, res.data);
+
+                dispatch(savedAdminDiprosesAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* GET TRANSAKSI ADMIN DIPROSES -- GET A5A
+export const getAdminDikirimAction = (page=1) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminDikirimAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminGetDikirim?_page=${page}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminDikirimAction`, res.data);
+                dispatch(savedAdminDikirimAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* GET TRANSAKSI ADMIN MENUNGGU KONFIRMASI TERFILTER DAN TERSORTIR -- GET A5B
+export const getAdminFilterDikirimAction = (query) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminFilterDikirimAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminFilterDikirim${query}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminFilterDikirimAction`, res.data);
+
+                dispatch(savedAdminDikirimAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* GET TRANSAKSI ADMIN DIPROSES -- GET A6A
+export const getAdminPesananDikonfirmasiAction = (page=1) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminPesananDikonfirmasiAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminGetPesananDikonfirmasi?_page=${page}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminPesananDikonfirmasiAction`, res.data);
+                dispatch(savedAdminPesananDikonfirmasiAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* GET TRANSAKSI ADMIN MENUNGGU KONFIRMASI TERFILTER DAN TERSORTIR -- GET A6B
+export const getAdminFilterPesananDikonfirmasiAction = (query) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminFilterPesananDikonfirmasiAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminFilterPesananDikonfirmasi${query}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminFilterPesananDikonfirmasiAction`, res.data);
+
+                dispatch(savedAdminPesananDikonfirmasiAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* GET TRANSAKSI ADMIN DIPROSES -- GET A7A
+export const getAdminDibatalkanAction = (page=1) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminDibatalkanAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminGetDibatalkan?_page=${page}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminDibatalkanAction`, res.data);
+                dispatch(savedAdminDibatalkanAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* GET TRANSAKSI ADMIN MENUNGGU KONFIRMASI TERFILTER DAN TERSORTIR -- GET A7B
+export const getAdminFilterDibatalkanAction = (query) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminFilterDibatalkanAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminFilterDibatalkan${query}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminFilterDibatalkanAction`, res.data);
+
+                dispatch(savedAdminDibatalkanAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
