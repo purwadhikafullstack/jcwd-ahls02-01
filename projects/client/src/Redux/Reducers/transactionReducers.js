@@ -7,14 +7,14 @@ const INITIAL_STATE = {
     userdiproses: [], //? OK
     userdikirim: [], //? OK
     userpesanandikonfirmasi: [], //? OK
-    userdibatalkan: [], //? TINGGAL FILTER SORT
-    adminvalidasiresep: [],
-    adminmenunggupembayaran: [],
-    adminmenunggukonfirmasi: [],
-    admindiproses: [],
-    admindikirim: [],
-    adminpesanandikonfirmasi: [],
-    admindibatalkan: []
+    userdibatalkan: [], //? OK
+    adminvalidasiresep: [], //^ PAGINATION FILTER SORT
+    adminmenunggupembayaran: [], //^ PAGINATION FILTER SORT
+    adminmenunggukonfirmasi: [], //^ PAGINATION FILTER SORT
+    admindiproses: [], //^ PAGINATION FILTER SORT
+    admindikirim: [], //^ PAGINATION FILTER SORT
+    adminpesanandikonfirmasi: [], //^ PAGINATION FILTER SORT
+    admindibatalkan: [] //^ PAGINATION FILTER SORT
 }
 
 export const transactionReducers = (state = INITIAL_STATE, action) => {
@@ -54,6 +54,34 @@ export const transactionReducers = (state = INITIAL_STATE, action) => {
         case "SAVED_TRANSACTION_ADMIN": //* SAVED SEMUA TRANSAKSI ADMIN -- A0
             console.log("HOLA ~ INI ISI DATA TRANSACTION DR TRANSACTION REDUCERS KHUSUS ADMIN", action.payload)
             return { ...state, transactionAdminView: action.payload };
+
+        case "ADMIN_VALIDASI_RESEP": //* SAVED ADMIN VALIDASI RESEP UNTUK GET, FILTER, SORTIR -- A1
+            console.log(`admin validasi resep -- transactionReducers`)
+            return { ...state, adminvalidasiresep: action.payload };
+
+        case "ADMIN_MENUNGGU_PEMBAYARAN": //* SAVED ADMIN MENUNGGU PEMBAYARAN UNTUK GET, FILTER, SORTIR -- A2
+            console.log(`admin menunggu pembayaran -- transactionReducers`)
+            return { ...state, adminmenunggupembayaran: action.payload };
+
+        case "ADMIN_MENUNGGU_KONFIRMASI": //* SAVED ADMIN MENUNGGU KONFIRMASI UNTUK GET, FILTER, SORTIR -- A3
+            console.log(`admin menunggu konfirmasi -- transactionReducers`)
+            return { ...state, adminmenunggukonfirmasi: action.payload };
+
+        case "ADMIN_DIPROSES": //* SAVED ADMIN DIPROSES UNTUK GET, FILTER, SORTIR -- A4
+            console.log(`admin diproses-- transactionReducers`)
+            return { ...state, admindiproses: action.payload };
+
+        case "ADMIN_DIKIRIM": //* SAVED ADMIN DIKIRIM UNTUK GET, FILTER, SORTIR -- A5
+            console.log(`admin dikirim-- transactionReducers`)
+            return { ...state, admindikirim: action.payload };
+
+        case "ADMIN_PESANAN_DIKONFIRMASI": //* SAVED ADMIN PESANAN DIKONFIRMASI UNTUK GET, FILTER, SORTIR -- A6
+            console.log(`admin pesanan dikonfirmasi-- transactionReducers`)
+            return { ...state, adminpesanandikonfirmasi: action.payload };
+
+        case "ADMIN_DIBATALKAN": //* SAVED ADMIN DIBATALKAN UNTUK GET, FILTER, SORTIR -- A7
+            console.log(`admin pesanan dibatalkan-- transactionReducers`)
+            return { ...state, admindibatalkan: action.payload };
 
         default:
             return state

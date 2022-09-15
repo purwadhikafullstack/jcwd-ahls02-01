@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToastHook } from "../CustomToast";
 import { API_URL, BE_URL } from "../../helper";
+import { getAdminValidasiResepAction, getAdminFilterValidasiResepAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
     Flex,
@@ -33,14 +34,95 @@ import {
 } from "@chakra-ui/react";
 
 const AdminTransCardValidasiResepComponent = (props) => {
+
+    //^ assign functions
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    
+
+    //^ state management
+    const { transactionList, transactionLength } = useSelector((state) => {
+        return {
+            transactionList: state.transactionReducers.adminvalidasiresep,
+            transactionLength: state.transactionReducers.transactionAdminView.filter(val => val.transactionStatus == "Menunggu Diproses Penjual").length
+        }
+    })
+
+    //& component did mount
+    useEffect(() => {
+        if (props.query.length > 0) {
+            getArrayFilteredSortedTransaction();
+        } else {
+            getPaginatedTransaction();
+        }
+    }, [props.query])
+
+    //^ cek props, state
+    console.log(`props.query`, props.query)
+    console.log(`transactionList`, transactionList);
+    console.log(`transactionLength`, transactionLength);
+
+    const getArrayFilteredSortedTransaction = () => {
+        dispatch(getAdminFilterValidasiResepAction(props.query))
+    }
+
+    const getPaginatedTransaction = (page = 0) => {
+        if (props.query.length == 0) {
+            dispatch(getAdminValidasiResepAction(page + 1))
+        }
+    }
+
+    const handlePaginate = (paginate) => {
+        getPaginatedTransaction(paginate);
+    }
+
+    const printBtnPagination = () => {
+        let btn = []
+        console.log(`transactionLength di printBtnPagination`, transactionLength);
+        console.log(`Math.ceil(transactionLength)/3 di printBtnPagination`, Math.ceil(transactionLength) / 3);
+        for (let i = 0; i < Math.ceil(transactionLength / 3); i++) {
+            btn.push(
+                <Box
+                    as='button'
+                    height='30px'
+                    lineHeight='1.5'
+                    transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                    border='1px'
+                    px='8px'
+                    borderRadius='4px'
+                    className="font-brand"
+                    fontSize='14px'
+                    fontWeight='bold'
+                    bg='var(--colorTwo)'
+                    borderColor='var(--colorSix)'
+                    color='var(--colorSix)'
+                    _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                    _active={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)'
+                    }}
+                    _focus={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)',
+                        boxShadow:
+                            '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                    }}
+                    onClick={() => handlePaginate(i)}
+                >
+                    {i + 1}
+                </Box>
+            )
+        }
+        return btn;
+    }
+
     //! pending list product dr hasil konversi / validasi resep
     //! pending handling subtotal
     const printSemuaTransaksi = () => {
-        if (props.dbValidasiResep.length > 0) {
+        if (transactionList.length > 0) {
             console.log(`isi props.dbValidasiResep`, props.dbValidasiResep)
-            return props.dbValidasiResep.map((value, index) => {
+            return transactionList.map((value, index) => {
                 if (value.prescription != null && value.transactionStatus == "Menunggu Diproses Penjual") {
                     return (
                         <div
@@ -92,7 +174,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                         justifyContent='space-between'
                                         className="font-brand"
                                         pb={2}
-                                        
+
                                     >
                                         {value.purchasedProducts.length > 0
                                             ?
@@ -226,7 +308,20 @@ const AdminTransCardValidasiResepComponent = (props) => {
 
     return (
         <>
-            {printSemuaTransaksi()}
+            {
+                props.query.length > 0
+                    ?
+                    <>
+                        {printSemuaTransaksi()}
+                    </>
+                    :
+                    <>
+                        {printSemuaTransaksi()}
+                        <ButtonGroup>
+                            {printBtnPagination()}
+                        </ButtonGroup>
+                    </>
+            }
         </>
     )
 

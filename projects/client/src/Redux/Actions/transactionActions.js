@@ -626,7 +626,7 @@ export const getAdminValidasiResepAction = (page=1) => {
     }
 }
 
-//* GET TRANSAKSI USER VALIDASI RESEP TERFILTER DAN TERSORTIR -- GET U1B
+//* GET TRANSAKSI ADMIN VALIDASI RESEP TERFILTER DAN TERSORTIR -- GET A1B
 export const getAdminFilterValidasiResepAction = (query) => {
     return async (dispatch) => {
         try {
