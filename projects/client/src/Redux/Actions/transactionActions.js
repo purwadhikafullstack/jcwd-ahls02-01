@@ -502,6 +502,76 @@ export const savedTransactionAdminAction = (data) => {
     }
 }
 
+//* SAVED ADMIN VALIDASI RESEP ACTION -- A1
+export const savedAdminValidasiResepAction = (data) => {
+    console.log("savedAdminValidasiResepAction", data);
+
+    return {
+        type: "ADMIN_VALIDASI_RESEP",
+        payload: data
+    }
+}
+
+//* SAVED ADMIN MENUNGGU PEMBAYARAN ACTION -- A2
+export const savedAdminMenungguPembayaranAction = (data) => {
+    console.log("savedAdminMenungguPembayaranAction", data);
+
+    return {
+        type: "ADMIN_MENUNGGU_PEMBAYARAN",
+        payload: data
+    }
+}
+
+//* SAVED ADMIN MENUNGGU KONFIRMASI ACTION -- A3
+export const savedAdminMenungguKonfirmasiAction = (data) => {
+    console.log("savedAdminMenungguKonfirmasiAction", data);
+
+    return {
+        type: "ADMIN_MENUNGGU_KONFIRMASI",
+        payload: data
+    }
+}
+
+//* SAVED ADMIN DIPROSES ACTION -- A4
+export const savedAdminDiprosesAction = (data) => {
+    console.log("savedAdminDiprosesAction", data);
+
+    return {
+        type: "ADMIN_DIPROSES",
+        payload: data
+    }
+}
+
+//* SAVED ADMIN DIKIRIM ACTION -- A5
+export const savedAdminDikirimAction = (data) => {
+    console.log("savedAdminDikirimAction", data);
+
+    return {
+        type: "ADMIN_DIKIRIM",
+        payload: data
+    }
+}
+
+//* SAVED ADMIN PESANAN DIKONFIRMASI ACTION -- A6
+export const savedAdminPesananDikonfirmasiAction = (data) => {
+    console.log("savedAdminPesananDikonfirmasiAction", data);
+
+    return {
+        type: "ADMIN_PESANAN_DIKONFIRMASI",
+        payload: data
+    }
+}
+
+//* SAVED ADMIN DIBATALKAN ACTION -- A7
+export const savedAdminDibatalkanAction = (data) => {
+    console.log("savedAdminDibatalkanAction", data);
+
+    return {
+        type: "ADMIN_DIBATALKAN",
+        payload: data
+    }
+}
+
 //* GET SEMUA TRANSAKSI ADMIN -- GET A1
 export const getTransactionAdminAction = () => {
     return async (dispatch) => {
@@ -522,6 +592,60 @@ export const getTransactionAdminAction = () => {
                 console.log(`res.data getTransactionAdminAction`, res.data);
 
                 dispatch(savedTransactionAdminAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* GET TRANSAKSI ADMIN VALIDASI RESEP -- GET A1A
+export const getAdminValidasiResepAction = (page=1) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminValidasiResepAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminGetValidasiResep?_page=${page}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminValidasiResepAction`, res.data);
+
+                dispatch(savedAdminValidasiResepAction(res.data));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* GET TRANSAKSI USER VALIDASI RESEP TERFILTER DAN TERSORTIR -- GET U1B
+export const getAdminFilterValidasiResepAction = (query) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            //^ cek ada token atau tidak
+            console.log(`getAdminFilterValidasiResepAction tokenIdUser`, token);
+
+            if (token) {
+                let res = await Axios.get(`${API_URL}/transaction/adminFilterValidasiResep${query}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data getAdminFilterValidasiResepAction`, res.data);
+
+                dispatch(savedAdminValidasiResepAction(res.data));
             }
         } catch (error) {
             console.log(error);

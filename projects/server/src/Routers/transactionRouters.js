@@ -3,9 +3,11 @@ const { transactionControllers } = require('../Controllers');
 const router = require('express').Router();
 
 router.get('/userGetAllTransaction', readToken, transactionControllers.userGetAllTransaction);
+
 router.post('/addNormalTransaction', readToken, transactionControllers.addNormalTransaction);
 router.post('/addRecipeTransaction', readToken, transactionControllers.addRecipeTransaction);
 router.patch('/addBuktiBayar', readToken, transactionControllers.addBuktiBayar);
+
 router.get('/userGetValidasiResep', readToken, transactionControllers.userGetValidasiResep);
 router.get('/userFilterValidasiResep', readToken, transactionControllers.userFilterValidasiResep);
 router.get('/userGetMenungguPembayaran', readToken, transactionControllers.userGetMenungguPembayaran);
@@ -22,6 +24,8 @@ router.get('/userGetDibatalkan', readToken, transactionControllers.userGetDibata
 router.get('/userFilterDibatalkan', readToken, transactionControllers.userFilterDibatalkan);
 
 router.get('/adminGetAllTransaction', readToken, transactionControllers.adminGetAllTransaction);
+router.get('/adminGetValidasiResep', readToken, transactionControllers.adminGetValidasiResep);
+router.get('/adminFilterValidasiResep', readToken, transactionControllers.adminFilterValidasiResep);
 
 
 
