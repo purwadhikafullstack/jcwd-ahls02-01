@@ -24,6 +24,7 @@ import TransactionListPage from "./Pages/Users/TransactionList";
 import UploadResepPage from "./Pages/Users/UploadResep";
 import AdminTransactionListPage from "./Pages/Admin/AdminTransactionList";
 import RacikResepPage from "./Pages/Admin/RacikResep";
+import SalesReport from "./Pages/Admin/SalesReport";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -59,6 +60,7 @@ function App() {
                 <Route path="/admin/productpage" element={<Productpage />} />
                 <Route path="/admin/transactionList" element={<AdminTransactionListPage />} />
                 <Route path="/admin/racikResep" element={<RacikResepPage />} />
+                <Route path="/admin/salesReport" element={<SalesReport />} />
               </>
             ) : (
               <>

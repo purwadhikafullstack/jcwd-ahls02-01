@@ -32,16 +32,16 @@ const Sidebar=(props)=>{
   }
 
   return( <div>
-    <nav class="sidebarAdmin">
+    <nav class="sidebarAdmin shadow">
       <div class="py-3 d-flex justify-content-center" style={{borderBottom:"1px solid #586BB1"}}>
       <Image src={logo2} width='140px'/>
       </div>
       <ul>
-        <li><a href="#">Dashboard</a></li>
+        <li><a href="/admin/dashboard">Dashboard</a></li>
         <li><a href="/admin/transactionList">Transaction</a></li>
         <li onClick={btninventory}><a href="">Inventory</a></li>
         <li onClick={btncategory}><a href="">Category</a></li>
-        <li><a href="#">Sales Report</a></li>
+        <li><a href="/admin/salesReport">Sales Report</a></li>
         <li><a href="#">Product History</a></li>
         <li onClick={btnLogout}><a href="#">Logout</a>
         </li>
