@@ -91,21 +91,6 @@ const SalesReport=(props)=>{
               <div class="row">
                 <div class="mt-2 col-md-10">
                   <div class="rounded-4 shadow p-3" style={{backgroundColor:"#f6f8fc", height:"100%"}}>
-                      <div class="row mb-4" style={{marginLeft:"10px", marginRight:"10px"}}>
-                          <Text class="h6">Tanggal</Text>
-                        <div class="col-md-3">
-                          <Input type={"date"} bgColor={"#FFFFFF"} boxShadow='md' fontSize={"l"} />
-                        </div>
-                        <div class="col-md-5">
-                          <Input bgColor={"#FFFFFF"} boxShadow='md' fontSize={"l"} placeholder="Cari nomer invoice / nama produk / nama pembeli"/>
-                        </div>
-                        <div class="col-md-4">
-                          <Box mt={"3px"}>
-                            <Button class="btn-def_second2">Cari</Button>
-                          </Box>
-                        </div>
-                      </div>
-                      <br />
                         <Box
                           borderRadius={5}
                         >

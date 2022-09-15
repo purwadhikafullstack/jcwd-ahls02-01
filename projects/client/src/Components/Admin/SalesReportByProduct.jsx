@@ -3,8 +3,8 @@ import React from "react";
 import { API_URL } from "../../helper";
 import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from "react-router-dom";
-import { Text, useMediaQuery, Box, Button, Flex, Divider, TableContainer, Table, TableCaption, Thead, Tbody, Tfoot,
-        Tr, Th, Td, Image, Input, Tabs, TabList, Tab, TabPanels, TabPanel} from '@chakra-ui/react';
+import { Text, useMediaQuery, Box, Button, Flex, Divider, Menu, MenuButton, MenuList, MenuItem, Tr, Td, Th,
+        Spacer, Image, Input, MenuDivider, TableContainer, Table, Thead, Tbody} from '@chakra-ui/react';
 
 
 
@@ -12,136 +12,173 @@ import { Text, useMediaQuery, Box, Button, Flex, Divider, TableContainer, Table,
 const SalesReportByProduct=(props)=>{
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [salesByInvoice, setSalesByInvoice] = React.useState();
+  const [laporanProduk, setLaporanProduk] = React.useState();
+  const [sortirTotalASC, setSortirTotalASC] = React.useState(false);
+  const [sortirTotalDSC, setSortirTotalDSC] = React.useState(false);
+  const [sortirTanggalASC, setSortirTanggalASC] = React.useState(false);
+  const [sortirTanggalDSC, setSortirTanggalDSC] = React.useState(false);
+  const [searchProduct, setSearchProduct] = React.useState("");
+  const [searchByProduct, setSearchByProduct] = React.useState();
+  const [searchOn, setSearchOn]=React.useState(false);
 
   React.useEffect(()=>{
-    getSalesByInvoice()
+    getLaporanProduk()
   }, [])
 
-  console.log("PROFIT HARI INIIII", salesByInvoice)
+  console.log("Search Product", searchByProduct)
+  // console.log("LAPORAN Product", laporanProduk)
 
-  const getSalesByInvoice = async() => {
+  const getLaporanProduk = async() => {
     try {
       let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.get(`${API_URL}/salesReport/getSalesByInvoice`, {
+      let res = await Axios.get(`${API_URL}/salesReport/getLaporanProduk`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       })
       if (res.data) {
-        console.log("RES DATA GET SALES BY INVOICE", res.data)
-        setSalesByInvoice(res.data)
+        console.log("RES DATA GET LAPORAN PRODUK", res.data)
+        setLaporanProduk(res.data)
       }
     } catch (error) {
       console.log(error)
     }
 }
 
-  const printSalesByProduct = () => {
-    if (salesByInvoice) {
-        return salesByInvoice.map((value, index) => {
-            return (
-                <div className="card mb-2" >
-                  <div className="card-body">
-                        <Box
-                            display='flex'
-                            flexDirection={{ base: 'column', md: 'row' }}
-                            alignItems={{ base: 'start', md: 'center' }}
-                            justifyContent='space-between'
-                            className="font-brand"
-                            as='b'
-                            pb={3}
-                        >
-                            <Box
-                                display='flex'
-                                flexDirection={{ base: 'column', md: 'row' }}
-                                alignItems={{ base: 'start', md: 'center' }}
-                                justifyContent='space-between'
-                                gap={5}
-                            >
-                                <Text>
-                                    {value.dateFE}
-                                </Text>
-                                <Text>
-                                    {value.invoiceNumber}
-                                </Text>
-                            </Box>
-                          </Box>
-                        <>
-                            {value.detail.map((valProduct, idxProduct) => {
-                              // console.log("check foto produk", valProduct.productPicture)
-                                return (
-                                    <Box
-                                        display='flex'
-                                        alignItems='start'
-                                        justifyContent='space-between'
-                                        className="font-brand"
-                                        pb={2}
-                                        // key={valProduct.idTransactionDetail}
-                                    >
-                                        <Box
-                                            display='flex'
-                                            alignItems='start'
-                                            justifyContent='start'
-                                            gap={5}
-                                        >
-                                            <Image
-                                                borderRadius='xl'
-                                                boxSize='70px'
-                                                src={valProduct.productPicture}
-                                                alt={`IMG-${valProduct.productName}`}
-                                                className="d-md-block d-none"
-                                            />
-                                            <Text>
-                                                <span>
-                                                    {valProduct.productName}
-                                                </span>
-                                                <br />
-                                                <span>
-                                                    {valProduct.purchaseQuantity} {valProduct.stockType} x Rp {valProduct.priceSale.toLocaleString()}
-                                                </span>
-                                            </Text>
-                                        </Box>
-                                        <Text
-                                            className="me-1"
-                                        >
-                                            Rp {valProduct.subTotal.toLocaleString()}
-                                        </Text>
-                                    </Box>
-                                )
-                            })}
-                        </>
+const handleSearch =async()=>{
+  try {
+    if(searchProduct){
+      let token = localStorage.getItem("tokenIdUser");
+      let res = await Axios.post(`${API_URL}/salesReport/getSearchProduct`, {
+        inputProduct: searchProduct
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      if (res.data) {
+        console.log("res.data SEARCH PRODUCT", res.data)
+        setSearchByProduct(res.data)
+        setSearchOn(true)
+        }
+      } else {
 
-                        <Box
-                            display='flex'
-                            alignItems='start'
-                            justifyContent='space-between'
-                            className="font-brand"
-                            pb={3}
-                            textColor='var(--colorSix)'
-                        >
-                            <Text
-                                ps={90}
-                                as={"b"}
-                                >
-                                Total
-                            </Text>
-                            <Text
-                                as={"b"}
-                                className="me-1"
-                            >
-                                Rp {value.totalTransaksi.toLocaleString()}
-                            </Text>
-                        </Box>
-                    </div>
-                </div>
-            )
-        })
+      }
+    } catch (err) {
+  }
+}
+
+  const printLaporanProduk = () => {
+    if(searchOn == false){
+      return laporanProduk.map((value, index)=>{
+        if (index % 2 == 0){
+          return (
+            <Tr>
+              <Td>{index+1}</Td>
+              <Td>{value.productName.slice(0,40)}</Td>
+              <Td>{value.qty}</Td>
+              <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+            </Tr>
+          )
+        } else {
+          return (
+            <Tr style={{backgroundColor:"#ebeef3"}}>
+              <Td>{index+1}</Td>
+              <Td>{value.productName.slice(0,40)}</Td>
+              <Td>{value.qty}</Td>
+              <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+            </Tr>
+          )
+        }
+      })
+    } else {
+      return searchByProduct.map((value, index)=>{
+        if (index % 2 == 0){
+          return (
+            <Tr>
+              <Td>{index+1}</Td>
+              <Td>{value.productName.slice(0,40)}</Td>
+              <Td>{value.qty}</Td>
+              <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+            </Tr>
+          )
+        } else {
+          return (
+            <Tr style={{backgroundColor:"#ebeef3"}}>
+              <Td>{index+1}</Td>
+              <Td>{value.productName.slice(0,40)}</Td>
+              <Td>{value.qty}</Td>
+              <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+            </Tr>
+          )
+        }
+      })
     }
   }
+  console.log("search PRODUKKKK", searchProduct)
 
   return( <>
-    {printSalesByProduct()}
+    <div class="row mb-4 mt-4" style={{marginLeft:"10px", marginRight:"10px"}}>
+      <div class="col-md-4">
+        <Input bgColor={"#FFFFFF"} boxShadow='md' fontSize={"l"} placeholder="Cari Nama Produk"
+          onChange={(e)=>setSearchProduct(e.target.value)}/>
+      </div>
+      <div class="col-md-8">
+        <Flex>
+            <Box mt={"3px"}>
+                <Button class="btn-def_second2" onClick={handleSearch}>Cari</Button>
+            </Box>
+            {
+              searchOn == true &&
+            <Box mt={"3px"} ms={"10px"}>
+              <Button class="btn-def" onClick={()=> {(setSearchOn(false));(setSearchProduct(""))}}>Batal Cari</Button>
+            </Box>
+            }
+            <Spacer/>
+            <Menu>
+                {({ isOpen }) => (
+            <>
+                <MenuButton isActive={isOpen} as={Button} size={"sm"} mt={"3px"} me={"25px"} width={"100px"} boxShadow={"md"}>
+                    {isOpen ? 'Close' : 'Sortir'}
+                </MenuButton>
+                <MenuList>
+                    <MenuItem onClick={() => setSortirTotalASC(true)}>Total Terkecil</MenuItem>
+                    <MenuItem onClick={() => setSortirTotalDSC(true)}>Total Terbesar</MenuItem>
+                    <MenuDivider />
+                    <MenuItem onClick={() => setSortirTanggalASC(true)}>Tanggal Terdekat</MenuItem>
+                    <MenuItem onClick={() => setSortirTanggalDSC(true)}>Tanggal Terjauh</MenuItem>
+                    <MenuDivider />
+                    <MenuItem >Batalkan Sortir</MenuItem>
+                </MenuList>
+            </>
+                )}
+            </Menu>
+        </Flex>
+      </div>
+    </div>
+    <Box ms={"20px"} me={"20px"}>
+      <TableContainer borderRadius={"10px"} boxShadow={"md"}>
+        <Table variant='simple'>
+          <Thead>
+            <Tr style={{backgroundColor:"#DE1B51", color:"#FFFFFF", height:"55px"}}>
+              <Th style={{color:"#FFFFFF"}}>No</Th>
+              <Th style={{color:"#FFFFFF"}}>Nama Produk</Th>
+              <Th style={{color:"#FFFFFF"}}>Jumlah</Th>
+              <Th isNumeric style={{color:"#FFFFFF"}}>Total</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {
+              laporanProduk == undefined ?
+              <div>
+              </div>
+            :
+              printLaporanProduk()
+            }
+          </Tbody>
+        </Table>
+      </TableContainer>
+    </Box>
   </>
   )
 }

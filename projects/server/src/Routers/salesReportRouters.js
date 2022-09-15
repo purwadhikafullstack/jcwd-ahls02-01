@@ -16,5 +16,10 @@ router.get('/getProfitMingguan', readToken, salesReportControllers.getProfitMing
 router.get('/getPenjualanObatMingguan', readToken, salesReportControllers.getPenjualanObatMingguan);
 router.get('/getProfitBulanan', readToken, salesReportControllers.getProfitBulanan);
 router.get('/getPenjualanObatBulanan', readToken, salesReportControllers.getPenjualanObatBulanan);
+router.get('/getLaporanProduk', readToken, salesReportControllers.getLaporanProduk);
+router.get('/getLaporanUser', readToken, salesReportControllers.getLaporanUser);
+router.post('/getSearchInvoice', readToken, salesReportControllers.getSearchInvoice);
+router.post('/getSearchProduct', readToken, salesReportControllers.getSearchProduct);
+router.post('/getSearchUser', readToken, salesReportControllers.getSearchUser);
 
 module.exports = router;

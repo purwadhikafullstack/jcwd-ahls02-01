@@ -9,7 +9,7 @@ module.exports = {
     try {
       if (req.dataUser.idUser) {
         let salesByInvoice = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
-          JOIN users u ON t.idUser = u.idUser;`);
+          JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC;`);
 
         let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
 
@@ -402,6 +402,166 @@ module.exports = {
         penjualanObatMingguan.push(penjualanObatHari5null.length)
 
         return res.status(200).send({ penjualanObatMingguan, penjualanObatRacikMingguan });
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  getLaporanProduk: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+        let getTransactionsdetail = await dbQuery(`SELECT productName as nama2, stockType, purchaseQuantity, subTotal, addDate FROM transactionsdetail
+        ORDER BY addDate DESC;`);
+
+        let getProduct = await dbQuery(`SELECT productName FROM products;`)
+        namaObat = []
+        obatTemp = []
+
+        getProduct.map((val, idx) => {
+          namaObat.push(val)
+        })
+
+        namaObat.forEach(valueObat => {
+          valueObat.qty = 0
+          valueObat.totalTransaksi = 0
+
+          getTransactionsdetail.forEach(val => {
+            if (valueObat.productName == val.nama2) {
+              valueObat.qty += val.purchaseQuantity
+              valueObat.totalTransaksi += val.subTotal
+            }
+          })
+        })
+
+        // console.log("namaObatttttt", namaObat)
+        return res.status(200).send(namaObat);
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  getLaporanUser: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+        let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users ORDER BY addDate DESC;`);
+
+        let getTransactionsdetail = await dbQuery(`SELECT idUser as idUser2, subTotal FROM transactionsdetail;`)
+        dataUser = []
+        // obatTemp = []
+
+        getUsers.map((val, idx) => {
+          dataUser.push(val)
+        })
+
+        dataUser.forEach(valueUser => {
+          valueUser.totalTransaksiUser = 0
+
+          getTransactionsdetail.forEach(val => {
+            if (valueUser.idUser == val.idUser2) {
+              valueUser.totalTransaksiUser += val.subTotal
+            }
+          })
+        })
+
+        // console.log("getUserss", getUsers)
+        return res.status(200).send(getUsers);
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  getSearchInvoice: async (req, res, next) => {
+    try {
+      console.log("search invoice", req.dataUser, req.body)
+      if (req.dataUser.idUser) {
+        let searchInvoice = await dbQuery(`SELECT * FROM transactions WHERE invoiceNumber LIKE
+        '%${req.body.inputInvoice}%' ORDER BY addDate DESC;`);
+
+        let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
+
+        searchInvoice.forEach(valueSearchInvoice => {
+          valueSearchInvoice.dateSlice = valueSearchInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
+          valueSearchInvoice.dYear = valueSearchInvoice.dateSlice.slice(0, 4)
+          valueSearchInvoice.dMonth = valueSearchInvoice.dateSlice.slice(5, 7)
+          valueSearchInvoice.dDate = valueSearchInvoice.dateSlice.slice(8, 10)
+          valueSearchInvoice.dateFE = `${valueSearchInvoice.dDate}-${valueSearchInvoice.dMonth}-${valueSearchInvoice.dYear}`
+          valueSearchInvoice.detail = []
+          valueSearchInvoice.totalTransaksi = 0
+
+
+          transDetail.forEach(valueTransDetail => {
+            if (valueSearchInvoice.idTransaction == valueTransDetail.idTransaction) {
+              valueSearchInvoice.detail.push(valueTransDetail)
+              valueSearchInvoice.totalTransaksi += valueTransDetail.subTotal
+            }
+          })
+        })
+        console.log("search Invoice", searchInvoice)
+        return res.status(200).send(searchInvoice);
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  getSearchProduct: async (req, res, next) => {
+    try {
+      console.log("req.body.inputProduct", req.body.inputProduct)
+      if (req.dataUser.idUser) {
+        let getTransactionsdetail = await dbQuery(`SELECT productName as nama2, stockType, purchaseQuantity, subTotal, addDate FROM transactionsdetail
+        ORDER BY addDate DESC;`);
+
+        let getProduct = await dbQuery(`SELECT productName FROM products WHERE productName LIKE '%${req.body.inputProduct}%';`)
+        namaObat = []
+        obatTemp = []
+
+        getProduct.map((val, idx) => {
+          namaObat.push(val)
+        })
+
+        namaObat.forEach(valueObat => {
+          valueObat.qty = 0
+          valueObat.totalTransaksi = 0
+
+          getTransactionsdetail.forEach(val => {
+            if (valueObat.productName == val.nama2) {
+              valueObat.qty += val.purchaseQuantity
+              valueObat.totalTransaksi += val.subTotal
+            }
+          })
+        })
+
+        // console.log("namaObatttttt", namaObat)
+        return res.status(200).send(namaObat);
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  getSearchUser: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+        let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users WHERE name LIKE '%${req.body.inputUser}%' ORDER BY addDate DESC;`);
+
+        let getTransactionsdetail = await dbQuery(`SELECT idUser as idUser2, subTotal FROM transactionsdetail;`)
+        dataUser = []
+        // obatTemp = []
+
+        getUsers.map((val, idx) => {
+          dataUser.push(val)
+        })
+
+        dataUser.forEach(valueUser => {
+          valueUser.totalTransaksiUser = 0
+
+          getTransactionsdetail.forEach(val => {
+            if (valueUser.idUser == val.idUser2) {
+              valueUser.totalTransaksiUser += val.subTotal
+            }
+          })
+        })
+
+        // console.log("getUserss", getUsers)
+        return res.status(200).send(getUsers);
       }
     } catch (error) {
       return next(error)
