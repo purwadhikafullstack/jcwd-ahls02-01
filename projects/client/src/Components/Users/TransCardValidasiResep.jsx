@@ -5,36 +5,15 @@ import { useNavigate, useLocation } from "react-router-dom";
 import NavbarComponent from "./Navbar";
 import { useToastHook } from "../CustomToast";
 import { API_URL, BE_URL } from "../../helper";
-import { savedUserValidasiResepAction, getUserValidasiResepAction } from "../../Redux/Actions/transactionActions";
+import { savedUserValidasiResepAction, getUserValidasiResepAction, getUserFilterValidasiResepAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
-    Divider,
-    VStack,
-    Center,
-    Stack,
     Image,
     Text,
-    Button,
     ButtonGroup,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Input,
-    InputGroup,
-    InputLeftAddon,
-    Select,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel
 } from "@chakra-ui/react";
 
 const TransCardValidasiResepComponent = (props) => {
-
 
     //^ assign functions
     const dispatch = useDispatch();
@@ -47,54 +26,29 @@ const TransCardValidasiResepComponent = (props) => {
         }
     })
 
-    // const [transactionLength, setTransactionLength] = useState(0);
-    const [paginate, setPaginate] = useState(0);
-
     //& component did mount
     useEffect(() => {
-        getPaginatedTransaction();
-        // handleDataLength();
-        // getAllTransactions();
-    }, [])
+        if (props.query.length > 0) {
+            getArrayFilteredSortedTransaction();
+        } else {
+            getPaginatedTransaction();
+        }
+    }, [props.query])
 
-    //TODO axios get seluruh transaksi yang prescriptionnya ga null dan berstatus Menunggu Diproses Penjual
-    // const handleDataLength = () => {
-    //     if (props.dbValidasiResep.length > 0) {
-    //         setTransactionLength(props.dbValidasiResep.length);
-    //     }
-    // }
+    //^ cek props, state
+    console.log(`props.query`, props.query)
+    console.log(`transactionList`, transactionList);
     console.log(`transactionLength`, transactionLength);
 
-    const getPaginatedTransaction = (page = 0) => {
-        dispatch(getUserValidasiResepAction(page+1))
-        setPaginate(page);
+    const getArrayFilteredSortedTransaction = () => {
+        dispatch(getUserFilterValidasiResepAction(props.query))
     }
 
-    // const getAllTransactions = () => {
-    //     return async () => {
-    //         try {
-    //             let token = localStorage.getItem("tokenIdUser");
-
-    //             if (token) {
-    //                 let res = await Axios.get(`${API_URL}/transaction/userGetAllTransaction`, {
-    //                     headers: {
-    //                         'Authorization': `Bearer ${token}`
-    //                     }
-    //                 })
-
-    //                 //^ cek isi res.data
-    //                 console.log(`getAllTransactions res.data`, res.data);
-
-    //                 let userValidasiResepData = res.data.filter(val => val.transactionStatus == "Menunggu Diproses Penjual");
-
-    //                 setTransactionLength(userValidasiResepData.length);
-
-    //             }
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     }
-    // }
+    const getPaginatedTransaction = (page = 0) => {
+        if (props.query.length == 0) {
+            dispatch(getUserValidasiResepAction(page + 1))
+        }
+    }
 
     const handlePaginate = (paginate) => {
         getPaginatedTransaction(paginate);
@@ -103,23 +57,47 @@ const TransCardValidasiResepComponent = (props) => {
     const printBtnPagination = () => {
         let btn = []
         console.log(`transactionLength di printBtnPagination`, transactionLength);
-        console.log(`Math.ceil(transactionLength)/3 di printBtnPagination`, Math.ceil(transactionLength)/3);
+        console.log(`Math.ceil(transactionLength)/3 di printBtnPagination`, Math.ceil(transactionLength) / 3);
         for (let i = 0; i < Math.ceil(transactionLength / 3); i++) {
-            btn.push(<Button
-                outline
-                color="btn-def"
-                onClick={() => handlePaginate(i)}
-                // style={{onClick}}
-            >
-                {i + 1}
-            </Button>)
+            btn.push(
+                <Box
+                    as='button'
+                    height='30px'
+                    lineHeight='1.5'
+                    transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                    border='1px'
+                    px='8px'
+                    borderRadius='4px'
+                    className="font-brand"
+                    fontSize='14px'
+                    fontWeight='bold'
+                    bg='var(--colorTwo)'
+                    borderColor='var(--colorSix)'
+                    color='var(--colorSix)'
+                    _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                    _active={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)'
+                    }}
+                    _focus={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)',
+                        boxShadow:
+                            '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                    }}
+                    onClick={() => handlePaginate(i)}
+                >
+                    {i + 1}
+                </Box>
+            )
         }
         return btn;
     }
 
     //^ cek kiriman dbValidasiResep dari page parent / TransactionList
     console.log(`props.dbValidasiResep`, props.dbValidasiResep)
-
 
     const printSemuaTransaksi = () => {
         if (transactionList.length > 0) {
@@ -209,17 +187,20 @@ const TransCardValidasiResepComponent = (props) => {
 
     return (
         <>
-            {printSemuaTransaksi()}
-            {/* {printBtnPagination()} */}
-            <ButtonGroup>
-                {/* <Button>
-                    1
-                </Button>
-                <Button>
-                    2
-                </Button> */}
-                {printBtnPagination()}
-            </ButtonGroup>
+            {
+                props.query.length > 0
+                    ?
+                    <>
+                        {printSemuaTransaksi()}
+                    </>
+                    :
+                    <>
+                        {printSemuaTransaksi()}
+                        <ButtonGroup>
+                            {printBtnPagination()}
+                        </ButtonGroup>
+                    </>
+            }
         </>
     )
 
