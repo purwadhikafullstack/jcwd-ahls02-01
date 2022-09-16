@@ -48,6 +48,8 @@
     "short-unique-id": "^4.4.4",
     "spinners-react": "^1.0.7",
     "sweetalert2": "^11.4.18",
+    "chart.js": "^3.9.1",
+    "react-chartjs-2": "^4.3.1",
     "web-vitals": "^2.1.4"
   },
   "eslintConfig": {

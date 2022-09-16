@@ -5,23 +5,32 @@ import { useNavigate, useLocation } from "react-router-dom";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
 import ModalPaymentProofComponent from "./ModalPaymentProof";
-import { getTransactionAction } from "../../Redux/Actions/transactionActions";
+import { getTransactionAction, getUserMenungguPembayaranAction, getUserFilterMenungguPembayaranAction} from "../../Redux/Actions/transactionActions";
 import { API_URL, BE_URL } from "../../helper";
 import {
     Box,
     Image,
     Text,
     Button,
+    ButtonGroup
 } from "@chakra-ui/react";
 
 const TransCardMenungguPembayaranComponent = (props) => {
 
+    //^ assign functions
+    const dispatch = useDispatch();
+
     //^ STATE MANAGEMENT
     const [total, setTotal] = useState(0);
-    // const [isModalMetodeBayarOpen, setisModalPaymentProofOpen] = useState(false);
     const [isModalPaymentProofOpen, setIsModalPaymentProofOpen] = useState(false);
     const [selectedTransaction, setSelectedTransaction] = useState({});
     const [isBtnUploadBuktiBayarClicked, setIsBtnUploadBuktiBayarClicked] = useState(0);
+    const { transactionList, transactionLength } = useSelector((state) => {
+        return {
+            transactionList: state.transactionReducers.usermenunggupembayaran,
+            transactionLength: state.transactionReducers.transaction.filter(val => val.transactionStatus == "Menunggu Pembayaran").length
+        }
+    })
 
     //^ cek state isModalPaymentProofOpen
     console.log(`isModalPaymentProofOpen`, isModalPaymentProofOpen);
@@ -30,33 +39,17 @@ const TransCardMenungguPembayaranComponent = (props) => {
 
     //& component did mount
     useEffect(() => {
+        if (props.query.length > 0) {
+            getArrayFilteredSortedTransaction();
+        } else {
+            getPaginatedTransaction();
+        }
+    }, [props.query, selectedTransaction, isModalPaymentProofOpen, isBtnUploadBuktiBayarClicked])
 
-    }, [selectedTransaction, isModalPaymentProofOpen, isBtnUploadBuktiBayarClicked])
-
-    // & onClick btn back di modal pilih metode pembayaran akan mulangin user ke page Checkout
-    // const btnBackModalMetodeBayar = () => {
-    //     console.log(`btnBackModalMetodeBayar dipencet`)
-    //     setIsModalMetodeBayarOpen(!isModalMetodeBayarOpen);
-    //     setWhichBank("");
-    // }
-
-    // & onClick btn pilih ulang metode pembayaran akan mulangin user ke modal pilih metode pembayaran
-    // const handleCallbackToChildPaymentMethod = () => {
-    //     setIsModalMetodeBayarOpen(true);
-    //     setWhichBank("");
-    // }
-
-    // & onClick metode bayar bca akan buka modal payment method khusus bca
-    // const handleBca = () => {
-    //     setWhichBank('bca');
-    //     setIsModalMetodeBayarOpen(!isModalMetodeBayarOpen);
-    // }
-
-    // & onClick metode bayar mandiri akan buka modal payment method khusus bca
-    // const handleMandiri = () => {
-    //     setWhichBank('mandiri');
-    //     setIsModalMetodeBayarOpen(!isModalMetodeBayarOpen);
-    // }
+    //^ cek props, state
+    console.log(`props.query`, props.query)
+    console.log(`transactionList`, transactionList);
+    console.log(`transactionLength`, transactionLength);
 
     const openModalPaymentProof = () => {
         if (isBtnUploadBuktiBayarClicked == 0) {
@@ -97,10 +90,66 @@ const TransCardMenungguPembayaranComponent = (props) => {
         setIsModalPaymentProofOpen(false);
     }
 
+    const getArrayFilteredSortedTransaction = () => {
+        dispatch(getUserFilterMenungguPembayaranAction(props.query))
+    }
+
+    const getPaginatedTransaction = (page = 0) => {
+        if (props.query.length == 0) {
+            dispatch(getUserMenungguPembayaranAction(page + 1))
+        }
+    }
+
+    const handlePaginate = (paginate) => {
+        getPaginatedTransaction(paginate);
+    }
+
+    const printBtnPagination = () => {
+        let btn = []
+        console.log(`transactionLength di printBtnPagination`, transactionLength);
+        console.log(`Math.ceil(transactionLength)/3 di printBtnPagination`, Math.ceil(transactionLength) / 3);
+        for (let i = 0; i < Math.ceil(transactionLength / 3); i++) {
+            btn.push(
+                <Box
+                    as='button'
+                    height='30px'
+                    lineHeight='1.5'
+                    transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                    border='1px'
+                    px='8px'
+                    borderRadius='4px'
+                    className="font-brand"
+                    fontSize='14px'
+                    fontWeight='bold'
+                    bg='var(--colorTwo)'
+                    borderColor='var(--colorSix)'
+                    color='var(--colorSix)'
+                    _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                    _active={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)'
+                    }}
+                    _focus={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)',
+                        boxShadow:
+                            '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                    }}
+                    onClick={() => handlePaginate(i)}
+                >
+                    {i + 1}
+                </Box>
+            )
+        }
+        return btn;
+    }
+
     //& print list transaksi yg menunggu pembayaran
     const printMenungguPembayaran = () => {
-        if (props.dbMenungguPembayaran.length > 0) {
-            return props.dbMenungguPembayaran.map((value, index) => {
+        if (transactionList.length > 0) {
+            return transactionList.map((value, index) => {
                 return (
                     <div
                         className="card mb-2" key={value.idTransaction}
@@ -156,7 +205,7 @@ const TransCardMenungguPembayaranComponent = (props) => {
                                                 <Image
                                                     borderRadius='xl'
                                                     boxSize='70px'
-                                                    src={BE_URL+valProduct.productPicture}
+                                                    src={BE_URL + valProduct.productPicture}
                                                     alt={`IMG-${valProduct.productName}`}
                                                     className="d-md-block d-none"
                                                 />
@@ -278,13 +327,26 @@ const TransCardMenungguPembayaranComponent = (props) => {
                 openModalPaymentProofFromCard={isModalPaymentProofOpen}
                 handleSendingToCardParentPaymentMethod={handleCallbackToChildPaymentProof}
                 handleSendingToCardParentPaymentMethodOVERLAY={handleCallbackToChildPaymentProofOVERLAY}
-                handleSendingToCardParentPaymentMethodONCLOSE = {handleCallbackToChildPaymentProofONCLOSE}
+                handleSendingToCardParentPaymentMethodONCLOSE={handleCallbackToChildPaymentProofONCLOSE}
 
                 selectedTransaction={selectedTransaction}
                 totalPayment={total}
             />
 
-            {printMenungguPembayaran()}
+            {
+                props.query.length > 0
+                    ?
+                    <>
+                        {printMenungguPembayaran()}
+                    </>
+                    :
+                    <>
+                        {printMenungguPembayaran()}
+                        <ButtonGroup>
+                            {printBtnPagination()}
+                        </ButtonGroup>
+                    </>
+            }
 
         </>
     )
