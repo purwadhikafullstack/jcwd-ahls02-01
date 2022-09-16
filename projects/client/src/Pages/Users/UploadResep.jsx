@@ -421,8 +421,24 @@ const UploadResepPage = (props) => {
     //& onClick tombol file akan minta user pilih gambar resep, simpan value resep di state
     const handleImageResep = (value) => {
         console.log(`value handleImageResep`, value);
-        setNewImageResep(value);
-        setIsUnggahResep(1); //& untuk jaga2 di setstate = 1 jg disini
+        console.log(`show value size image resep`, value.size)
+
+        if (value.size <= 1000000) {
+            if(value.type == "image/png" || value.type=="image/jpeg"){
+                setNewImageResep(value);
+                setIsUnggahResep(1); //& untuk jaga2 di setstate = 1 jg disini
+            } else {
+                newToast({
+                    description: "Tipe gambar bukan jpg/jpeg/png",
+                    status: 'error'
+                })
+            }
+        } else {
+            newToast({
+                description: "Ukuran gambar melebihi 1M",
+                status: 'error'
+            })
+        }
     }
 
     //& onClick akan simpan gambar resep, alamat terpilih, ongkir terpilih di tabel transaksi
@@ -439,7 +455,7 @@ const UploadResepPage = (props) => {
         console.log(`btnBayar tokenIdUser`, token);
 
         try {
-            if (newImageResep == null || idAddressForOngkir == null    || ongkir == 0) {
+            if (newImageResep == null || idAddressForOngkir == null || ongkir == 0) {
                 newToast({
                     title: `Informasi Belum Lengkap`,
                     description: "Lengkapi dahulu form nya",

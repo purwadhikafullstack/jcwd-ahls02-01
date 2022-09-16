@@ -5,40 +5,101 @@ import { useNavigate, useLocation } from "react-router-dom";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
 import { API_URL, BE_URL } from "../../helper";
+import { getUserMenungguKonfirmasiAction, getUserFilterMenungguKonfirmasiAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
-    Divider,
-    VStack,
-    Center,
-    Stack,
     Image,
     Text,
     Button,
     ButtonGroup,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Input,
-    InputGroup,
-    InputLeftAddon,
-    Select,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel
 } from "@chakra-ui/react";
 
 const TransCardMenungguKonfirmasiComponent = (props) => {
 
-    //TODO axios get seluruh transaksi yang berstatus Menunggu Konfirmasi
+    //^ assign functions
+    const dispatch = useDispatch();
+
+    //^ state management
+    const { transactionList, transactionLength } = useSelector((state) => {
+        return {
+            transactionList: state.transactionReducers.usermenunggukonfirmasi,
+            transactionLength: state.transactionReducers.transaction.filter(val => val.transactionStatus == "Menunggu Konfirmasi").length
+        }
+    })
+
+    //& component did mount
+    useEffect(() => {
+        if (props.query.length > 0) {
+            getArrayFilteredSortedTransaction();
+        } else {
+            getPaginatedTransaction();
+        }
+    }, [props.query])
+
+    //^ cek props, state
+    console.log(`props.query`, props.query)
+    console.log(`transactionList`, transactionList);
+    console.log(`transactionLength`, transactionLength);
+
+    const getArrayFilteredSortedTransaction = () => {
+        dispatch(getUserFilterMenungguKonfirmasiAction(props.query))
+    }
+
+    const getPaginatedTransaction = (page = 0) => {
+        if (props.query.length == 0) {
+            dispatch(getUserMenungguKonfirmasiAction(page + 1))
+        }
+    }
+
+    const handlePaginate = (paginate) => {
+        getPaginatedTransaction(paginate);
+    }
+
+    const printBtnPagination = () => {
+        let btn = []
+        console.log(`transactionLength di printBtnPagination`, transactionLength);
+        console.log(`Math.ceil(transactionLength)/3 di printBtnPagination`, Math.ceil(transactionLength) / 3);
+        for (let i = 0; i < Math.ceil(transactionLength / 3); i++) {
+            btn.push(
+                <Box
+                    as='button'
+                    height='30px'
+                    lineHeight='1.5'
+                    transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                    border='1px'
+                    px='8px'
+                    borderRadius='4px'
+                    className="font-brand"
+                    fontSize='14px'
+                    fontWeight='bold'
+                    bg='var(--colorTwo)'
+                    borderColor='var(--colorSix)'
+                    color='var(--colorSix)'
+                    _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                    _active={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)'
+                    }}
+                    _focus={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)',
+                        boxShadow:
+                            '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                    }}
+                    onClick={() => handlePaginate(i)}
+                >
+                    {i + 1}
+                </Box>
+            )
+        }
+        return btn;
+    }
 
     const printMenungguKonfirmasi = () => {
-        if (props.dbMenungguKonfirmasi.length > 0) {
-            return props.dbMenungguKonfirmasi.map((value, index) => {
+        if (transactionList.length > 0) {
+            return transactionList.map((value, index) => {
                 return (
                     <div
                         className="card mb-2" key={value.idTransaction}
@@ -94,7 +155,7 @@ const TransCardMenungguKonfirmasiComponent = (props) => {
                                                 <Image
                                                     borderRadius='xl'
                                                     boxSize='70px'
-                                                    src={BE_URL+valProduct.productPicture}
+                                                    src={BE_URL + valProduct.productPicture}
                                                     alt={`IMG-${valProduct.productName}`}
                                                     className="d-md-block d-none"
                                                 />
@@ -181,7 +242,20 @@ const TransCardMenungguKonfirmasiComponent = (props) => {
 
     return (
         <>
-            {printMenungguKonfirmasi()}
+            {
+                props.query.length > 0
+                    ?
+                    <>
+                        {printMenungguKonfirmasi()}
+                    </>
+                    :
+                    <>
+                        {printMenungguKonfirmasi()}
+                        <ButtonGroup>
+                            {printBtnPagination()}
+                        </ButtonGroup>
+                    </>
+            }
         </>
     )
 

@@ -412,7 +412,7 @@ const RacikResepPage = (props) => {
                                         alt='Gambar resep dokter'
                                         borderRadius='sm'
                                         boxSize='300px'
-                                        className="imgResep"
+                                        // className=""
                                         />
                                   </div>
                                   <div class="col-md-8">
