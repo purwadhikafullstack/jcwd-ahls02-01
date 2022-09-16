@@ -1804,7 +1804,7 @@ module.exports = {
             return next(error);
         }
     },
-    adminEditDetailRecipe: async (req, res, next) => { //* ADMIN EDIT DETAIL RECIPE
+    adminAddTransactionDetailForRecipe: async (req, res, next) => { //* ADMIN EDIT DETAIL RECIPE
         try {
 
             console.log(`req.query.id di adminGetDetailRecipe`, req.query.id);

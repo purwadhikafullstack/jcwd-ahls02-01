@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToastHook } from "../../Components/CustomToast";
 import Sidebar from "../../Components/Admin/Sidebar";
-import { getTransactionAdminAction } from "../../Redux/Actions/transactionActions";
-import ModalEdit from "../../Components/Admin/ModalProducts";
+import { getTransactionAdminAction, savedTransactionAdminAction } from "../../Redux/Actions/transactionActions";
+import ModalConversion from "../../Components/Admin/ModalConversion";
 import { API_URL, BE_URL } from "../../helper";
 import {
   Box,
@@ -44,6 +44,7 @@ const RacikResepPage = (props) => {
   //^ assign function
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [currentToast, newToast] = useToastHook();
 
   //^ state management]
   const { state, search } = useLocation();
@@ -52,7 +53,7 @@ const RacikResepPage = (props) => {
   const [detail, setDetail] = useState({});
   const [allProducts, setAllProducts] = useState([]);
   const [addProductClicked, setAddProductClicked] = useState(0);
-  const [selectedMeds, setSelectedMeds] = [];
+  const [selectedMeds, setSelectedMeds] = useState([]);
   const [detailOneMed, setDetailOneMed] = useState({
     idProduct: "",
     idStock: "",
@@ -63,6 +64,8 @@ const RacikResepPage = (props) => {
     priceSale: 0,
     subTotal: 0
   });
+  const [toggleModal, setToggleModal] = useState(false)
+  const [idForConversion, setIdForConversion] = useState(null)
 
   const { transactionList, transactionLength } = useSelector((state) => {
     return {
@@ -119,108 +122,183 @@ const RacikResepPage = (props) => {
       priceSale: 0,
       subTotal: 0
     })
-
-    // temp.push(
-    //   <Select
-    //     placeholder="Pilih produk"
-    //     onChange={(e) => handleProdukTerpilih(e, index)}
-    //     size="sm"
-    //   >
-    //     <Input
-    //       placeholder="Nama Produk"
-    //     />
-
-    //   </Select>)
+    setSelectedMeds(temp)
+    console.log(`selectedMeds`, selectedMeds)
   }
 
-  const handleProdukTerpilih = () => {
-    let temp = [...detailOneMed.idProduct]
-
-
-  }
-
-
-  // const handleSelectProduct = (value) => {
-  //   console.log(`value dari dropdown`, value);
-  //   let temp = allProducts.filter(valueAll => valueAll.idProduct == value);
-
-  //   console.log(`nilai temp di handleSelectProduct`, temp);
-  //   setSelectedMeds([...selectedMeds, ...temp]);
-  //   console.log(`isi selectedMeds`, selectedMeds);
-  // }
-
-  // console.log(`selectedMeds setelah append dengan temp`, selectedMeds);
-
-  //   const printStock = () => {
-  //     if (newProduct.stock.length > 0) {
-  //         return newProduct.stock.map((value, index) => {
-  //             return (
-  //                 <div className="d-flex justify-content-between my-1" key={index}>
-  //                     <Input type="text" placeholder={`Type-${index + 1}`} onChange={(e) => handleType(e, index)} />
-  //                     <Input type="number" placeholder={`Stock-${index + 1}`} onChange={(e) => handleStock(e, index)} />
-  //                     <Button
-  //                         outline
-  //                         color="danger"
-  //                         onClick={() => { handleDeleteStock(index) }}
-  //                     >Delete</Button>
-  //                 </div>
-  //             )
-  //         })
-  //     }
-  // }
-
-  const printTambahProduk = () => {
-    return (
-      <div class="pb-3">
-        <Box mt={2}>
-          <div class="row">
-            <div class="col-md-4">
-              <Text class="h6">
-                Paracetamol
-              </Text>
+  const printProduct = () => {
+    console.log(`selectedMeds`, selectedMeds)
+    if (selectedMeds.length > 0) {
+      return selectedMeds.map((value, index) => {
+        return (
+          <div className="mb-2 font-brand">
+            <div
+              key={value.idStock}
+              className="d-flex align-items-center justify-content-between"
+            >
+              <Select
+                placeholder="Pilih Produk"
+                onChange={(e) => handleProdukTerpilih(e.target.value, index)}
+                size="sm"
+                width={334}
+              >
+                {
+                  allProducts.map((value2, index2) => {
+                    // console.log(`isi value2`,value2)
+                    return (
+                      <option
+                        id={value2.idStock}
+                        value={`${value2.idProduct}|${value2.idStock}|${value2.productName}|${value2.stockType}|${value2.stockQuantity}|${value2.priceSale}`}
+                      >
+                        {`${value2.productName} - sisa ${value2.stockQuantity} ${value2.stockType}`}
+                      </option>
+                    )
+                  }
+                  )}
+              </Select>
+              <ButtonGroup
+                me={6}
+              >
+                <Button
+                  outline
+                  className="btn-def"
+                  size="sm"
+                  style={{ width: "80px" }}
+                  onClick={() => { handleKonversi(value, index) }}
+                >Konversi</Button>
+                <Button
+                  outline
+                  className="btn-def"
+                  size="sm"
+                  style={{ width: "80px" }}
+                  onClick={() => { handleDeleteProduct(index) }}
+                >Delete</Button>
+              </ButtonGroup>
             </div>
-            <div class="col-md-5">
-              <div class="row">
-                <div class="col-md-5">
-                  <Text class="h6">
-                    10 Kapsul
-                  </Text>
-                  <Text class="h6">
-                    5 Kapsul
-                  </Text>
-                </div>
-                <div class="col-md-2">
-                  <Text class="h6">
-                    X
-                  </Text>
-                  <Text class="h6">
-                    X
-                  </Text>
-                </div>
-                <div class="col-md-5">
-                  <Text class="h6">
-                    Rp 1.300
-                  </Text>
-                  <Text class="h6">
-                    Rp 1.000
-                  </Text>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <Text class="h6">
-                Rp 13.000
-              </Text>
-              <Text class="h6">
-                Rp 15.000
-              </Text>
+            <div
+              className="d-flex align-items-center justify-content-between"
+            >
+              <InputGroup size="sm">
+                <InputLeftAddon children="Quantity" width={150} />
+                <Input
+                  width="fit-content"
+                  onChange={(e) => handlePurchaseQuantity(e, index)}
+                  size="sm"
+                />
+              </InputGroup>
+              {/* <InputGroup size="sm">
+                <InputLeftAddon children="Type" width={150} />
+                <Input
+                  width="fit-content"
+                  onChange={(e) => handleStockType(e, index)}
+                  size="sm"
+                />
+              </InputGroup> */}
             </div>
           </div>
-        </Box>
-      </div>
-    )
+        )
+      })
+    }
   }
 
+  const handleProdukTerpilih = (e, idx) => {
+    // console.log(`typeof isi dropdown yg dipilih / isi handleProdukTerpilih`, (e))
+
+    // console.log(`isi idProduct di dropdown setelah dipecah`, idProduct)
+    // console.log(`isi idProduct di dropdown setelah dipecah lewat e.split("|")[0]`, e.split("|")[0])
+
+    let temp = [...selectedMeds]
+    temp[idx].idProduct = e.split("|")[0]
+    temp[idx].idStock = e.split("|")[1]
+    temp[idx].productName = e.split("|")[2]
+    temp[idx].stockType = e.split("|")[3]
+    temp[idx].stockQuantity = e.split("|")[4]
+    temp[idx].priceSale = e.split("|")[5]
+    setSelectedMeds(temp)
+  }
+
+  console.log(`selectedMeds`, selectedMeds)
+
+  const handlePurchaseQuantity = (e, idx) => {
+    let temp = [...selectedMeds]
+    temp[idx].purchaseQuantity = e.target.value
+    temp[idx].subTotal = e.target.value * temp[idx].priceSale
+    setSelectedMeds(temp)
+  }
+
+  const handleDeleteProduct = (idx) => {
+    let temp = [...selectedMeds]
+    temp.splice(idx, 1)
+    setSelectedMeds(temp)
+  }
+
+  const handleKonversi = (value, index) => { //! error di product reducer line 36
+    if (value.idProduct) {
+      console.log(`handleKonversi diklik`)
+      setToggleModal(true)
+      setIdForConversion(value.idProduct)
+      console.log(`idForConversion`, idForConversion)
+    } else {
+      newToast({
+        title: `Produk belum terpilih`,
+        description: "Pilih dahulu produk yang ingin dikonversi",
+        status: 'warning'
+      })
+    }
+  }
+
+  console.log(`idForConversion`, idForConversion);
+
+  const handleCLoseModal = () => {
+    setToggleModal(false)
+  }
+
+  const btnSubmit = async () => {
+    try {
+      console.log(`isi selectedMeds sebelum submit`, selectedMeds);
+
+      let token = localStorage.getItem("tokenIdUser");
+      if (token) {
+        let res = await Axios.post(`${API_URL}/transaction/adminAddTransactionDetailForRecipe${search}`, {selectedMeds,idUser:detail.idUser,idTransaksi:search.split("=")[1]}, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        console.log("data yg teregister", res.data)
+        getTransactionAdminAction();
+        // navigate("/admin/transactionList")
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const getTransactionAdminAction = () => {
+    return async (dispatch) => {
+      try {
+        let token = localStorage.getItem("tokenIdUser");
+
+        //^ cek ada token atau tidak
+        console.log(`getTransactionAdminAction tokenIdUser`, token);
+
+        if (token) {
+          let res = await Axios.get(`${API_URL}/transaction/adminGetAllTransaction`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+
+          //^ cek isi res.data
+          console.log(`res.data getTransactionAdminAction`, res.data);
+
+          dispatch(savedTransactionAdminAction(res.data));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
 
   return (
     <>
@@ -264,19 +342,23 @@ const RacikResepPage = (props) => {
                             <Button
                               className="btn-def_second"
                               onClick={btnTambahProduk}
+                              size="sm"
+                              mb={2}
                             >
                               Tambah Produk
                             </Button>
-                            {/* {printOptions()} */}
-                            {/* <Box
-                              display='flex'
-                              alignItems='start'
-                              justifyContent='space-between'
-                              className="font-brand"
-                              pb={2}
-                            >
-                              printProductTerpilih()
-                            </Box> */}
+                            {printProduct()}
+
+                            {
+                              idForConversion
+                              &&
+                              <ModalConversion
+                                toggleModal={toggleModal}
+                                handleCLoseModal={handleCLoseModal}
+                                idForConversion={idForConversion}
+                              />
+                            }
+
                           </div>
                         </div>
                         <Divider mt={5} />
@@ -286,12 +368,12 @@ const RacikResepPage = (props) => {
                           </div>
                           <div class="col-md-8">
 
-                            {printTambahProduk()}
-
                             <div class="d-flex justify-content-end mt-2">
                               <Button
-                                className="btn-def_second3"
-                                onClick={() => navigate("/admin/transactionList")}
+                                className="btn-def_second"
+                                width={80}
+                                size="sm"
+                                onClick={btnSubmit}
                               >
                                 Simpan & kembali ke daftar transaksi
                               </Button>
@@ -302,7 +384,6 @@ const RacikResepPage = (props) => {
                     </div>
                   </>
                 }
-
               </div>
             </div>
           </div>

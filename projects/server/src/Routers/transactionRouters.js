@@ -41,5 +41,6 @@ router.get('/adminFilterDibatalkan', readToken, transactionControllers.adminFilt
 
 router.get('/adminGetDetailRecipe', readToken, transactionControllers.adminGetDetailRecipe);
 router.get('/adminGetAllProduct', transactionControllers.adminGetAllProduct);
+router.post('/adminAddTransactionDetailForRecipe', transactionControllers.adminAddTransactionDetailForRecipe);
 
 module.exports = router;
