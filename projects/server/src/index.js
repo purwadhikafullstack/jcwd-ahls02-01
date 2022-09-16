@@ -1,11 +1,10 @@
-require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
-dotenv.config();
 const { join } = require("path");
 const bearerTokens = require("express-bearer-token");
 
+require('dotenv').config({ path: join(__dirname, '../.env') });
+console.log(process.env.PORT);
 const PORT = process.env.PORT || 8000;
 const app = express();
 // app.use(
@@ -80,13 +79,13 @@ app.use((err, req, res, next) => {
 //#endregion
 
 //#region CLIENT
-// const clientPath = "../../client/build";
-// app.use(express.static(join(__dirname, clientPath)));
+const clientPath = "../../client/build";
+app.use(express.static(join(__dirname, clientPath)));
 
 // Serve the HTML page
-// app.get("*", (req, res) => {
-//   res.sendFile(join(__dirname, clientPath, "index.html"));
-// });
+app.get("*", (req, res) => {
+  res.sendFile(join(__dirname, clientPath, "index.html"));
+});
 
 //#endregion
 
