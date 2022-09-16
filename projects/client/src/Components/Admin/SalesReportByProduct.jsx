@@ -13,10 +13,10 @@ const SalesReportByProduct=(props)=>{
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [laporanProduk, setLaporanProduk] = React.useState();
+  const [laporanProdukTotalASC, setLaporanProdukTotalASC] = React.useState();
+  const [laporanProdukTotalDSC, setLaporanProdukTotalDSC] = React.useState();
   const [sortirTotalASC, setSortirTotalASC] = React.useState(false);
   const [sortirTotalDSC, setSortirTotalDSC] = React.useState(false);
-  const [sortirTanggalASC, setSortirTanggalASC] = React.useState(false);
-  const [sortirTanggalDSC, setSortirTanggalDSC] = React.useState(false);
   const [searchProduct, setSearchProduct] = React.useState("");
   const [searchByProduct, setSearchByProduct] = React.useState();
   const [searchOn, setSearchOn]=React.useState(false);
@@ -25,24 +25,63 @@ const SalesReportByProduct=(props)=>{
     getLaporanProduk()
   }, [])
 
-  console.log("Search Product", searchByProduct)
+  // console.log("CHECK SORTIR", sortirTotalASC, sortirTotalDSC, sortirTanggalASC, sortirTanggalDSC)
+  // console.log("Search Product", searchByProduct)
   // console.log("LAPORAN Product", laporanProduk)
+  // console.log("LAPORAN Product TOTAL ASC", laporanProdukTotalASC)
+  // console.log("LAPORAN Product TOTAL DSC", laporanProdukTotalDSC)
 
   const getLaporanProduk = async() => {
     try {
+        let token = localStorage.getItem("tokenIdUser");
+        let res = await Axios.get(`${API_URL}/salesReport/getLaporanProduk`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        if (res.data) {
+          console.log("RES DATA GET LAPORAN PRODUK", res.data)
+          setLaporanProduk(res.data)
+        }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+const handleSortTotalASC =async()=>{
+  try {
+    setSortirTotalDSC(false)
+    setSortirTotalASC(true)
       let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.get(`${API_URL}/salesReport/getLaporanProduk`, {
+      let res = await Axios.get(`${API_URL}/salesReport/getLaporanProdukTotalASC`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       })
       if (res.data) {
-        console.log("RES DATA GET LAPORAN PRODUK", res.data)
-        setLaporanProduk(res.data)
+        console.log("RES DATA GET LAPORAN PRODUK TotalASC", res.data)
+        setLaporanProdukTotalASC(res.data)
       }
-    } catch (error) {
-      console.log(error)
-    }
+    } catch (err) {
+  }
+}
+
+const handleSortTotalDSC =async()=>{
+  try {
+    setSortirTotalASC(false)
+    setSortirTotalDSC(true)
+      let token = localStorage.getItem("tokenIdUser");
+      let res = await Axios.get(`${API_URL}/salesReport/getLaporanProdukTotalDSC`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      if (res.data) {
+        console.log("RES DATA GET LAPORAN PRODUK TotalDSC", res.data)
+        setLaporanProdukTotalDSC(res.data)
+      }
+    } catch (err) {
+  }
 }
 
 const handleSearch =async()=>{
@@ -69,8 +108,8 @@ const handleSearch =async()=>{
 }
 
   const printLaporanProduk = () => {
-    if(searchOn == false){
-      return laporanProduk.map((value, index)=>{
+    if(searchOn == true){
+      return searchByProduct.map((value, index)=>{
         if (index % 2 == 0){
           return (
             <Tr>
@@ -91,8 +130,74 @@ const handleSearch =async()=>{
           )
         }
       })
+    } else if (sortirTotalASC == true){
+      if(laporanProdukTotalASC == undefined){
+        return (
+          <Tr>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+          </Tr>
+        )
+      } else {
+        return laporanProdukTotalASC.map((value, index)=>{
+          if (index % 2 == 0){
+            return (
+              <Tr>
+                <Td>{index+1}</Td>
+                <Td>{value.productName.slice(0,40)}</Td>
+                <Td>{value.qty}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          } else {
+            return (
+              <Tr style={{backgroundColor:"#ebeef3"}}>
+                <Td>{index+1}</Td>
+                <Td>{value.productName.slice(0,40)}</Td>
+                <Td>{value.qty}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          }
+        })
+      }
+    } else if (sortirTotalDSC == true){
+      if(laporanProdukTotalDSC == undefined){
+        return (
+          <Tr>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+          </Tr>
+        )
+      } else{
+        return laporanProdukTotalDSC.map((value, index)=>{
+          if (index % 2 == 0){
+            return (
+              <Tr>
+                <Td>{index+1}</Td>
+                <Td>{value.productName.slice(0,40)}</Td>
+                <Td>{value.qty}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          } else {
+            return (
+              <Tr style={{backgroundColor:"#ebeef3"}}>
+                <Td>{index+1}</Td>
+                <Td>{value.productName.slice(0,40)}</Td>
+                <Td>{value.qty}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          }
+        })
+      }
     } else {
-      return searchByProduct.map((value, index)=>{
+      return laporanProduk.map((value, index)=>{
         if (index % 2 == 0){
           return (
             <Tr>
@@ -115,7 +220,11 @@ const handleSearch =async()=>{
       })
     }
   }
-  console.log("search PRODUKKKK", searchProduct)
+
+  const handleCancel = () => {
+    setSortirTotalASC(false)
+    setSortirTotalDSC(false)
+  };
 
   return( <>
     <div class="row mb-4 mt-4" style={{marginLeft:"10px", marginRight:"10px"}}>
@@ -142,13 +251,10 @@ const handleSearch =async()=>{
                     {isOpen ? 'Close' : 'Sortir'}
                 </MenuButton>
                 <MenuList>
-                    <MenuItem onClick={() => setSortirTotalASC(true)}>Total Terkecil</MenuItem>
-                    <MenuItem onClick={() => setSortirTotalDSC(true)}>Total Terbesar</MenuItem>
+                    <MenuItem onClick={handleSortTotalASC}>Total Terkecil</MenuItem>
+                    <MenuItem onClick={handleSortTotalDSC}>Total Terbesar</MenuItem>
                     <MenuDivider />
-                    <MenuItem onClick={() => setSortirTanggalASC(true)}>Tanggal Terdekat</MenuItem>
-                    <MenuItem onClick={() => setSortirTanggalDSC(true)}>Tanggal Terjauh</MenuItem>
-                    <MenuDivider />
-                    <MenuItem >Batalkan Sortir</MenuItem>
+                    <MenuItem onClick={handleCancel}>Batalkan Sortir</MenuItem>
                 </MenuList>
             </>
                 )}

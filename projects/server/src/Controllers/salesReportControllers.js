@@ -36,6 +36,134 @@ module.exports = {
       return next(error)
     }
   },
+  getSalesByInvoiceTotalASC: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+        let salesByInvoice = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
+          JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC;`);
+
+        let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
+
+        salesByInvoice.forEach(valueSalesByInvoice => {
+          valueSalesByInvoice.dateSlice = valueSalesByInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
+          valueSalesByInvoice.dYear = valueSalesByInvoice.dateSlice.slice(0, 4)
+          valueSalesByInvoice.dMonth = valueSalesByInvoice.dateSlice.slice(5, 7)
+          valueSalesByInvoice.dDate = valueSalesByInvoice.dateSlice.slice(8, 10)
+          valueSalesByInvoice.dateFE = `${valueSalesByInvoice.dDate}-${valueSalesByInvoice.dMonth}-${valueSalesByInvoice.dYear}`
+          valueSalesByInvoice.detail = []
+          valueSalesByInvoice.totalTransaksi = 0
+
+
+          transDetail.forEach(valueTransDetail => {
+            if (valueSalesByInvoice.idTransaction == valueTransDetail.idTransaction) {
+              valueSalesByInvoice.detail.push(valueTransDetail)
+              valueSalesByInvoice.totalTransaksi += valueTransDetail.subTotal
+            }
+          })
+        })
+        return res.status(200).send(salesByInvoice.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi }));
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  getSalesByInvoiceTotalDSC: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+        let salesByInvoice = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
+          JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC;`);
+
+        let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
+
+        salesByInvoice.forEach(valueSalesByInvoice => {
+          valueSalesByInvoice.dateSlice = valueSalesByInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
+          valueSalesByInvoice.dYear = valueSalesByInvoice.dateSlice.slice(0, 4)
+          valueSalesByInvoice.dMonth = valueSalesByInvoice.dateSlice.slice(5, 7)
+          valueSalesByInvoice.dDate = valueSalesByInvoice.dateSlice.slice(8, 10)
+          valueSalesByInvoice.dateFE = `${valueSalesByInvoice.dDate}-${valueSalesByInvoice.dMonth}-${valueSalesByInvoice.dYear}`
+          valueSalesByInvoice.detail = []
+          valueSalesByInvoice.totalTransaksi = 0
+
+
+          transDetail.forEach(valueTransDetail => {
+            if (valueSalesByInvoice.idTransaction == valueTransDetail.idTransaction) {
+              valueSalesByInvoice.detail.push(valueTransDetail)
+              valueSalesByInvoice.totalTransaksi += valueTransDetail.subTotal
+            }
+          })
+        })
+        return res.status(200).send(salesByInvoice.sort((a, b) => { return b.totalTransaksi - a.totalTransaksi }));
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  getSalesByInvoiceTanggalASC: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+        console.log("TANGGAL ASC JALAN")
+        let salesByInvoice = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
+          JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC;`);
+
+        let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
+
+        salesByInvoice.forEach(valueSalesByInvoice => {
+          valueSalesByInvoice.dateSlice = valueSalesByInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
+          valueSalesByInvoice.dYear = valueSalesByInvoice.dateSlice.slice(0, 4)
+          valueSalesByInvoice.dMonth = valueSalesByInvoice.dateSlice.slice(5, 7)
+          valueSalesByInvoice.dDate = valueSalesByInvoice.dateSlice.slice(8, 10)
+          valueSalesByInvoice.dateFE = `${valueSalesByInvoice.dDate}-${valueSalesByInvoice.dMonth}-${valueSalesByInvoice.dYear}`
+          valueSalesByInvoice.detail = []
+          valueSalesByInvoice.totalTransaksi = 0
+
+
+          transDetail.forEach(valueTransDetail => {
+            if (valueSalesByInvoice.idTransaction == valueTransDetail.idTransaction) {
+              valueSalesByInvoice.detail.push(valueTransDetail)
+              valueSalesByInvoice.totalTransaksi += valueTransDetail.subTotal
+            }
+          })
+        })
+        // console.log("========>", salesByInvoice.sort((a, b) => { return a.addDate - b.addDate }));
+        return res.status(200).send(salesByInvoice.sort((a, b) => { return b.addDate - a.addDate }));
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  getSalesByInvoiceTanggalDSC: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+
+        console.log("TANGGAL DSC JALAN")
+        let salesByInvoice = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
+          JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC;`);
+
+        let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
+
+        salesByInvoice.forEach(valueSalesByInvoice => {
+          valueSalesByInvoice.dateSlice = valueSalesByInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
+          valueSalesByInvoice.dYear = valueSalesByInvoice.dateSlice.slice(0, 4)
+          valueSalesByInvoice.dMonth = valueSalesByInvoice.dateSlice.slice(5, 7)
+          valueSalesByInvoice.dDate = valueSalesByInvoice.dateSlice.slice(8, 10)
+          valueSalesByInvoice.dateFE = `${valueSalesByInvoice.dDate}-${valueSalesByInvoice.dMonth}-${valueSalesByInvoice.dYear}`
+          valueSalesByInvoice.detail = []
+          valueSalesByInvoice.totalTransaksi = 0
+
+
+          transDetail.forEach(valueTransDetail => {
+            if (valueSalesByInvoice.idTransaction == valueTransDetail.idTransaction) {
+              valueSalesByInvoice.detail.push(valueTransDetail)
+              valueSalesByInvoice.totalTransaksi += valueTransDetail.subTotal
+            }
+          })
+        })
+        return res.status(200).send(salesByInvoice.sort((a, b) => { return a.addDate - b.addDate }));
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
   getProfitHariIni: async (req, res, next) => {
     try {
       if (req.dataUser.idUser) {
@@ -433,8 +561,75 @@ module.exports = {
           })
         })
 
-        // console.log("namaObatttttt", namaObat)
+        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
         return res.status(200).send(namaObat);
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  getLaporanProdukTotalASC: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+        let getTransactionsdetail = await dbQuery(`SELECT productName as nama2, stockType, purchaseQuantity, subTotal, addDate FROM transactionsdetail
+        ORDER BY addDate DESC;`);
+
+
+        let getProduct = await dbQuery(`SELECT productName FROM products;`)
+        namaObat = []
+        obatTemp = []
+
+        getProduct.map((val, idx) => {
+          namaObat.push(val)
+        })
+
+        namaObat.forEach(valueObat => {
+          valueObat.qty = 0
+          valueObat.totalTransaksi = 0
+
+          getTransactionsdetail.forEach(val => {
+            if (valueObat.productName == val.nama2) {
+              valueObat.qty += val.purchaseQuantity
+              valueObat.totalTransaksi += val.subTotal
+            }
+          })
+        })
+
+        // console.log("namaObatttttt", namaObat)
+        return res.status(200).send(namaObat.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi }));
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  getLaporanProdukTotalDSC: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+        let getTransactionsdetail = await dbQuery(`SELECT productName as nama2, stockType, purchaseQuantity, subTotal, addDate FROM transactionsdetail
+        ORDER BY addDate DESC;`);
+
+        let getProduct = await dbQuery(`SELECT productName FROM products;`)
+        namaObat = []
+        obatTemp = []
+
+        getProduct.map((val, idx) => {
+          namaObat.push(val)
+        })
+
+        namaObat.forEach(valueObat => {
+          valueObat.qty = 0
+          valueObat.totalTransaksi = 0
+
+          getTransactionsdetail.forEach(val => {
+            if (valueObat.productName == val.nama2) {
+              valueObat.qty += val.purchaseQuantity
+              valueObat.totalTransaksi += val.subTotal
+            }
+          })
+        })
+
+        // console.log("namaObatttttt", namaObat)
+        return res.status(200).send(namaObat.sort((a, b) => { return b.totalTransaksi - a.totalTransaksi }));
       }
     } catch (error) {
       return next(error)
@@ -470,6 +665,66 @@ module.exports = {
       return next(error)
     }
   },
+  getLaporanUserTotalASC: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+        let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users ORDER BY addDate DESC;`);
+
+        let getTransactionsdetail = await dbQuery(`SELECT idUser as idUser2, subTotal FROM transactionsdetail;`)
+        dataUser = []
+        // obatTemp = []
+
+        getUsers.map((val, idx) => {
+          dataUser.push(val)
+        })
+
+        dataUser.forEach(valueUser => {
+          valueUser.totalTransaksiUser = 0
+
+          getTransactionsdetail.forEach(val => {
+            if (valueUser.idUser == val.idUser2) {
+              valueUser.totalTransaksiUser += val.subTotal
+            }
+          })
+        })
+
+        // console.log("getUserss", getUsers)
+        return res.status(200).send(getUsers.sort((a, b) => { return a.totalTransaksiUser - b.totalTransaksiUser }));
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  getLaporanUserTotalDSC: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+        let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users ORDER BY addDate DESC;`);
+
+        let getTransactionsdetail = await dbQuery(`SELECT idUser as idUser2, subTotal FROM transactionsdetail;`)
+        dataUser = []
+        // obatTemp = []
+
+        getUsers.map((val, idx) => {
+          dataUser.push(val)
+        })
+
+        dataUser.forEach(valueUser => {
+          valueUser.totalTransaksiUser = 0
+
+          getTransactionsdetail.forEach(val => {
+            if (valueUser.idUser == val.idUser2) {
+              valueUser.totalTransaksiUser += val.subTotal
+            }
+          })
+        })
+
+        // console.log("getUserss", getUsers)
+        return res.status(200).send(getUsers.sort((a, b) => { return b.totalTransaksiUser - a.totalTransaksiUser }));
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
   getSearchInvoice: async (req, res, next) => {
     try {
       console.log("search invoice", req.dataUser, req.body)
@@ -498,6 +753,46 @@ module.exports = {
         })
         console.log("search Invoice", searchInvoice)
         return res.status(200).send(searchInvoice);
+      }
+    } catch (error) {
+      return next(error)
+    }
+  },
+  getFilterInvoice: async (req, res, next) => {
+    try {
+      if (req.dataUser.idUser) {
+        // console.log("filter invoice", parseInt(req.body.tanggalAkhir.slice(8, 11)) + 1)
+        setTanggalAwal = parseInt(req.body.tanggalAkhir.slice(8, 11)) - 1
+        setTanggalAkhir = parseInt(req.body.tanggalAkhir.slice(8, 11)) + 1
+        setAwal = req.body.tanggalAkhir.slice(0, 8)
+        setAkhir = req.body.tanggalAkhir.slice(0, 8)
+        setAwal += setTanggalAwal
+        setAkhir += setTanggalAkhir
+        // console.log("Awal", setAwal, "Akhir", setAkhir)
+        let filterInvoice = await dbQuery(`SELECT * FROM transactions WHERE addDate BETWEEN
+        '${setAwal}' AND '${setAkhir}';`);
+
+        let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
+
+        filterInvoice.forEach(valueFilterInvoice => {
+          valueFilterInvoice.dateSlice = valueFilterInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
+          valueFilterInvoice.dYear = valueFilterInvoice.dateSlice.slice(0, 4)
+          valueFilterInvoice.dMonth = valueFilterInvoice.dateSlice.slice(5, 7)
+          valueFilterInvoice.dDate = valueFilterInvoice.dateSlice.slice(8, 10)
+          valueFilterInvoice.dateFE = `${valueFilterInvoice.dDate}-${valueFilterInvoice.dMonth}-${valueFilterInvoice.dYear}`
+          valueFilterInvoice.detail = []
+          valueFilterInvoice.totalTransaksi = 0
+
+
+          transDetail.forEach(valueTransDetail => {
+            if (valueFilterInvoice.idTransaction == valueTransDetail.idTransaction) {
+              valueFilterInvoice.detail.push(valueTransDetail)
+              valueFilterInvoice.totalTransaksi += valueTransDetail.subTotal
+            }
+          })
+        })
+        // console.log("FILTERRR Invoice", filterInvoice)
+        return res.status(200).send(filterInvoice);
       }
     } catch (error) {
       return next(error)
@@ -540,7 +835,7 @@ module.exports = {
   getSearchUser: async (req, res, next) => {
     try {
       if (req.dataUser.idUser) {
-        let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users WHERE name LIKE '%${req.body.inputUser}%' ORDER BY addDate DESC;`);
+        let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users WHERE email LIKE '%${req.body.inputUser}%' ORDER BY addDate DESC;`);
 
         let getTransactionsdetail = await dbQuery(`SELECT idUser as idUser2, subTotal FROM transactionsdetail;`)
         dataUser = []

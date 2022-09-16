@@ -13,8 +13,10 @@ const SalesReportByUser=(props)=>{
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [laporanUser, setLaporanUser] = React.useState();
-  const [sortirTotalPembeli, setSortirTotalPembeli] = React.useState(false);
-  const [sortirTanggalPembeli, setSortirTanggalPembeli] = React.useState(false);
+  const [laporanUserTotalASC, setLaporanUserTotalASC] = React.useState();
+  const [laporanUserTotalDSC, setLaporanUserTotalDSC] = React.useState();
+  const [sortirTotalASC, setSortirTotalASC] = React.useState(false);
+  const [sortirTotalDSC, setSortirTotalDSC] = React.useState(false);
   const [searchUser, setSearchUser] = React.useState("");
   const [searchByUser, setSearchByUser] = React.useState();
   const [searchOn, setSearchOn]=React.useState(false);
@@ -41,7 +43,43 @@ const SalesReportByUser=(props)=>{
     } catch (error) {
       console.log(error)
     }
-}
+  }
+
+  const handleSortTotalASC =async()=>{
+    try {
+      setSortirTotalDSC(false)
+      setSortirTotalASC(true)
+        let token = localStorage.getItem("tokenIdUser");
+        let res = await Axios.get(`${API_URL}/salesReport/getLaporanUserTotalASC`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        if (res.data) {
+          console.log("RES DATA GET LAPORAN USER TotalASC", res.data)
+          setLaporanUserTotalASC(res.data)
+        }
+      } catch (err) {
+    }
+  }
+  
+  const handleSortTotalDSC =async()=>{
+    try {
+      setSortirTotalASC(false)
+      setSortirTotalDSC(true)
+        let token = localStorage.getItem("tokenIdUser");
+        let res = await Axios.get(`${API_URL}/salesReport/getLaporanUserTotalDSC`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        if (res.data) {
+          console.log("RES DATA GET LAPORAN User TotalDSC", res.data)
+          setLaporanUserTotalDSC(res.data)
+        }
+      } catch (err) {
+    }
+  }
 
 const handleSearch =async()=>{
   try {
@@ -67,8 +105,8 @@ const handleSearch =async()=>{
 }
 
   const printLaporanUser = () => {
-    if(searchOn == false){
-      return laporanUser.map((value, index)=>{
+    if(searchOn == true){
+      return searchByUser.map((value, index)=>{
         if (index % 2 == 0){
           return (
             <Tr>
@@ -77,7 +115,7 @@ const handleSearch =async()=>{
               <Td>{value.email}</Td>
               <Td>{value.phone}</Td>
               <Td isNumeric>{value.totalTransaksiUser.toLocaleString()}</Td>
-          </Tr>
+            </Tr>
           )
         } else {
           return (
@@ -91,8 +129,80 @@ const handleSearch =async()=>{
           )
         }
       })
+    } else if (sortirTotalASC == true){
+      if(laporanUserTotalASC == undefined){
+        return (
+          <Tr>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+          </Tr>
+        )
+      } else {
+        return laporanUserTotalASC.map((value, index)=>{
+          if (index % 2 == 0){
+            return (
+              <Tr>
+                <Td>{index+1}</Td>
+                <Td>{value.name}</Td>
+                <Td>{value.email}</Td>
+                <Td>{value.phone}</Td>
+                <Td isNumeric>{value.totalTransaksiUser.toLocaleString()}</Td>
+              </Tr>
+            )
+          } else {
+            return (
+              <Tr style={{backgroundColor:"#ebeef3"}}>
+                <Td>{index+1}</Td>
+                <Td>{value.name}</Td>
+                <Td>{value.email}</Td>
+                <Td>{value.phone}</Td>
+                <Td isNumeric>{value.totalTransaksiUser.toLocaleString()}</Td>
+              </Tr>
+            )
+          }
+        })
+      }
+    } else if (sortirTotalDSC == true){
+      if(laporanUserTotalDSC == undefined){
+        return (
+          <Tr>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+          </Tr>
+        )
+      } else{
+        return laporanUserTotalDSC.map((value, index)=>{
+          if (index % 2 == 0){
+            return (
+              <Tr>
+                <Td>{index+1}</Td>
+                <Td>{value.name}</Td>
+                <Td>{value.email}</Td>
+                <Td>{value.phone}</Td>
+                <Td isNumeric>{value.totalTransaksiUser.toLocaleString()}</Td>
+              </Tr>
+            )
+          } else {
+            return (
+              <Tr style={{backgroundColor:"#ebeef3"}}>
+                <Td>{index+1}</Td>
+                <Td>{value.name}</Td>
+                <Td>{value.email}</Td>
+                <Td>{value.phone}</Td>
+                <Td isNumeric>{value.totalTransaksiUser.toLocaleString()}</Td>
+              </Tr>
+            )
+          }
+        })
+      }
     } else {
-      return searchByUser.map((value, index)=>{
+      return laporanUser.map((value, index)=>{
         if (index % 2 == 0){
           return (
             <Tr>
@@ -117,12 +227,16 @@ const handleSearch =async()=>{
       })
     }
   }
-  console.log("search PRODUKKKK", searchUser)
+  
+  const handleCancel = () => {
+    setSortirTotalASC(false)
+    setSortirTotalDSC(false)
+  };
 
   return( <>
     <div class="row mb-4 mt-4" style={{marginLeft:"10px", marginRight:"10px"}}>
       <div class="col-md-4">
-        <Input bgColor={"#FFFFFF"} boxShadow='md' fontSize={"l"} placeholder="Cari Nama Pembeli"
+        <Input bgColor={"#FFFFFF"} boxShadow='md' fontSize={"l"} placeholder="Cari Email Pembeli"
           onChange={(e)=>setSearchUser(e.target.value)}/>
       </div>
       <div class="col-md-8">
@@ -144,13 +258,10 @@ const handleSearch =async()=>{
                     {isOpen ? 'Close' : 'Sortir'}
                 </MenuButton>
                 <MenuList>
-                    <MenuItem onClick={() => setSortirTotalPembeli(false)}>Total Terkecil</MenuItem>
-                    <MenuItem onClick={() => setSortirTotalPembeli(true)}>Total Terbesar</MenuItem>
+                    <MenuItem onClick={handleSortTotalASC}>Total Terkecil</MenuItem>
+                    <MenuItem onClick={handleSortTotalDSC}>Total Terbesar</MenuItem>
                     <MenuDivider />
-                    <MenuItem onClick={() => setSortirTanggalPembeli(false)}>Tanggal Terdekat</MenuItem>
-                    <MenuItem onClick={() => setSortirTanggalPembeli(true)}>Tanggal Terjauh</MenuItem>
-                    <MenuDivider />
-                    <MenuItem >Batalkan Sortir</MenuItem>
+                    <MenuItem onClick={handleCancel}>Batalkan Sortir</MenuItem>
                 </MenuList>
             </>
                 )}
