@@ -5,15 +5,15 @@ const transporter = require("../Config/nodemailer");
 const uploader = require("../Config/uploader");
 const fs = require("fs");
 const categoryControllers = require("./Randy/categoryControllers")
-const productControllers= require("./Randy/productControllers")
-const conversionControllers= require("./Randy/conversionControllers")
+const productControllers = require("./Randy/productControllers")
+const conversionControllers = require("./Randy/conversionControllers")
 
 
 module.exports = {
-...categoryControllers,
-...productControllers,
-...conversionControllers
- 
+  ...categoryControllers,
+  ...productControllers,
+  ...conversionControllers
+
 
 
 

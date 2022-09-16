@@ -9,11 +9,15 @@ router.patch("/editproduct", readToken, AdminController.editProduct);
 router.post("/createcategory", readToken, AdminController.createCategory);
 router.patch("/updatecategory", readToken, AdminController.updateCategory);
 router.post("/deletecategory", readToken, AdminController.deleteCategory);
+
 // router.get("/getunitdata",readToken, AdminController.getAvailableUnit);
 // router.post("/convertunit",readToken,AdminController.getConverstionUnit);
 router.get("/getcategory", readToken, AdminController.getCategoryList);
 router.post("/getProduct", readToken, AdminController.getProduct);
 router.post("/konversiStock", readToken, AdminController.konversiStock);
 router.get("/getAllProduct", AdminController.getAllProduct);
+router.get("/getunitdata", readToken, AdminController.getAvailableUnit);
+router.post("/convertunit", readToken, AdminController.getConverstionUnit);
+router.get("/getcategory", readToken, AdminController.getCategoryList);
 
 module.exports = router;

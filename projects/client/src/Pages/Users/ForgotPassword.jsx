@@ -71,8 +71,8 @@ console.log(emailForgot)
     <Box boxShadow='md'>
       <NavbarComponent/>
     </Box>
-    <div class="container text-center pt-5 pb-5">
-    <Text class="h3">Forgot Password</Text>
+    <div class="container text-center pt-4 pb-5">
+    <Text class="h4">Forgot Password</Text>
     <br />
     <hr />
     <br />
@@ -85,7 +85,7 @@ console.log(emailForgot)
           <Input shadow={"md"} type="email" placeholder="Input Your Email" onChange={(e)=>setEmailForgot(e.target.value)}/>
         </Box>
         <div class="d-grid gap-2 mx-auto mt-3">
-          <Button class="btn btn-danger" isLoading={loadingStat} loadingText='Loading' 
+          <Button class="btn btn-danger" isLoading={loadingStat} 
             onClick={handleSubmit}>
               Submit
             </Button>

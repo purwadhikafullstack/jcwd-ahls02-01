@@ -1,5 +1,6 @@
 import React from "react";
 import Axios from "axios";
+import { API_URL, BE_URL } from "../../helper";
 import "../../Styles/Users/LandingPage.css";
 import VectorHeader from "../../Assets/DevImage/HeaderLandingPage.png";
 import logo from "../../Assets/DevImage/LogoMedhika.png";
@@ -18,6 +19,7 @@ import obat4 from "../../Assets/DevImage/Enervon-C.jpg";
 import obat5 from "../../Assets/DevImage/Derma.jpg";
 import NavbarComponent from "../../Components/Users/Navbar";
 import Modal from "../../Components/Users/ModalLogin";
+import FooterComponent from "../../Components/Users/Footer";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useToastHook } from "../../Components/CustomToast";
@@ -44,6 +46,21 @@ const LandingPage = (props) => {
   const [loadingStat, setLoadingStat] = React.useState(false);
   const [currentToast, newToast] = useToastHook();
   const [isLargerThan1280] = useMediaQuery("(min-width: 1280px)");
+  const [productData, setProductData] = React.useState([]);
+
+  React.useEffect(() => {
+    fetchProductList();
+  }, []);
+
+  const fetchProductList = () => {
+    let token = localStorage.getItem("tokenIdUser");
+    Axios.get(`${API_URL}/users/getproducts`, {
+    }).then((res) => {
+      setProductData(res.data.data);
+      console.log(res.data);
+    });
+  };
+
   const { isVerified, users, name, profilePicture, token } = useSelector(
     (state) => {
       return {
@@ -57,7 +74,7 @@ const LandingPage = (props) => {
   );
 
   console.log("S T A T U S LandingPage", isVerified);
-
+  console.log("productData LandingPage", productData)
   const btnCart = async () => {
     try {
       setLoadingStat(true);
@@ -73,12 +90,7 @@ const LandingPage = (props) => {
         });
         setLoadingStat(false);
       } else {
-        newToast({
-          title: "Anda Belum Login",
-          description: "Anda harus login agar bisa transaksi di Medhika",
-          status: "warning",
-        });
-        setShow(!show);
+        setShow(!show)
         setLoadingStat(false);
       }
     } catch (err) {
@@ -148,6 +160,7 @@ const LandingPage = (props) => {
                           <Button
                             style={{ marginRight: "0px", marginTop: "75px" }}
                             class="btn-def_second"
+                            onClick={() => navigate(`/uploadresep`)}
                           >
                             Unggah Resep
                           </Button>
@@ -180,27 +193,14 @@ const LandingPage = (props) => {
                   <Flex>
                     <Text class="h6b">Kategori</Text>
                     <Spacer />
-                    <Link href="/productlist" class="h6br">
-                      Semua Produk
-                    </Link>
+                    <Link href="/productlist" class="h6br">Semua Produk</Link>
                   </Flex>
                   <div class="row">
                     <div class="col-md-4 col-sm-12">
-                      <Box
-                        borderRadius={"10px"}
-                        width="100%"
-                        boxShadow="md"
-                        bg="#FFFFFF"
-                        marginTop={"10px"}
-                        paddingBottom={"10px"}
-                      >
+                      <Box borderRadius={"10px"} width="100%" boxShadow='md' bg='#FFFFFF' marginTop={"10px"} paddingBottom={"10px"}>
                         <div class="row">
                           <div class="col-5">
-                            <Image
-                              src={kategori1}
-                              width="70%"
-                              style={{ marginLeft: "25px", marginTop: "5px" }}
-                            />
+                            <Image src={kategori1} width='70%' style={{ marginLeft: "25px", marginTop: "5px" }} />
                           </div>
                           <div class="col-7">
                             <Text class="h6-link">Obat-Obatan</Text>
@@ -209,51 +209,25 @@ const LandingPage = (props) => {
                       </Box>
                     </div>
                     <div class="col-md-4 col-sm-12">
-                      <Box
-                        borderRadius={"10px"}
-                        width="100%"
-                        boxShadow="md"
-                        bg="#FFFFFF"
-                        marginTop={"10px"}
-                        paddingBottom={"10px"}
-                      >
+                      <Box borderRadius={"10px"} width="100%" boxShadow='md' bg='#FFFFFF' marginTop={"10px"} paddingBottom={"10px"}>
                         <div class="row">
                           <div class="col-5">
-                            <Image
-                              src={kategori2}
-                              width="70%"
-                              style={{ marginLeft: "25px", marginTop: "5px" }}
-                            />
+                            <Image src={kategori2} width='70%' style={{ marginLeft: "25px", marginTop: "5px" }} />
                           </div>
                           <div class="col-7">
-                            <Text class="h6" style={{ marginTop: "50px" }}>
-                              Vitamin & Suplemen
-                            </Text>
+                            <Text class="h6" style={{ marginTop: "50px" }}>Vitamin & Suplemen</Text>
                           </div>
                         </div>
                       </Box>
                     </div>
                     <div class="col-md-4 col-sm-12">
-                      <Box
-                        borderRadius={"10px"}
-                        width="100%"
-                        boxShadow="md"
-                        bg="#FFFFFF"
-                        marginTop={"10px"}
-                        paddingBottom={"10px"}
-                      >
+                      <Box borderRadius={"10px"} width="100%" boxShadow='md' bg='#FFFFFF' marginTop={"10px"} paddingBottom={"10px"}>
                         <div class="row">
                           <div class="col-5">
-                            <Image
-                              src={kategori3}
-                              width="70%"
-                              style={{ marginLeft: "25px", marginTop: "5px" }}
-                            />
+                            <Image src={kategori3} width='70%' style={{ marginLeft: "25px", marginTop: "5px" }} />
                           </div>
                           <div class="col-7">
-                            <Text class="h6" style={{ marginTop: "50px" }}>
-                              Perawatan Tubuh
-                            </Text>
+                            <Text class="h6" style={{ marginTop: "50px" }}>Perawatan Tubuh</Text>
                           </div>
                         </div>
                       </Box>
@@ -272,232 +246,123 @@ const LandingPage = (props) => {
               <Box marginTop={"40px"}>
                 <Text class="h6b">Rekomendasi</Text>
               </Box>
-              <div class="VectorRekomendasi" style={{ height: "400px" }}>
-                <div class="row">
-                  <div class="col-2"></div>
-                  <div class="col-2">
-                    <Box
-                      borderRadius={"10px"}
-                      width="100%"
-                      height="88%"
-                      boxShadow="lg"
-                      bg="#FFFFFF"
-                      marginTop={"50px"}
-                      paddingBottom={"10px"}
-                    >
+              {
+                productData.length > 0 ?
+                  <>
+                    <div class="VectorRekomendasi" style={{ height: "400px" }}>
                       <div class="row">
-                        <div class="row d-flex justify-content-center">
-                          <Image
-                            src={obat1}
-                            width="85%"
-                            style={{ marginLeft: "25px", marginTop: "5px" }}
-                          />
-                          <Text class="h6b" style={{ marginLeft: "35px" }}>
-                            Panadol
-                          </Text>
+                        <div class="col-2"></div>
+                        <div class="col-2">
+                          <Box borderRadius={"10px"} width="100%" height="88%" boxShadow='lg' bg='#FFFFFF' marginTop={"50px"} paddingBottom={"10px"}>
+                            <div class="row">
+                              <div class="row d-flex justify-content-center">
+                                <Image src={BE_URL + productData[1].productPicture} width='85%' style={{ marginLeft: "25px", marginTop: "5px" }} />
+                                <Box noOfLines={1} >
+                                  <Text class="h6b" style={{ marginLeft: "35px" }}>{productData[1].productName}</Text>
+                                </Box>
+                              </div>
+                              <div class="row">
+                                <Text class="h6b" style={{ marginTop: "65px", marginLeft: "20px" }}>Rp. {productData[1].priceSale.toLocaleString()} / {productData[1].defaultUnit}</Text>
+                              </div>
+                            </div>
+                            <div class="d-flex justify-content-center mt-2">
+                              <Button isLoading={loadingStat}
+                                class="btn-rekom" onClick={() => navigate(`/productDetail/${productData[1].idProduct}`)}>Detail Product</Button>
+                              <Modal style={{ color: "#000000" }} onClose={() => setShow(!show)} show={show} />
+                            </div>
+                          </Box>
                         </div>
-                        <div class="row">
-                          <Text
-                            class="h6b"
-                            style={{ marginTop: "65px", marginLeft: "20px" }}
-                          >
-                            Rp. 12.000 / Saset
-                          </Text>
+                        <div class="col-2">
+                          <Box borderRadius={"10px"} width="100%" height="88%" boxShadow='lg' bg='#FFFFFF' marginTop={"50px"} paddingBottom={"10px"}>
+                            <div class="row">
+                              <div class="row d-flex justify-content-center">
+                                <Image src={BE_URL + productData[2].productPicture} width='85%' style={{ marginLeft: "25px", marginTop: "5px" }} />
+                                <Box noOfLines={1} >
+                                  <Text class="h6b" style={{ marginLeft: "35px" }}>{productData[2].productName}</Text>
+                                </Box>
+                              </div>
+                              <div class="row">
+                                <Text class="h6b" style={{ marginTop: "65px", marginLeft: "20px" }}>Rp. {productData[2].priceSale.toLocaleString()} / {productData[2].defaultUnit}</Text>
+                              </div>
+                            </div>
+                            <div class="d-flex justify-content-center mt-2">
+                              <Button isLoading={loadingStat}
+                                class="btn-rekom" onClick={() => navigate(`/productDetail/${productData[2].idProduct}`)}>Detail Product</Button>
+                              <Modal style={{ color: "#000000" }} onClose={() => setShow(!show)} show={show} />
+                            </div>
+                          </Box>
                         </div>
-                      </div>
-                      <div class="d-flex justify-content-center mt-2">
-                        <Button
-                          isLoading={loadingStat}
-                          loadingText="Loading"
-                          class="btn-rekom"
-                          onClick={btnCart}
-                        >
-                          Add To Cart
-                        </Button>
-                        <Modal
-                          style={{ color: "#000000" }}
-                          onClose={() => setShow(!show)}
-                          show={show}
-                        />
-                      </div>
-                    </Box>
-                  </div>
-                  <div class="col-2">
-                    <Box
-                      borderRadius={"10px"}
-                      width="100%"
-                      height="88%"
-                      boxShadow="lg"
-                      bg="#FFFFFF"
-                      marginTop={"50px"}
-                      paddingBottom={"10px"}
-                    >
-                      <div class="row">
-                        <div class="row d-flex justify-content-center">
-                          <Image
-                            src={obat2}
-                            width="85%"
-                            style={{ marginLeft: "25px", marginTop: "5px" }}
-                          />
-                          <Text class="h6b" style={{ marginLeft: "35px" }}>
-                            Decolgen
-                          </Text>
+                        <div class="col-2">
+                          <Box borderRadius={"10px"} width="100%" height="88%" boxShadow='lg' bg='#FFFFFF' marginTop={"50px"} paddingBottom={"10px"}>
+                            <div class="row">
+                              <div class="row d-flex justify-content-center">
+                                <Image src={BE_URL + productData[5].productPicture} width='85%' style={{ marginLeft: "25px", marginTop: "5px" }} />
+                                <Box noOfLines={1} >
+                                  <Text class="h6b" style={{ marginLeft: "35px" }}>{productData[5].productName}</Text>
+                                </Box>
+                              </div>
+                              <div class="row">
+                                <Text class="h6b" style={{ marginTop: "65px", marginLeft: "20px" }}>Rp. {productData[5].priceSale.toLocaleString()} / {productData[5].defaultUnit}</Text>
+                              </div>
+                            </div>
+                            <div class="d-flex justify-content-center mt-2">
+                              <Button isLoading={loadingStat}
+                                class="btn-rekom" onClick={() => navigate(`/productDetail/${productData[5].idProduct}`)}>Detail Product</Button>
+                              <Modal style={{ color: "#000000" }} onClose={() => setShow(!show)} show={show} />
+                            </div>
+                          </Box>
                         </div>
-                        <div class="row">
-                          <Text
-                            class="h6b"
-                            style={{ marginTop: "65px", marginLeft: "20px" }}
-                          >
-                            Rp. 2.300 / Saset
-                          </Text>
+                        <div class="col-2">
+                          <Box borderRadius={"10px"} width="100%" height="88%" boxShadow='lg' bg='#FFFFFF' marginTop={"50px"} paddingBottom={"10px"}>
+                            <div class="row">
+                              <div class="row d-flex justify-content-center">
+                                <Image src={BE_URL + productData[0].productPicture} width='85%' style={{ marginLeft: "25px", marginTop: "5px" }} />
+                                <Box noOfLines={1} >
+                                  <Text class="h6b" style={{ marginLeft: "35px" }}>{productData[0].productName}</Text>
+                                </Box>
+                              </div>
+                              <div class="row">
+                                <Text class="h6b" style={{ marginTop: "65px", marginLeft: "20px" }}>Rp. {productData[0].priceSale.toLocaleString()} / {productData[0].defaultUnit}</Text>
+                              </div>
+                            </div>
+                            <div class="d-flex justify-content-center mt-2">
+                              <Button isLoading={loadingStat}
+                                class="btn-rekom" onClick={() => navigate(`/productDetail/${productData[0].idProduct}`)}>Detail Product</Button>
+                              <Modal style={{ color: "#000000" }} onClose={() => setShow(!show)} show={show} />
+                            </div>
+                          </Box>
                         </div>
-                      </div>
-                      <div class="d-flex justify-content-center mt-2">
-                        <Button
-                          isLoading={loadingStat}
-                          loadingText="Loading"
-                          class="btn-rekom"
-                          onClick={btnCart}
-                        >
-                          Add To Cart
-                        </Button>
-                      </div>
-                    </Box>
-                  </div>
-                  <div class="col-2">
-                    <Box
-                      borderRadius={"10px"}
-                      width="100%"
-                      height="88%"
-                      boxShadow="lg"
-                      bg="#FFFFFF"
-                      marginTop={"50px"}
-                      paddingBottom={"10px"}
-                    >
-                      <div class="row">
-                        <div class="row d-flex justify-content-center">
-                          <Image
-                            src={obat3}
-                            width="85%"
-                            style={{ marginLeft: "25px", marginTop: "5px" }}
-                          />
-                          <Text class="h6b" style={{ marginLeft: "35px" }}>
-                            Blackmores Multivitamin
-                          </Text>
-                        </div>
-                        <div class="row">
-                          <Text
-                            class="h6b"
-                            style={{ marginTop: "40px", marginLeft: "20px" }}
-                          >
-                            Rp. 550.000 / Botol
-                          </Text>
+                        <div class="col-2">
+                          <Box borderRadius={"10px"} width="100%" height="88%" boxShadow='lg' bg='#FFFFFF' marginTop={"50px"} paddingBottom={"10px"}>
+                            <div class="row">
+                              <div class="row d-flex justify-content-center">
+                                <Image src={BE_URL + productData[7].productPicture} width='85%' style={{ marginLeft: "25px", marginTop: "5px" }} />
+                                <Box noOfLines={1} >
+                                  <Text class="h6b" style={{ marginLeft: "35px" }}>{productData[7].productName}</Text>
+                                </Box>
+                              </div>
+                              <div class="row">
+                                <Text class="h6b" style={{ marginTop: "65px", marginLeft: "20px" }}>Rp. {productData[7].priceSale.toLocaleString()} / {productData[7].defaultUnit}</Text>
+                              </div>
+                            </div>
+                            <div class="d-flex justify-content-center mt-2">
+                              <Button isLoading={loadingStat}
+                                class="btn-rekom" onClick={() => navigate(`/productDetail/${productData[7].idProduct}`)}>Detail Product</Button>
+                              <Modal style={{ color: "#000000" }} onClose={() => setShow(!show)} show={show} />
+                            </div>
+                          </Box>
                         </div>
                       </div>
-                      <div class="d-flex justify-content-center mt-2">
-                        <Button
-                          isLoading={loadingStat}
-                          loadingText="Loading"
-                          class="btn-rekom"
-                          onClick={btnCart}
-                        >
-                          Add To Cart
-                        </Button>
-                      </div>
-                    </Box>
-                  </div>
-                  <div class="col-2">
-                    <Box
-                      borderRadius={"10px"}
-                      width="100%"
-                      height="88%"
-                      boxShadow="lg"
-                      bg="#FFFFFF"
-                      marginTop={"50px"}
-                      paddingBottom={"10px"}
-                    >
-                      <div class="row">
-                        <div class="row d-flex justify-content-center">
-                          <Image
-                            src={obat4}
-                            width="85%"
-                            style={{ marginLeft: "25px", marginTop: "5px" }}
-                          />
-                          <Text class="h6b" style={{ marginLeft: "35px" }}>
-                            Enervon-C
-                          </Text>
-                        </div>
-                        <div class="row">
-                          <Text
-                            class="h6b"
-                            style={{ marginTop: "65px", marginLeft: "20px" }}
-                          >
-                            Rp. 35.000 / Saset
-                          </Text>
-                        </div>
-                      </div>
-                      <div class="d-flex justify-content-center mt-2">
-                        <Button
-                          isLoading={loadingStat}
-                          loadingText="Loading"
-                          class="btn-rekom"
-                          onClick={btnCart}
-                        >
-                          Add To Cart
-                        </Button>
-                      </div>
-                    </Box>
-                  </div>
-                  <div class="col-2">
-                    <Box
-                      borderRadius={"10px"}
-                      width="100%"
-                      height="88%"
-                      boxShadow="lg"
-                      bg="#FFFFFF"
-                      marginTop={"50px"}
-                      paddingBottom={"10px"}
-                    >
-                      <div class="row">
-                        <div class="row d-flex justify-content-center">
-                          <Image
-                            src={obat5}
-                            width="85%"
-                            style={{ marginLeft: "25px", marginTop: "5px" }}
-                          />
-                          <Text class="h6b" style={{ marginLeft: "35px" }}>
-                            Derma AnGel Acne Patch Day
-                          </Text>
-                        </div>
-                        <div class="row">
-                          <Text
-                            class="h6b"
-                            style={{ marginTop: "40px", marginLeft: "20px" }}
-                          >
-                            Rp. 16.500 / Saset
-                          </Text>
-                        </div>
-                      </div>
-                      <div class="d-flex justify-content-center mt-2">
-                        <Button
-                          isLoading={loadingStat}
-                          loadingText="Loading"
-                          class="btn-rekom"
-                          onClick={btnCart}
-                        >
-                          Add To Cart
-                        </Button>
-                      </div>
-                    </Box>
-                  </div>
-                </div>
-              </div>
+                    </div>
+                  </>
+                  :
+                  <>
+                    <div class="VectorRekomendasi" style={{ height: "400px" }}>
+                    </div>
+                  </>
+              }
             </div>
-            <Divider
-              borderWidth={"1px"}
-              borderColor={"#333333"}
-              style={{ marginTop: "100px" }}
-            />
+            <Divider borderWidth={"1px"} borderColor={"#333333"} style={{ marginTop: "100px" }} />
             <Box marginTop={"40px"}>
               <Text class="h6b">Jaminan Untuk Anda</Text>
             </Box>
@@ -603,154 +468,63 @@ const LandingPage = (props) => {
               <div style={{ height: "400px" }}>
                 <div class="row">
                   <div class="col-12 d-flex justify-content-center">
-                    <Box
-                      borderRadius={"10px"}
-                      width="80%"
-                      height="85%"
-                      boxShadow="lg"
-                      bg="#FFFFFF"
-                      marginTop={"50px"}
-                      paddingBottom={"10px"}
-                    >
+                    <Box borderRadius={"10px"} width="80%" height="85%" boxShadow='lg' bg='#FFFFFF' marginTop={"50px"} paddingBottom={"10px"}>
                       <div class="row">
                         <div class="row d-flex justify-content-center text-center">
-                          <Image
-                            src={obat1}
-                            width="35%"
-                            style={{ marginLeft: "25px" }}
-                          />
-                          <Text
-                            class="h6b"
-                            style={{ marginLeft: "35px", marginBottom: "20px" }}
-                          >
-                            Panadol
-                          </Text>
+                          <Image src={obat1} width='35%' style={{ marginLeft: "25px" }} />
+                          <Text class="h6b" style={{ marginLeft: "35px", marginBottom: "20px" }}>Panadol</Text>
                         </div>
                         <div class="row text-center">
-                          <Text class="h6b" style={{ marginLeft: "20px" }}>
-                            Rp. 12.000 / Saset
-                          </Text>
+                          <Text class="h6b" style={{ marginLeft: "20px" }}>Rp. 12.000 / Saset</Text>
                         </div>
                       </div>
                       <div class="d-flex justify-content-center mt-2">
-                        <Button
-                          isLoading={loadingStat}
-                          loadingText="Loading"
-                          class="btn-rekom"
-                          onClick={btnCart}
-                        >
-                          Add To Cart
-                        </Button>
-                        <Modal
-                          style={{ color: "#000000" }}
-                          onClose={() => setShow(!show)}
-                          show={show}
-                        />
+                        <Button isLoading={loadingStat}
+                          class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
+                        <Modal style={{ color: "#000000" }} onClose={() => setShow(!show)} show={show} />
                       </div>
                     </Box>
                   </div>
                   <div class="col-12 d-flex justify-content-center">
-                    <Box
-                      borderRadius={"10px"}
-                      width="80%"
-                      height="85%"
-                      boxShadow="lg"
-                      bg="#FFFFFF"
-                      marginTop={"50px"}
-                      paddingBottom={"10px"}
-                    >
+                    <Box borderRadius={"10px"} width="80%" height="85%" boxShadow='lg' bg='#FFFFFF' marginTop={"50px"} paddingBottom={"10px"}>
                       <div class="row">
                         <div class="row d-flex justify-content-center text-center">
-                          <Image
-                            src={obat3}
-                            width="35%"
-                            style={{ marginLeft: "25px" }}
-                          />
-                          <Text
-                            class="h6b"
-                            style={{ marginLeft: "35px", marginBottom: "20px" }}
-                          >
-                            Blackmores Multivitamin
-                          </Text>
+                          <Image src={obat3} width='35%' style={{ marginLeft: "25px" }} />
+                          <Text class="h6b" style={{ marginLeft: "35px", marginBottom: "20px" }}>Blackmores Multivitamin</Text>
                         </div>
                         <div class="row text-center">
-                          <Text class="h6b" style={{ marginLeft: "20px" }}>
-                            Rp. 550.000 / Botol
-                          </Text>
+                          <Text class="h6b" style={{ marginLeft: "20px" }}>Rp. 550.000 / Botol</Text>
                         </div>
                       </div>
                       <div class="d-flex justify-content-center mt-2">
-                        <Button
-                          isLoading={loadingStat}
-                          loadingText="Loading"
-                          class="btn-rekom"
-                          onClick={btnCart}
-                        >
-                          Add To Cart
-                        </Button>
-                        <Modal
-                          style={{ color: "#000000" }}
-                          onClose={() => setShow(!show)}
-                          show={show}
-                        />
+                        <Button isLoading={loadingStat}
+                          class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
+                        <Modal style={{ color: "#000000" }} onClose={() => setShow(!show)} show={show} />
                       </div>
                     </Box>
                   </div>
                   <div class="col-12 d-flex justify-content-center">
-                    <Box
-                      borderRadius={"10px"}
-                      width="80%"
-                      height="85%"
-                      boxShadow="lg"
-                      bg="#FFFFFF"
-                      marginTop={"50px"}
-                      paddingBottom={"10px"}
-                    >
+                    <Box borderRadius={"10px"} width="80%" height="85%" boxShadow='lg' bg='#FFFFFF' marginTop={"50px"} paddingBottom={"10px"}>
                       <div class="row">
                         <div class="row d-flex justify-content-center text-center">
-                          <Image
-                            src={obat5}
-                            width="35%"
-                            style={{ marginLeft: "25px" }}
-                          />
-                          <Text
-                            class="h6b"
-                            style={{ marginLeft: "35px", marginBottom: "20px" }}
-                          >
-                            Derma AnGel Acne Patch Day
-                          </Text>
+                          <Image src={obat5} width='35%' style={{ marginLeft: "25px" }} />
+                          <Text class="h6b" style={{ marginLeft: "35px", marginBottom: "20px" }}>Derma AnGel Acne Patch Day</Text>
                         </div>
                         <div class="row text-center">
-                          <Text class="h6b" style={{ marginLeft: "20px" }}>
-                            Rp. 16.500 / Saset
-                          </Text>
+                          <Text class="h6b" style={{ marginLeft: "20px" }}>Rp. 16.500 / Saset</Text>
                         </div>
                       </div>
                       <div class="d-flex justify-content-center mt-2">
-                        <Button
-                          isLoading={loadingStat}
-                          loadingText="Loading"
-                          class="btn-rekom"
-                          onClick={btnCart}
-                        >
-                          Add To Cart
-                        </Button>
-                        <Modal
-                          style={{ color: "#000000" }}
-                          onClose={() => setShow(!show)}
-                          show={show}
-                        />
+                        <Button isLoading={loadingStat}
+                          class="btn-rekom" onClick={btnCart}>Add To Cart</Button>
+                        <Modal style={{ color: "#000000" }} onClose={() => setShow(!show)} show={show} />
                       </div>
                     </Box>
                   </div>
                 </div>
               </div>
             </div>
-            <Divider
-              borderWidth={"1px"}
-              borderColor={"#333333"}
-              style={{ marginTop: "470px" }}
-            />
+            <Divider borderWidth={"1px"} borderColor={"#333333"} style={{ marginTop: "470px" }} />
             <Box marginTop={"40px"}>
               <Text class="h6b">Jaminan Untuk Anda</Text>
             </Box>
@@ -876,20 +650,7 @@ const LandingPage = (props) => {
         <br />
         <br />
       </div>
-      <div style={{ backgroundColor: "#586BB1" }}>
-        <div class="container text-center">
-          <Text
-            class="h6"
-            style={{
-              paddingTop: "20px",
-              paddingBottom: "20px",
-              color: "#FFFFFF",
-            }}
-          >
-            Group 1 Final Project - JCWDAHLS01
-          </Text>
-        </div>
-      </div>
+      <FooterComponent />
     </>
   );
 };

@@ -11,7 +11,8 @@ import NotFoundPage from "./Pages/Users/404";
 import ChangePassword from "./Pages/Users/ChangePassword";
 import ForgotPassword from "./Pages/Users/ForgotPassword";
 import ResetPassword from "./Pages/Users/ResetPassword";
-import Cart from "./Pages/Users/Cart";
+import CartPage from "./Pages/Users/Cart";
+import CheckoutPage from "./Pages/Users/Checkout";
 import Dashboard from "./Pages/Admin/Dashboard";
 import Category from "./Pages/Admin/Category";
 import EditProfile from "./Pages/Users/EditProfile";
@@ -19,6 +20,11 @@ import Verification from "./Pages/Users/Verification";
 import Productpage from "./Pages/Admin/Product";
 import ProductList from "./Pages/Users/ProductList";
 import ProductDetail from "./Pages/Users/ProductDetail";
+import TransactionListPage from "./Pages/Users/TransactionList";
+import UploadResepPage from "./Pages/Users/UploadResep";
+import AdminTransactionListPage from "./Pages/Admin/AdminTransactionList";
+import RacikResepPage from "./Pages/Admin/RacikResep";
+import SalesReport from "./Pages/Admin/SalesReport";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -52,6 +58,9 @@ function App() {
                 <Route path="/admin/dashboard" element={<Dashboard />} />
                 <Route path="/admin/category" element={<Category />} />
                 <Route path="/admin/productpage" element={<Productpage />} />
+                <Route path="/admin/transactionList" element={<AdminTransactionListPage />} />
+                <Route path="/admin/racikResep" element={<RacikResepPage />} />
+                <Route path="/admin/salesReport" element={<SalesReport />} />
               </>
             ) : (
               <>
@@ -64,8 +73,11 @@ function App() {
                   path="/resetPassword/:token"
                   element={<ResetPassword />}
                 />
-                <Route path="/cart" element={<Cart />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path='/checkout' element={<CheckoutPage />} />
                 <Route path="/editProfile" element={<EditProfile />} />
+                <Route path='/transactionlist' element={<TransactionListPage />} />
+                <Route path='/uploadresep' element={<UploadResepPage />} />
               </>
             )}
           </>
@@ -74,6 +86,8 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot" element={<ForgotPassword />} />
+            <Route path="/productdetail/:id" element={<ProductDetail />} />
+            <Route path="/productList" element={<ProductList />} />
           </>
         )}
         <Route path="*" element={<NotFoundPage />} />

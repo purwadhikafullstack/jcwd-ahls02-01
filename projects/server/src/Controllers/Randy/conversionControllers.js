@@ -5,6 +5,13 @@ const { uploader } = require("../../Config/uploader");
 const { fs } = require("../../Config/uploader");
 
 module.exports = {
+getAvailableUnit: async (req, res) => {
+    const getUnit = `Select p.productName,s.stockQuantity from products as p join stocks as S on P.idproduct = s.idProduct WHERE s.isMain = 'false';`;
+    let sql13 = await query(getUnit);
+    return res.status(200).json({
+      data: sql13,
+    });
+  },
   getProduct: async (req, res, next) => {
     try {
       console.log("req.body getProduct", req.body);
