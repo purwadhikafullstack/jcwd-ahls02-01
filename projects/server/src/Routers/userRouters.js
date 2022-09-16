@@ -14,6 +14,7 @@ router.patch('/reset', readToken, userControllers.reset);
 router.patch('/edit', readToken, userControllers.edit);
 router.patch('/profilePicture', readToken, userControllers.profilePicture);
 router.get("/getproducts", userControllers.getProducts);
+
 router.get(
   "/getproductdetail/:id",
   
