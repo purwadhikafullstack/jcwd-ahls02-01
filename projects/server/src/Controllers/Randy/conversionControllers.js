@@ -1,4 +1,3 @@
-
 const db = require("../../Config/database");
 const util = require("util");
 const query = db.dbQuery;

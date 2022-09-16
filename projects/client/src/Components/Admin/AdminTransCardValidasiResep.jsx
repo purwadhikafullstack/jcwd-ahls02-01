@@ -7,11 +7,7 @@ import { API_URL, BE_URL } from "../../helper";
 import { getAdminValidasiResepAction, getAdminFilterValidasiResepAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
-    Flex,
     Divider,
-    VStack,
-    Center,
-    Stack,
     Image,
     Text,
     Button,
@@ -26,11 +22,6 @@ import {
     InputGroup,
     InputLeftAddon,
     Select,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel
 } from "@chakra-ui/react";
 
 const AdminTransCardValidasiResepComponent = (props) => {
@@ -121,7 +112,6 @@ const AdminTransCardValidasiResepComponent = (props) => {
     //! pending handling subtotal
     const printSemuaTransaksi = () => {
         if (transactionList.length > 0) {
-            console.log(`isi props.dbValidasiResep`, props.dbValidasiResep)
             return transactionList.map((value, index) => {
                 if (value.prescription != null && value.transactionStatus == "Menunggu Diproses Penjual") {
                     return (
@@ -161,7 +151,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                 <Button
                                     className="btn-def_second"
                                     mb={3}
-                                    onClick={() => navigate("/admin/racikResep")}
+                                    onClick={() => navigate(`/admin/racikResep?id=${value.idTransaction}`)}
                                 >
                                     Validasi Resep
                                 </Button>

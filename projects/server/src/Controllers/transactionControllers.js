@@ -3,7 +3,7 @@ const { uploader } = require("../Config/uploader");
 const fs = require("fs");
 
 module.exports = {
-    userGetAllTransaction: async (req, res, next) => {
+    userGetAllTransaction: async (req, res, next) => { //* USER GET ALL TRANSACTION
         try {
 
             let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser=${dbConf.escape(req.dataUser.idUser)} group by t1.idTransaction order by t1.addDate desc;`)
@@ -858,7 +858,7 @@ module.exports = {
             return next(error);
         }
     },
-    addNormalTransaction: async (req, res, next) => {
+    addNormalTransaction: async (req, res, next) => { //* USER ADD TRANSACTION FROM CART
         try {
             console.log(`arrayIdCart`, req.body.arrayIdCart);
             console.log(`idAddress`, req.body.idAddress);
@@ -943,7 +943,7 @@ module.exports = {
             return next(error);
         }
     },
-    addRecipeTransaction: async (req, res, next) => {
+    addRecipeTransaction: async (req, res, next) => { //* USER ADD TRANSACTION FROM RECIPE
         try {
 
             if (req.dataUser.idUser) {
@@ -994,7 +994,7 @@ module.exports = {
             return next(error);
         }
     },
-    addBuktiBayar: async (req, res, next) => {
+    addBuktiBayar: async (req, res, next) => { //* USER ADD BUKTI BAYAR
         try {
 
             if (req.dataUser.idUser) {
@@ -1023,7 +1023,7 @@ module.exports = {
             return next(error);
         }
     },
-    adminGetAllTransaction: async (req, res, next) => {
+    adminGetAllTransaction: async (req, res, next) => { //* ADMIN GET ALL TRANSACTION
         try {
 
             let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress group by t1.idTransaction order by t1.addDate asc;`)
@@ -1762,6 +1762,71 @@ module.exports = {
             });
 
             return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminGetDetailRecipe: async (req, res, next) => { //* ADMIN GET DETAIL RECIPE
+        try {
+
+            console.log(`req.query.id di adminGetDetailRecipe`, req.query.id);
+
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idTransaction = ${req.query.id} group by t1.idTransaction;`)
+
+            console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idTransaction = ${req.query.id} group by t1.idTransaction;`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction[0]);
+
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminGetAllProduct: async (req, res, next) => { //* ADMIN GET SEMUA LIST PRODUK SERTA STOKNYA
+        try {
+
+            let productList = await dbQuery(`select p.idProduct, p.productName, p.productPicture, p.convertedQuantity, s.idStock, s.stockType, s.stockQuantity, s.priceSale, s.isMain from products p left join stocks s on p.idProduct = s.idProduct where p.isDeleted = false;`)
+
+            return res.status(200).send(productList);
+
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminEditDetailRecipe: async (req, res, next) => { //* ADMIN EDIT DETAIL RECIPE
+        try {
+
+            console.log(`req.query.id di adminGetDetailRecipe`, req.query.id);
+
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idTransaction = ${req.query.id} group by t1.idTransaction;`)
+
+            console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idTransaction = ${req.query.id} group by t1.idTransaction;`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction[0]);
+
         } catch (error) {
             return next(error);
         }

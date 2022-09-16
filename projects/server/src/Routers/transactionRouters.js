@@ -39,4 +39,7 @@ router.get('/adminFilterPesananDikonfirmasi', readToken, transactionControllers.
 router.get('/adminGetDibatalkan', readToken, transactionControllers.adminGetDiproses);
 router.get('/adminFilterDibatalkan', readToken, transactionControllers.adminFilterDiproses);
 
+router.get('/adminGetDetailRecipe', readToken, transactionControllers.adminGetDetailRecipe);
+router.get('/adminGetAllProduct', transactionControllers.adminGetAllProduct);
+
 module.exports = router;
