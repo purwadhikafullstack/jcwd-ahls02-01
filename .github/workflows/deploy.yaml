@@ -19,6 +19,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Build Project
         run: |
+          npm cache clean –force
           npm install
           npm run build
       # - name: Deploy to Linode
