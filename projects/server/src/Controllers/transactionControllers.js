@@ -2001,7 +2001,7 @@ module.exports = {
                 let updateStockQuery = []
                 transactionDetail.forEach((val, idx) => {
                     updateStockQuery.push(`update stocks set stockQuantity = ${val.stockQuantity + val.purchaseQuantity} where idStock = ${val.idStock};`)
-                    
+
                     console.log(`update stocks set stockQuantity = ${val.stockQuantity + val.purchaseQuantity} where idStock = ${val.idStock};`)
                 })
 
@@ -2017,5 +2017,37 @@ module.exports = {
         } catch (error) {
             return next(error)
         }
-    }
+    },
+    userConfirmReceivingThePackage: async (req, res, next) => {
+        try {
+            console.log(`req.params.id`, req.params.id);
+            console.log(`req.body.transactionStatus`, req.body.newTransactionStatus);
+
+            if (req.dataUser.idUser) {
+                //* update tabel transaksi
+                let editTransaction = await dbQuery(`update transactions set transactionStatus = ${dbConf.escape(req.body.newTransactionStatus)} where idTransaction = ${req.params.id};`);
+
+                console.log(`update transactions set transactionStatus = ${dbConf.escape(req.body.newTransactionStatus)} where idTransaction = ${req.params.id};`)
+
+                //* transactionDetail ditarik untuk ambil idStock dan purchase quantity
+                let transactionDetail = await dbQuery(`select t2.idTransaction, t2.idStock, s.stockQuantity, t2.purchaseQuantity from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock where t2.idTransaction = ${req.params.id};`);
+
+                let updateTableProductHistory = []
+                transactionDetail.forEach((val, idx) => {
+                    updateTableProductHistory.push(`insert into producthistory (idStock,idTransaction,mutationSource,mutationType) values (${val.idStock},${req.params.id},"Penjualan","Pengurangan");`)
+
+                    console.log(`insert into producthistory (idStock,idTransaction,mutationSource,mutationType) values (${val.idStock},${req.params.id},"Penjualan","Pengurangan");`)
+                })
+
+                let contents1
+                await Promise.all(updateTableProductHistory.map(async (valArray) => {
+                    contents1 = await dbQuery(valArray);
+                }));
+
+                return res.status(200).send({ success: true, message: `update transactionStatus dan producthistory berhasil` })
+            }
+        } catch (error) {
+            return next(error)
+        }
+    },
 }

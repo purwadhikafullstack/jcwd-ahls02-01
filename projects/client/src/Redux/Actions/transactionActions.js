@@ -1042,3 +1042,34 @@ export const cancellingOrderAction = (idTransaction, newTransactionStatus) => {
         }
     }
 }
+
+//* USER CONFIRM RECEIVING THE PACKAGE ==> UPDATE STATUS DAN PRODUCTHISTORY
+export const confirmReceivePackageAction = (idTransaction, newTransactionStatus) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            if (token) {
+                let res = await Axios.patch(`${API_URL}/transaction/userConfirmReceivingThePackage/${idTransaction}`, {
+                    newTransactionStatus
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data confirmReceivePackageAction`, res.data);
+
+                dispatch(getTransactionAction());
+                dispatch(getTransactionAdminAction());
+                dispatch(getUserPesananDikonfirmasiAction());
+                dispatch(getAdminPesananDikonfirmasiAction());
+
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}

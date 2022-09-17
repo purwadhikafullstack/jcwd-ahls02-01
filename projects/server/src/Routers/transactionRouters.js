@@ -55,5 +55,8 @@ router.patch('/adminEditTransactionStatusOnly/:id', readToken, transactionContro
 //* ADMIN CANCELING THE ORDER
 router.patch('/adminCancelingTheOrder/:id', readToken, transactionControllers.adminCancelingTheOrder);
 
+//* USER CONFIRM RECEIVING THE PACKAGE
+router.patch('/userConfirmReceivingThePackage/:id', readToken, transactionControllers.userConfirmReceivingThePackage);
+
 
 module.exports = router;

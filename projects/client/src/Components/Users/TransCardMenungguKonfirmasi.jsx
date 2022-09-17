@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
 import { API_URL, BE_URL } from "../../helper";
-import { getUserMenungguKonfirmasiAction, getUserFilterMenungguKonfirmasiAction } from "../../Redux/Actions/transactionActions";
+import { getUserMenungguKonfirmasiAction, getUserFilterMenungguKonfirmasiAction, cancellingOrderAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
     Image,
@@ -26,15 +26,18 @@ const TransCardMenungguKonfirmasiComponent = (props) => {
             transactionLength: state.transactionReducers.transaction.filter(val => val.transactionStatus == "Menunggu Konfirmasi").length
         }
     })
+    const [batalkanPesanan, setBatalkanPesanan] = useState(0)
 
     //& component did mount
     useEffect(() => {
         if (props.query.length > 0) {
             getArrayFilteredSortedTransaction();
+            setBatalkanPesanan(0)
         } else {
             getPaginatedTransaction();
+            setBatalkanPesanan(0)
         }
-    }, [props.query])
+    }, [props.query, batalkanPesanan])
 
     //^ cek props, state
     console.log(`props.query`, props.query)
@@ -228,6 +231,7 @@ const TransCardMenungguKonfirmasiComponent = (props) => {
                                 <Button
                                     className="btn-def"
                                     width={160}
+                                    onClick={() => btnBatalkanPesanan(value.idTransaction, "Dibatalkan")}
                                 >
                                     Batalkan Pesanan
                                 </Button>
@@ -238,6 +242,12 @@ const TransCardMenungguKonfirmasiComponent = (props) => {
                 )
             })
         }
+    }
+
+    const btnBatalkanPesanan = (idTransaction, status) => {
+        dispatch(cancellingOrderAction(idTransaction, status))
+        getPaginatedTransaction();
+        setBatalkanPesanan(1);
     }
 
     return (
