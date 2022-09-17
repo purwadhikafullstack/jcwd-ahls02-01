@@ -6,7 +6,8 @@ import { getCityReducers } from "./getCityReducers";
 import { getCostReducers } from "./getCostReducers";
 import { cartReducers } from "./cartReducers";
 import { transactionReducers } from "./transactionReducers";
+import { productReducers } from "./productReducers";
 
 export const globalStore = combineReducers({
-  userReducers, addressReducers, getProvinceReducers, getCityReducers, cartReducers, getCostReducers, transactionReducers
+  userReducers, addressReducers, getProvinceReducers, getCityReducers, cartReducers, getCostReducers, transactionReducers, productReducers
 })

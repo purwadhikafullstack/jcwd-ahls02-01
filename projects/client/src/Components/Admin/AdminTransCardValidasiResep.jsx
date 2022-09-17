@@ -159,7 +159,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                 {/* UPDATE V2.0 */}
                                 <>
                                     <Box
-                                        display='flex'
+                                        // display='flex-vertical'
                                         alignItems='start'
                                         justifyContent='space-between'
                                         className="font-brand"
@@ -174,36 +174,41 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                                         <Box
                                                             display='flex'
                                                             alignItems='start'
-                                                            justifyContent='start'
-                                                            gap={5}
-                                                            key={valProduct.idTransactionDetail}
+                                                            justifyContent='space-between'
+                                                            className="font-brand"
+                                                            pb={2}
+
                                                         >
-                                                            <Image
-                                                                borderRadius='xl'
-                                                                boxSize='70px'
-                                                                src={value.prescription.includes("http")
-                                                                    ?
-                                                                    value.prescription
-                                                                    :
-                                                                    `${BE_URL}${value.prescription}`}
-                                                                alt='Gambar resep dokter'
-                                                                className="d-md-block d-none imgResep"
-                                                            />
-                                                            <Text>
-                                                                <span>
-                                                                    {valProduct.productName}
-                                                                </span>
-                                                                <br />
-                                                                <span>
-                                                                    {valProduct.purchaseQuantity} {valProduct.stockType} x Rp {valProduct.priceSale.toLocaleString()}
-                                                                </span>
+                                                            <Box
+                                                                display='flex'
+                                                                alignItems='start'
+                                                                justifyContent='start'
+                                                                gap={5}
+                                                                key={valProduct.idTransactionDetail}
+                                                            >
+                                                                <Image
+                                                                    borderRadius='xl'
+                                                                    boxSize='70px'
+                                                                    src={BE_URL + valProduct.productPicture}
+                                                                    alt='Gambar resep dokter'
+                                                                    className="d-md-block d-none imgResep"
+                                                                />
+                                                                <Text>
+                                                                    <span>
+                                                                        {valProduct.productName}
+                                                                    </span>
+                                                                    <br />
+                                                                    <span>
+                                                                        {valProduct.purchaseQuantity} {valProduct.stockType} x Rp {valProduct.priceSale.toLocaleString()}
+                                                                    </span>
+                                                                </Text>
+                                                            </Box>
+                                                            <Text
+                                                                className="me-1"
+                                                            >
+                                                                Rp {valProduct.subTotal.toLocaleString()}
                                                             </Text>
                                                         </Box>
-                                                        <Text
-                                                            className="me-1"
-                                                        >
-                                                            Rp {valProduct.subTotal.toLocaleString()}
-                                                        </Text>
                                                     </>
                                                 )
                                             })
@@ -275,10 +280,10 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                                 textColor='var(--colorSix)'
                                             >
                                                 Rp {value.totalPayment != null
-                                                ?
-                                                value.totalPayment.toLocaleString()
-                                                :
-                                                value.freightCost.toLocaleString()
+                                                    ?
+                                                    value.totalPayment.toLocaleString()
+                                                    :
+                                                    value.freightCost.toLocaleString()
                                                 }
                                             </Text>
                                         </Box>

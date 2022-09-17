@@ -1826,29 +1826,26 @@ module.exports = {
                 contents1 = await dbQuery(valArrayDetail);
             }));
 
-            // let addDetailQuery = [];
-            //     if (getNewTransaction.length >= 1) {
-            //         getNewTransaction.forEach((valNewTransaction) => {
-            //             getAllCart.forEach((valAllCart) => {
-            //                 if (valNewTransaction.idCart == valAllCart.idCart) {
+            let getStock = await dbQuery(`select s.idStock, s.stockQuantity, s.priceSale from stocks s;`);
 
-            //                     console.log(`addDetailQuery belum diisi IdCart itu`);
+            let updateStockQuery = [];
+            if (selectedMeds.length >= 1) {
+                selectedMeds.forEach((valueNewTransaction) => {
+                    getStock.forEach(valueGetStock => {
+                        if (valueNewTransaction.idStock == valueGetStock.idStock) {
+                            console.log(`update stocks set stockQuantity = ${valueGetStock.stockQuantity - valueNewTransaction.purchaseQuantity} where idStock = ${valueNewTransaction.idStock};`)
 
-            //                     addDetailQuery.push(`insert into transactionsdetail (idTransaction, idStock, idUser, productName, productPicture, stockType, purchaseQuantity, priceSale, subTotal) values (${dbConf.escape(valNewTransaction.idTransaction)}, ${dbConf.escape(valAllCart.idStock)}, ${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(valAllCart.productName)},${dbConf.escape(valAllCart.productPicture)},${dbConf.escape(valAllCart.stockType)},${dbConf.escape(valAllCart.cartQuantity)},${dbConf.escape(valAllCart.priceSale)},${dbConf.escape(valAllCart.subTotal)});`)
+                            updateStockQuery.push(`update stocks set stockQuantity = ${valueGetStock.stockQuantity - valueNewTransaction.purchaseQuantity} where idStock = ${valueNewTransaction.idStock};`)
+                        }
+                    })
+                })
+            }
+            let contents2
+            await Promise.all(updateStockQuery.map(async (valArrayDetail) => {
+                contents2 = await dbQuery(valArrayDetail);
+            }));
 
-            //                 }
-            //             })
-
-            //         })
-            //     }
-
-            //     let contents3
-            //     await Promise.all(addDetailQuery.map(async (valArrayDetail) => {
-            //         contents3 = await dbQuery(valArrayDetail);
-            //     }));
-
-            //     console.log(`addDetailQuery`, addDetailQuery);
-            return res.status(200).send({ success: true, message:`add transactionsdetail berhasil` });
+            return res.status(200).send({ success: true, message: `update stock berhasil` });
         } catch (error) {
             return next(error);
         }
