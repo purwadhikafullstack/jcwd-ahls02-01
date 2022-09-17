@@ -44,8 +44,9 @@ function ModalConversion(props) {
         // memeriksa adanya token
         if (token) {
           let res = await Axios.post(`${API_URL}/admin/getProduct`,{
-            
+            idProducts: props.idForconversion
           },{
+            
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -109,6 +110,7 @@ function ModalConversion(props) {
           </ModalHeader>
           <ModalCloseButton onClick={props.onClose}/>
           <Divider />
+          :
           <ModalBody pb={1}>
           <Text class="h5" style={{marginTop:"5px", marginLeft:"20px"}}>{product[0].productName}</Text>
           <TableContainer width={"200px"} boxShadow='md' style={{marginLeft:"20px"}}>
