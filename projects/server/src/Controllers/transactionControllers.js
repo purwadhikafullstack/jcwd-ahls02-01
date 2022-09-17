@@ -1975,11 +1975,44 @@ module.exports = {
             console.log(`req.params.id`, req.params.id);
             console.log(`req.body.transactionStatus`, req.body.newTransactionStatus);
 
-            if(req.dataUser.idUser){
+            if (req.dataUser.idUser) {
                 let editTransaction = await dbQuery(`update transactions set transactionStatus = ${dbConf.escape(req.body.newTransactionStatus)} where idTransaction = ${req.params.id};`);
             }
 
-            return res.status(200).send({success: true, message: `update transactionStatus berhasil`})
+            return res.status(200).send({ success: true, message: `update transactionStatus berhasil` })
+
+        } catch (error) {
+            return next(error)
+        }
+    },
+    adminCancelingTheOrder: async (req, res, next) => {
+        try {
+            console.log(`req.params.id`, req.params.id);
+            console.log(`req.body.transactionStatus`, req.body.newTransactionStatus);
+
+            if (req.dataUser.idUser) {
+                console.log(`update transactions set transactionStatus = ${dbConf.escape(req.body.newTransactionStatus)} where idTransaction = ${req.params.id};`)
+
+                let editTransaction = await dbQuery(`update transactions set transactionStatus = ${dbConf.escape(req.body.newTransactionStatus)} where idTransaction = ${req.params.id};`);
+
+                //* transactionDetail ditarik untuk ambil idStock dan purchase quantity
+                let transactionDetail = await dbQuery(`select t2.idTransaction, t2.idStock, s.stockQuantity, t2.purchaseQuantity from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock where t2.idTransaction = ${req.params.id};`);
+
+                let updateStockQuery = []
+                transactionDetail.forEach((val, idx) => {
+                    updateStockQuery.push(`update stocks set stockQuantity = ${val.stockQuantity + val.purchaseQuantity} where idStock = ${val.idStock};`)
+                    
+                    console.log(`update stocks set stockQuantity = ${val.stockQuantity + val.purchaseQuantity} where idStock = ${val.idStock};`)
+                })
+
+                let contents1
+                await Promise.all(updateStockQuery.map(async (valArray) => {
+                    contents1 = await dbQuery(valArray);
+                }));
+
+            }
+
+            return res.status(200).send({ success: true, message: `update transactionStatus dan stocks berhasil` })
 
         } catch (error) {
             return next(error)

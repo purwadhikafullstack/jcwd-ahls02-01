@@ -993,6 +993,48 @@ export const updateTransactionStatusOnlyAction = (idTransaction, newTransactionS
 
                 dispatch(getTransactionAction());
                 dispatch(getTransactionAdminAction());
+                dispatch(getUserValidasiResepAction());
+                dispatch(getUserMenungguPembayaranAction());
+                dispatch(getUserDiprosesAction());
+                dispatch(getUserDikirimAction());
+                dispatch(getUserPesananDikonfirmasiAction());
+                dispatch(getAdminValidasiResepAction());
+                dispatch(getAdminMenungguPembayaranAction());
+                dispatch(getAdminMenungguKonfirmasiAction());
+                dispatch(getAdminDiprosesAction());
+                dispatch(getAdminDikirimAction());
+                
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* CANCELLING ORDER ACTION ==> UPDATE STATUS DAN STOK
+export const cancellingOrderAction = (idTransaction, newTransactionStatus) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            if (token) {
+                let res = await Axios.patch(`${API_URL}/transaction/adminCancelingTheOrder/${idTransaction}`, {
+                    newTransactionStatus
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data cancellingOrderAction`, res.data);
+
+                dispatch(getTransactionAction());
+                dispatch(getTransactionAdminAction());
+                dispatch(getUserDibatalkanAction());
+                dispatch(getAdminDibatalkanAction());
+
             }
 
         } catch (error) {

@@ -41,8 +41,8 @@ router.get('/adminGetDikirim', readToken, transactionControllers.adminGetDikirim
 router.get('/adminFilterDikirim', readToken, transactionControllers.adminFilterDikirim);
 router.get('/adminGetPesananDikonfirmasi', readToken, transactionControllers.adminGetPesananDikonfirmasi);
 router.get('/adminFilterPesananDikonfirmasi', readToken, transactionControllers.adminFilterPesananDikonfirmasi);
-router.get('/adminGetDibatalkan', readToken, transactionControllers.adminGetDiproses);
-router.get('/adminFilterDibatalkan', readToken, transactionControllers.adminFilterDiproses);
+router.get('/adminGetDibatalkan', readToken, transactionControllers.adminGetDibatalkan);
+router.get('/adminFilterDibatalkan', readToken, transactionControllers.adminFilterDibatalkan);
 
 //* RECIPE VALIDATION PROSES
 router.get('/adminGetDetailRecipe', readToken, transactionControllers.adminGetDetailRecipe);
@@ -52,6 +52,8 @@ router.post('/adminAddTransactionDetailForRecipe', transactionControllers.adminA
 //* UPDATE TRANSACTION STATUS WITHOUT IMPACTING PRODUCT HISTORY TABEL
 router.patch('/adminEditTransactionStatusOnly/:id', readToken, transactionControllers.adminEditTransactionStatusOnly);
 
+//* ADMIN CANCELING THE ORDER
+router.patch('/adminCancelingTheOrder/:id', readToken, transactionControllers.adminCancelingTheOrder);
 
 
 module.exports = router;
