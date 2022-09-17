@@ -5,6 +5,7 @@ const rajaOngkirRouters = require('./rajaOngkirRouters');
 const cartRouters = require('./cartRouters');
 const transactionRouters = require('./transactionRouters');
 const salesReportRouters = require('./salesReportRouters');
+const productHistoryRouters = require('./productHistoryRouters')
 
 const router = require('express').Router();
 
@@ -15,5 +16,6 @@ router.use("/rajaOngkir", rajaOngkirRouters);
 router.use("/cart", cartRouters);
 router.use("/transaction", transactionRouters);
 router.use("/salesReport", salesReportRouters);
+router.use("/productHistory", productHistoryRouters);
 
 module.exports = router;
