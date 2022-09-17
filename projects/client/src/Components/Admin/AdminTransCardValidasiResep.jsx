@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToastHook } from "../CustomToast";
 import { API_URL, BE_URL } from "../../helper";
-import { getAdminValidasiResepAction, getAdminFilterValidasiResepAction } from "../../Redux/Actions/transactionActions";
+import { getAdminValidasiResepAction, getAdminFilterValidasiResepAction,updateTransactionStatusOnlyAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
     Divider,
@@ -37,15 +37,18 @@ const AdminTransCardValidasiResepComponent = (props) => {
             transactionLength: state.transactionReducers.transactionAdminView.filter(val => val.transactionStatus == "Menunggu Diproses Penjual").length
         }
     })
+    const [tagihDiklik,setTagihDiklik] = useState(0)
 
     //& component did mount
     useEffect(() => {
         if (props.query.length > 0) {
             getArrayFilteredSortedTransaction();
+            setTagihDiklik(0)
         } else {
             getPaginatedTransaction();
+            setTagihDiklik(0)
         }
-    }, [props.query])
+    }, [props.query,tagihDiklik])
 
     //^ cek props, state
     console.log(`props.query`, props.query)
@@ -292,7 +295,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                 <div className="d-flex justify-content-end mt-2">
                                     <Button
                                         className="btn-def_second"
-                                    // onClick={() => btnTagihPembayaran(value.idTransaction)}
+                                        onClick={() => btnTagihPembayaran(value.idTransaction,"Menunggu Pembayaran")}
                                     >
                                         Tagih Pembayaran
                                     </Button>
@@ -304,6 +307,12 @@ const AdminTransCardValidasiResepComponent = (props) => {
             }
             )
         }
+    }
+
+    const btnTagihPembayaran = (idTransaction,status)=>{
+        dispatch(updateTransactionStatusOnlyAction(idTransaction, status))
+        getPaginatedTransaction();
+        setTagihDiklik(1);
     }
 
     return (
