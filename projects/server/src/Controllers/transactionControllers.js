@@ -1807,26 +1807,48 @@ module.exports = {
     adminAddTransactionDetailForRecipe: async (req, res, next) => { //* ADMIN EDIT DETAIL RECIPE
         try {
 
-            console.log(`req.query.id di adminGetDetailRecipe`, req.query.id);
+            console.log(`req.body.idTransaction`, req.body.idTransaction)
+            console.log(`req.body.idUser`, req.body.idUser)
+            console.log(`req.body.selectMeds`, req.body.selectedMeds)
 
-            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idTransaction = ${req.query.id} group by t1.idTransaction;`)
+            let { idTransaction, idUser, selectedMeds } = req.body;
 
-            console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idTransaction = ${req.query.id} group by t1.idTransaction;`)
+            let addDetailQuery = [];
+            if (selectedMeds.length >= 1) {
+                selectedMeds.forEach((valueNewTransaction) => {
+                    console.log(`insert into transactionsdetail (idTransaction, idStock, idUser, productName, productPicture, stockType, purchaseQuantity, priceSale, subTotal) values (${idTransaction},${valueNewTransaction.idStock},${idUser},${dbConf.escape(valueNewTransaction.productName)},${dbConf.escape(valueNewTransaction.productPicture)},${dbConf.escape(valueNewTransaction.stockType)},${valueNewTransaction.purchaseQuantity},${valueNewTransaction.priceSale},${valueNewTransaction.subTotal})`);
 
-            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
-            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
-
-            transaction.forEach((val, idx) => {
-                val.purchasedProducts = [];
-                transactionDetail.forEach((valDetail, idxDetail) => {
-                    if (val.idTransaction == valDetail.idTransaction) {
-                        val.purchasedProducts.push(valDetail)
-                    }
+                    addDetailQuery.push(`insert into transactionsdetail (idTransaction, idStock, idUser, productName, productPicture, stockType, purchaseQuantity, priceSale, subTotal) values (${idTransaction},${valueNewTransaction.idStock},${idUser},${dbConf.escape(valueNewTransaction.productName)},${dbConf.escape(valueNewTransaction.productPicture)},${dbConf.escape(valueNewTransaction.stockType)},${valueNewTransaction.purchaseQuantity},${valueNewTransaction.priceSale},${valueNewTransaction.subTotal});`)
                 })
-            });
+            }
+            let contents1
+            await Promise.all(addDetailQuery.map(async (valArrayDetail) => {
+                contents1 = await dbQuery(valArrayDetail);
+            }));
 
-            return res.status(200).send(transaction[0]);
+            // let addDetailQuery = [];
+            //     if (getNewTransaction.length >= 1) {
+            //         getNewTransaction.forEach((valNewTransaction) => {
+            //             getAllCart.forEach((valAllCart) => {
+            //                 if (valNewTransaction.idCart == valAllCart.idCart) {
 
+            //                     console.log(`addDetailQuery belum diisi IdCart itu`);
+
+            //                     addDetailQuery.push(`insert into transactionsdetail (idTransaction, idStock, idUser, productName, productPicture, stockType, purchaseQuantity, priceSale, subTotal) values (${dbConf.escape(valNewTransaction.idTransaction)}, ${dbConf.escape(valAllCart.idStock)}, ${dbConf.escape(req.dataUser.idUser)}, ${dbConf.escape(valAllCart.productName)},${dbConf.escape(valAllCart.productPicture)},${dbConf.escape(valAllCart.stockType)},${dbConf.escape(valAllCart.cartQuantity)},${dbConf.escape(valAllCart.priceSale)},${dbConf.escape(valAllCart.subTotal)});`)
+
+            //                 }
+            //             })
+
+            //         })
+            //     }
+
+            //     let contents3
+            //     await Promise.all(addDetailQuery.map(async (valArrayDetail) => {
+            //         contents3 = await dbQuery(valArrayDetail);
+            //     }));
+
+            //     console.log(`addDetailQuery`, addDetailQuery);
+            return res.status(200).send({ success: true, message:`add transactionsdetail berhasil` });
         } catch (error) {
             return next(error);
         }

@@ -148,7 +148,7 @@ const RacikResepPage = (props) => {
                     return (
                       <option
                         id={value2.idStock}
-                        value={`${value2.idProduct}|${value2.idStock}|${value2.productName}|${value2.stockType}|${value2.stockQuantity}|${value2.priceSale}`}
+                        value={`${value2.idProduct}|${value2.idStock}|${value2.productName}|${value2.stockType}|${value2.stockQuantity}|${value2.priceSale}|${value2.productPicture}`}
                       >
                         {`${value2.productName} - sisa ${value2.stockQuantity} ${value2.stockType}`}
                       </option>
@@ -214,6 +214,7 @@ const RacikResepPage = (props) => {
     temp[idx].stockType = e.split("|")[3]
     temp[idx].stockQuantity = e.split("|")[4]
     temp[idx].priceSale = e.split("|")[5]
+    temp[idx].productPicture = e.split("|")[6]
     setSelectedMeds(temp)
   }
 
@@ -259,14 +260,14 @@ const RacikResepPage = (props) => {
 
       let token = localStorage.getItem("tokenIdUser");
       if (token) {
-        let res = await Axios.post(`${API_URL}/transaction/adminAddTransactionDetailForRecipe${search}`, {selectedMeds,idUser:detail.idUser,idTransaksi:search.split("=")[1]}, {
+        let res = await Axios.post(`${API_URL}/transaction/adminAddTransactionDetailForRecipe`, {selectedMeds,idUser:detail.idUser,idTransaction:search.split("=")[1]}, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
         console.log("data yg teregister", res.data)
         getTransactionAdminAction();
-        // navigate("/admin/transactionList")
+        navigate("/admin/transactionList")
       }
 
     } catch (error) {
