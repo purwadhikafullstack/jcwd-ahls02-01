@@ -39,8 +39,6 @@ import {
   getProducts,
   getProductActions,
 } from "../../Redux/Actions/productsAction";
-
-
 function ModalConversion(props) {
   // const { isOpen, onOpen, onClose } = useDisclosure()
   const dispatch = useDispatch();
@@ -54,11 +52,11 @@ function ModalConversion(props) {
   const [currentToast, newToast] = useToastHook();
   const [loadingStat, setLoadingStat] = React.useState(false);
   const [dataproduct,SetDataproduct] = React.useState([]);
-
   React.useEffect(() => {
-    getProducts()
-  }, [])
-
+    if(props.idForConversion){
+      getProducts();
+    }
+  }, [props.idForConversion]);
   // const { dataproduct } = useSelector((state) => {
   //   console.log(state.productReducers,"test reducer")
   //   return {
@@ -66,44 +64,43 @@ function ModalConversion(props) {
   //   };
   // });
   // console.log("getProducts", dataproduct);
-  // console.log("KonversionQty", konversiQty);
-
+  // console.log("KonversionQty", konversiQty);'
+  console.log(`props.idForConversion di modal conversion`,props.idForConversion)
   const getProducts = async () => {
-    try {
-      let token = localStorage.getItem("tokenIdUser");
-      console.log("TOKENN PRODUCT JALAN", token);
-      // memeriksa adanya token
-      if (token) {
-        let res = await Axios.post(
-          `${API_URL}/admin/getProduct`,
-          {
-            idProducts:3
+    if(props.idForConversion){
 
-          },
-          {
-
-            headers: {
-              Authorization: `Bearer ${token}`,
+      try {
+        let token = localStorage.getItem("tokenIdUser");
+        console.log("TOKENN PRODUCT JALAN", token);
+        // memeriksa adanya token
+        if (token) {
+          let res = await Axios.post(
+            `${API_URL}/admin/getProduct`,
+            {
+              idProducts: props.idForConversion
             },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (res.data) {
+            console.log("RES DATA GETPRODUCTS", res.data);
+            SetDataproduct(res.data);
           }
-        );
-        if (res.data) {
-          console.log("RES DATA GETPRODUCTS", res.data);
-          SetDataproduct(res.data);
-          
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-
     }
 
   };
-
+  console.log(dataproduct,"===============");
   const handleKonversi = async () => {
     try {
       let token = localStorage.getItem("tokenIdUser");
-      console.log("TOKENN PRODUCT JALAN", token)
+      console.log("TOKENN PRODUCT JALAN", token);
       // memeriksa adanya token
       if (token) {
         let res = await Axios.post(
@@ -121,20 +118,30 @@ function ModalConversion(props) {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-
           }
-        })
+        );
         if (res.data) {
           console.log("RES DATA GETPRODUCTS KONVERSI", res.data);
           SetDataproduct(res.data);
+          props.handleStockChangesAfterConversion()
           setShow(!show)
         }
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
-
+console.log(dataproduct,"test test")
+  // return(
+  //   <div>
+  //     <h1>
+  //       ini tes
+  //     </h1>
+  //     <h1>
+  //       {dataproduct.length > 0 && dataproduct[0].productName}
+  //     </h1>
+  //   </div>
+  // )
   return (
     <>
       <Modal
@@ -142,9 +149,9 @@ function ModalConversion(props) {
         initialFocusRef={initialRef}
         finalFocusRef={finalRef}
         size={"sm"}
-        isOpen={props.toggleModal}
-        onClose={props.handleCloseModal}
-        motionPreset='slideInBottom'
+        isOpen={props.show}
+        onClose={props.onClose}
+        motionPreset="slideInBottom"
       >
         {/* <OverlayOne /> */}
         <ModalOverlay />
@@ -156,7 +163,6 @@ function ModalConversion(props) {
           <Divider />
           {dataproduct.length == 0 ? (
             <ModalBody>
-              
             </ModalBody>
           ) : (
             <ModalBody pb={1}>
@@ -176,13 +182,13 @@ function ModalConversion(props) {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    <Tr bgColor={"#f6f8fc"}>
+                    <Tr bgColor={"#F6F8FC"}>
                       <Td>{dataproduct[0].stockType}</Td>
                       <div class="d-flex justify-content-end">
                         <Td>{dataproduct[0].stockQuantity}</Td>
                       </div>
                     </Tr>
-                    <Tr bgColor={"#f6f8fc"}>
+                    <Tr bgColor={"#F6F8FC"}>
                       <Td>{dataproduct[1].stockType}</Td>
                       <div class="d-flex justify-content-end">
                         <Td>{dataproduct[1].stockQuantity}</Td>
@@ -199,13 +205,28 @@ function ModalConversion(props) {
                   1 {dataproduct[0].defaultUnit} = {dataproduct[0].convertedQuantity}{" "}
                   {dataproduct[1].stockType}
                 </Text>
-
               </div>
-              <div class="col-md-5">
-                <Input mt={"15px"} size="sm" placeholder='Qty' boxShadow='md' onChange={(e) => setKonversiQty(e.target.value)} />
+              <div class="row">
+                <div class="col-md-7">
+                  <Text
+                    class="h6"
+                    style={{ marginTop: "25px", marginLeft: "20px" }}
+                  >
+                    Ingin Konversi Berapa?
+                  </Text>
+                </div>
+                <div class="col-md-5">
+                  <Input
+                    mt={"15px"}
+                    size="sm"
+                    placeholder="Qty"
+                    boxShadow="md"
+                    onChange={(e) => setKonversiQty(e.target.value)}
+                  />
+                </div>
               </div>
-            </div>
-          </ModalBody>
+            </ModalBody>
+          )}
           <ModalFooter>
             <Box me={"3px"}>
               <Button
@@ -222,5 +243,4 @@ function ModalConversion(props) {
     </>
   );
 }
-
 export default ModalConversion;

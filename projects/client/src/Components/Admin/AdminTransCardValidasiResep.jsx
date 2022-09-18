@@ -194,7 +194,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                                                     boxSize='70px'
                                                                     src={BE_URL + valProduct.productPicture}
                                                                     alt='Gambar resep dokter'
-                                                                    className="d-md-block d-none imgResep"
+                                                                    className="d-md-block d-none"
                                                                 />
                                                                 <Text>
                                                                     <span>
