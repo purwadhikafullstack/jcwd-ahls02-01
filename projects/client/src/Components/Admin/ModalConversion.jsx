@@ -52,18 +52,20 @@ function ModalConversion(props) {
   const toast = useToast();
   const [currentToast, newToast] = useToastHook();
   const [loadingStat, setLoadingStat] = React.useState(false);
+  const [dataproduct,SetDataproduct] = React.useState([]);
 
   React.useEffect(() => {
     getProducts();
   }, []);
 
-  const { product } = useSelector((state) => {
-    return {
-      product: state.productReducers.product,
-    };
-  });
-  console.log("getProducts", product);
-  console.log("KonversionQty", konversiQty);
+  // const { dataproduct } = useSelector((state) => {
+  //   console.log(state.productReducers,"test reducer")
+  //   return {
+  //     dataproduct: state.productReducers.product,
+  //   };
+  // });
+  // console.log("getProducts", dataproduct);
+  // console.log("KonversionQty", konversiQty);
 
   const getProducts = async () => {
     try {
@@ -74,7 +76,8 @@ function ModalConversion(props) {
         let res = await Axios.post(
           `${API_URL}/admin/getProduct`,
           {
-            idProducts: props.idForconversion,
+            idProducts:3
+
           },
           {
             headers: {
@@ -84,13 +87,17 @@ function ModalConversion(props) {
         );
         if (res.data) {
           console.log("RES DATA GETPRODUCTS", res.data);
-          dispatch(getProductActions(res.data));
+          SetDataproduct(res.data);
+          
         }
       }
     } catch (error) {
       console.log(error);
+
     }
+
   };
+  console.log(dataproduct,"===============");
 
   const handleKonversi = async () => {
     try {
@@ -101,13 +108,13 @@ function ModalConversion(props) {
         let res = await Axios.post(
           `${API_URL}/admin/konversiStock`,
           {
-            idProducts: product[0].idProduct,
+            idProducts: dataproduct[0].idProduct,
             conversionQty: konversiQty,
-            stocksQuantityMain: product[0].stockQuantity,
-            stocksQuantity: product[1].stockQuantity,
-            convertedsQuantity: product[1].convertedQuantity,
-            idStocksMain: product[0].idStock,
-            idStocks: product[1].idStock,
+            stocksQuantityMain: dataproduct[0].stockQuantity,
+            stocksQuantity:dataproduct[1].stockQuantity,
+            convertedsQuantity: dataproduct[1].convertedQuantity,
+            idStocksMain: dataproduct[0].idStock,
+            idStocks: dataproduct[1].idStock,
           },
           {
             headers: {
@@ -117,14 +124,25 @@ function ModalConversion(props) {
         );
         if (res.data) {
           console.log("RES DATA GETPRODUCTS KONVERSI", res.data);
-          dispatch(getProductActions(res.data));
+          SetDataproduct(res.data);
+          setShow(!show)
         }
       }
     } catch (error) {
       console.log(error);
     }
   };
-
+console.log(dataproduct,"test test")
+  // return(
+  //   <div>
+  //     <h1>
+  //       ini tes
+  //     </h1>
+  //     <h1>
+  //       {dataproduct.length > 0 && dataproduct[0].productName}
+  //     </h1>
+  //   </div>
+  // )
   return (
     <>
       <Modal
@@ -144,14 +162,14 @@ function ModalConversion(props) {
           </ModalHeader>
           <ModalCloseButton onClick={props.onClose} />
           <Divider />
-          {product == undefined ? (
+          {dataproduct.length == 0 ? (
             <ModalBody>
               
             </ModalBody>
           ) : (
             <ModalBody pb={1}>
               <Text class="h5" style={{ marginTop: "5px", marginLeft: "20px" }}>
-                {product[0].productName}
+                {dataproduct[0].productName}
               </Text>
               <TableContainer
                 width={"200px"}
@@ -167,15 +185,15 @@ function ModalConversion(props) {
                   </Thead>
                   <Tbody>
                     <Tr bgColor={"#f6f8fc"}>
-                      <Td>{product[0].stockType}</Td>
+                      <Td>{dataproduct[0].stockType}</Td>
                       <div class="d-flex justify-content-end">
-                        <Td>{product[0].stockQuantity}</Td>
+                        <Td>{dataproduct[0].stockQuantity}</Td>
                       </div>
                     </Tr>
                     <Tr bgColor={"#f6f8fc"}>
-                      <Td>{product[1].stockType}</Td>
+                      <Td>{dataproduct[1].stockType}</Td>
                       <div class="d-flex justify-content-end">
-                        <Td>{product[1].stockQuantity}</Td>
+                        <Td>{dataproduct[1].stockQuantity}</Td>
                       </div>
                     </Tr>
                   </Tbody>
@@ -186,8 +204,8 @@ function ModalConversion(props) {
                   fontSize="sm"
                   style={{ marginTop: "15px", marginLeft: "20px" }}
                 >
-                  1 {product[0].defaultUnit} = {product[0].convertedQuantity}{" "}
-                  {product[1].stockType}
+                  1 {dataproduct[0].defaultUnit} = {dataproduct[0].convertedQuantity}{" "}
+                  {dataproduct[1].stockType}
                 </Text>
               </div>
               <div class="row">
