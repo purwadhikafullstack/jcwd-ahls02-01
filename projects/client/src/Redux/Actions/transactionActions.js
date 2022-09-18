@@ -113,7 +113,7 @@ export const getTransactionAction = () => {
 }
 
 //* GET TRANSAKSI USER VALIDASI RESEP -- GET U1A
-export const getUserValidasiResepAction = (page=1) => {
+export const getUserValidasiResepAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -167,7 +167,7 @@ export const getUserFilterValidasiResepAction = (query) => {
 }
 
 //* GET TRANSAKSI USER MENUNGGU PEMBAYARAN -- GET U2A
-export const getUserMenungguPembayaranAction = (page=1) => {
+export const getUserMenungguPembayaranAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -221,7 +221,7 @@ export const getUserFilterMenungguPembayaranAction = (query) => {
 }
 
 //* GET TRANSAKSI USER MENUNGGU KONFIRMASI -- GET U3A
-export const getUserMenungguKonfirmasiAction = (page=1) => {
+export const getUserMenungguKonfirmasiAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -275,7 +275,7 @@ export const getUserFilterMenungguKonfirmasiAction = (query) => {
 }
 
 //* GET TRANSAKSI USER DIPROSES -- GET U4A
-export const getUserDiprosesAction = (page=1) => {
+export const getUserDiprosesAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -329,7 +329,7 @@ export const getUserFilterDiprosesAction = (query) => {
 }
 
 //* GET TRANSAKSI USER DIKIRIM -- GET U5A
-export const getUserDikirimAction = (page=1) => {
+export const getUserDikirimAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -383,7 +383,7 @@ export const getUserFilterDikirimAction = (query) => {
 }
 
 //* GET TRANSAKSI USER PESANAN DIKONFIRMASI -- GET U6A
-export const getUserPesananDikonfirmasiAction = (page=1) => {
+export const getUserPesananDikonfirmasiAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -437,7 +437,7 @@ export const getUserFilterPesananDikonfirmasiAction = (query) => {
 }
 
 //* GET TRANSAKSI USER DIBATALKAN -- GET U7A
-export const getUserDibatalkanAction = (page=1) => {
+export const getUserDibatalkanAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -600,7 +600,7 @@ export const getTransactionAdminAction = () => {
 }
 
 //* GET TRANSAKSI ADMIN VALIDASI RESEP -- GET A1A
-export const getAdminValidasiResepAction = (page=1) => {
+export const getAdminValidasiResepAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -654,7 +654,7 @@ export const getAdminFilterValidasiResepAction = (query) => {
 }
 
 //* GET TRANSAKSI ADMIN MENUNGGU PEMBAYARAN -- GET A2A
-export const getAdminMenungguPembayaranAction = (page=1) => {
+export const getAdminMenungguPembayaranAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -708,7 +708,7 @@ export const getAdminFilterMenungguPembayaranAction = (query) => {
 }
 
 //* GET TRANSAKSI ADMIN MENUNGGU KONFIRMASI -- GET A3A
-export const getAdminMenungguKonfirmasiAction = (page=1) => {
+export const getAdminMenungguKonfirmasiAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -762,7 +762,7 @@ export const getAdminFilterMenungguKonfirmasiAction = (query) => {
 }
 
 //* GET TRANSAKSI ADMIN DIPROSES -- GET A4A
-export const getAdminDiprosesAction = (page=1) => {
+export const getAdminDiprosesAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -814,8 +814,8 @@ export const getAdminFilterDiprosesAction = (query) => {
     }
 }
 
-//* GET TRANSAKSI ADMIN DIPROSES -- GET A5A
-export const getAdminDikirimAction = (page=1) => {
+//* GET TRANSAKSI ADMIN DIKIRIM -- GET A5A
+export const getAdminDikirimAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -840,7 +840,7 @@ export const getAdminDikirimAction = (page=1) => {
     }
 }
 
-//* GET TRANSAKSI ADMIN MENUNGGU KONFIRMASI TERFILTER DAN TERSORTIR -- GET A5B
+//* GET TRANSAKSI ADMIN DIKIRIM TERFILTER DAN TERSORTIR -- GET A5B
 export const getAdminFilterDikirimAction = (query) => {
     return async (dispatch) => {
         try {
@@ -867,8 +867,8 @@ export const getAdminFilterDikirimAction = (query) => {
     }
 }
 
-//* GET TRANSAKSI ADMIN DIPROSES -- GET A6A
-export const getAdminPesananDikonfirmasiAction = (page=1) => {
+//* GET TRANSAKSI ADMIN PESANAN DIKONFIRMASI -- GET A6A
+export const getAdminPesananDikonfirmasiAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -893,7 +893,7 @@ export const getAdminPesananDikonfirmasiAction = (page=1) => {
     }
 }
 
-//* GET TRANSAKSI ADMIN MENUNGGU KONFIRMASI TERFILTER DAN TERSORTIR -- GET A6B
+//* GET TRANSAKSI ADMIN PESANAN DIKONFIRMASI TERFILTER DAN TERSORTIR -- GET A6B
 export const getAdminFilterPesananDikonfirmasiAction = (query) => {
     return async (dispatch) => {
         try {
@@ -921,7 +921,7 @@ export const getAdminFilterPesananDikonfirmasiAction = (query) => {
 }
 
 //* GET TRANSAKSI ADMIN DIPROSES -- GET A7A
-export const getAdminDibatalkanAction = (page=1) => {
+export const getAdminDibatalkanAction = (page = 1) => {
     return async (dispatch) => {
         try {
             let token = localStorage.getItem("tokenIdUser");
@@ -967,6 +967,107 @@ export const getAdminFilterDibatalkanAction = (query) => {
 
                 dispatch(savedAdminDibatalkanAction(res.data));
             }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* UPDATE TRANSACTION STATUS ONLY
+export const updateTransactionStatusOnlyAction = (idTransaction, newTransactionStatus) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            if (token) {
+                let res = await Axios.patch(`${API_URL}/transaction/adminEditTransactionStatusOnly/${idTransaction}`, {
+                    newTransactionStatus
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data updateTransactionStatusOnlyAction`, res.data);
+
+                dispatch(getTransactionAction());
+                dispatch(getTransactionAdminAction());
+                dispatch(getUserValidasiResepAction());
+                dispatch(getUserMenungguPembayaranAction());
+                dispatch(getUserDiprosesAction());
+                dispatch(getUserDikirimAction());
+                dispatch(getUserPesananDikonfirmasiAction());
+                dispatch(getAdminValidasiResepAction());
+                dispatch(getAdminMenungguPembayaranAction());
+                dispatch(getAdminMenungguKonfirmasiAction());
+                dispatch(getAdminDiprosesAction());
+                dispatch(getAdminDikirimAction());
+                
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* CANCELLING ORDER ACTION ==> UPDATE STATUS DAN STOK
+export const cancellingOrderAction = (idTransaction, newTransactionStatus) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            if (token) {
+                let res = await Axios.patch(`${API_URL}/transaction/adminCancelingTheOrder/${idTransaction}`, {
+                    newTransactionStatus
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data cancellingOrderAction`, res.data);
+
+                dispatch(getTransactionAction());
+                dispatch(getTransactionAdminAction());
+                dispatch(getUserDibatalkanAction());
+                dispatch(getAdminDibatalkanAction());
+
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+//* USER CONFIRM RECEIVING THE PACKAGE ==> UPDATE STATUS DAN PRODUCTHISTORY
+export const confirmReceivePackageAction = (idTransaction, newTransactionStatus) => {
+    return async (dispatch) => {
+        try {
+            let token = localStorage.getItem("tokenIdUser");
+
+            if (token) {
+                let res = await Axios.patch(`${API_URL}/transaction/userConfirmReceivingThePackage/${idTransaction}`, {
+                    newTransactionStatus
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                //^ cek isi res.data
+                console.log(`res.data confirmReceivePackageAction`, res.data);
+
+                dispatch(getTransactionAction());
+                dispatch(getTransactionAdminAction());
+                dispatch(getUserPesananDikonfirmasiAction());
+                dispatch(getAdminPesananDikonfirmasiAction());
+
+            }
+
         } catch (error) {
             console.log(error);
         }

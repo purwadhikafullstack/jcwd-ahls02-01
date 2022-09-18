@@ -42,7 +42,7 @@ const AdminTransCardDikirimComponent = (props) => {
      const { transactionList, transactionLength } = useSelector((state) => {
          return {
              transactionList: state.transactionReducers.admindikirim,
-             transactionLength: state.transactionReducers.transactionAdminView.filter(val => val.transactionStatus == "Diproses").length
+             transactionLength: state.transactionReducers.transactionAdminView.filter(val => val.transactionStatus == "Dikirim").length
          }
      })
  

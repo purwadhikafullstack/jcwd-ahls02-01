@@ -40,6 +40,7 @@ import {
   getProductActions,
 } from "../../Redux/Actions/productsAction";
 
+
 function ModalConversion(props) {
   // const { isOpen, onOpen, onClose } = useDisclosure()
   const dispatch = useDispatch();
@@ -54,29 +55,28 @@ function ModalConversion(props) {
   const [loadingStat, setLoadingStat] = React.useState(false);
 
   React.useEffect(() => {
-    getProducts();
-  }, []);
+    getProducts()
+  }, [])
 
   const { product } = useSelector((state) => {
     return {
-      product: state.productReducers.product,
-    };
-  });
-  console.log("getProducts", product);
-  console.log("KonversionQty", konversiQty);
+      product: state.productReducers.product
+    }
+  })
+  console.log("getProducts", product)
+  console.log("KonversionQty", konversiQty)
+  console.log(`props.idForConversion di ModalConversion`,props.idForConversion)
 
   const getProducts = async () => {
-    try {
-      let token = localStorage.getItem("tokenIdUser");
-      console.log("TOKENN PRODUCT JALAN", token);
-      // memeriksa adanya token
-      if (token) {
-        let res = await Axios.post(
-          `${API_URL}/admin/getProduct`,
-          {
-            idProducts: props.idForconversion,
-          },
-          {
+    if (props.idForConversion) {
+      try {
+        let token = localStorage.getItem("tokenIdUser");
+        console.log("TOKENN PRODUCT JALAN", token)
+        // memeriksa adanya token
+        if (token) {
+          let res = await Axios.post(`${API_URL}/admin/getProduct`, {
+            idProducts: props.idForConversion //! BUTUH ID PRODUCT DARI RACIKRESEP PAGE
+          }, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -91,39 +91,35 @@ function ModalConversion(props) {
       console.log(error);
     }
   };
-
+  
   const handleKonversi = async () => {
     try {
       let token = localStorage.getItem("tokenIdUser");
-      console.log("TOKENN PRODUCT JALAN", token);
+      console.log("TOKENN PRODUCT JALAN", token)
       // memeriksa adanya token
       if (token) {
-        let res = await Axios.post(
-          `${API_URL}/admin/konversiStock`,
-          {
-            idProducts: product[0].idProduct,
-            conversionQty: konversiQty,
-            stocksQuantityMain: product[0].stockQuantity,
-            stocksQuantity: product[1].stockQuantity,
-            convertedsQuantity: product[1].convertedQuantity,
-            idStocksMain: product[0].idStock,
-            idStocks: product[1].idStock,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        let res = await Axios.post(`${API_URL}/admin/konversiStock`, {
+          idProducts: product[0].idProduct,
+          conversionQty: konversiQty,
+          stocksQuantityMain: product[0].stockQuantity,
+          stocksQuantity: product[1].stockQuantity,
+          convertedsQuantity: product[1].convertedQuantity,
+          idStocksMain: product[0].idStock,
+          idStocks: product[1].idStock
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
           }
-        );
+        })
         if (res.data) {
-          console.log("RES DATA GETPRODUCTS KONVERSI", res.data);
-          dispatch(getProductActions(res.data));
+          console.log("RES DATA GETPRODUCTS KONVERSI", res.data)
+          dispatch(getProductActions(res.data))
         }
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
 
   return (
     <>
@@ -132,9 +128,9 @@ function ModalConversion(props) {
         initialFocusRef={initialRef}
         finalFocusRef={finalRef}
         size={"sm"}
-        isOpen={props.show}
-        onClose={props.onClose}
-        motionPreset="slideInBottom"
+        isOpen={props.toggleModal}
+        onClose={props.handleCloseModal}
+        motionPreset='slideInBottom'
       >
         {/* <OverlayOne /> */}
         <ModalOverlay />
@@ -144,73 +140,44 @@ function ModalConversion(props) {
           </ModalHeader>
           <ModalCloseButton onClick={props.onClose} />
           <Divider />
-          {product == undefined ? (
-            <ModalBody>
-              
-            </ModalBody>
-          ) : (
-            <ModalBody pb={1}>
-              <Text class="h5" style={{ marginTop: "5px", marginLeft: "20px" }}>
-                {product[0].productName}
-              </Text>
-              <TableContainer
-                width={"200px"}
-                boxShadow="md"
-                style={{ marginLeft: "20px" }}
-              >
-                <Table size="sm">
-                  <Thead>
-                    <Tr bgColor={"#DE1B51"}>
-                      <Th color={"#FFFFFF"}>Type</Th>
-                      <Th color={"#FFFFFF"}>Qty</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    <Tr bgColor={"#f6f8fc"}>
-                      <Td>{product[0].stockType}</Td>
-                      <div class="d-flex justify-content-end">
-                        <Td>{product[0].stockQuantity}</Td>
-                      </div>
-                    </Tr>
-                    <Tr bgColor={"#f6f8fc"}>
-                      <Td>{product[1].stockType}</Td>
-                      <div class="d-flex justify-content-end">
-                        <Td>{product[1].stockQuantity}</Td>
-                      </div>
-                    </Tr>
-                  </Tbody>
-                </Table>
-              </TableContainer>
-              <div class="text-muted">
-                <Text
-                  fontSize="sm"
-                  style={{ marginTop: "15px", marginLeft: "20px" }}
-                >
-                  1 {product[0].defaultUnit} = {product[0].convertedQuantity}{" "}
-                  {product[1].stockType}
-                </Text>
+          <ModalBody pb={1}>
+            <Text class="h5" style={{ marginTop: "5px", marginLeft: "20px" }}>{product[0].productName}</Text>
+            <TableContainer width={"200px"} boxShadow='md' style={{ marginLeft: "20px" }}>
+              <Table size='sm'>
+                <Thead>
+                  <Tr bgColor={"#DE1B51"} >
+                    <Th color={"#FFFFFF"}>Type</Th>
+                    <Th color={"#FFFFFF"}>Qty</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  <Tr bgColor={"#f6f8fc"}>
+                    <Td>{product[0].stockType}</Td>
+                    <div class="d-flex justify-content-end">
+                      <Td>{product[0].stockQuantity}</Td>
+                    </div>
+                  </Tr>
+                  <Tr bgColor={"#f6f8fc"}>
+                    <Td>{product[1].stockType}</Td>
+                    <div class="d-flex justify-content-end">
+                      <Td>{product[1].stockQuantity}</Td>
+                    </div>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </TableContainer>
+            <div class="text-muted">
+              <Text fontSize='sm' style={{ marginTop: "15px", marginLeft: "20px" }}>1 {product[0].defaultUnit} = {product[0].convertedQuantity} {product[1].stockType}</Text>
+            </div>
+            <div class="row">
+              <div class="col-md-7">
+                <Text class="h6" style={{ marginTop: "25px", marginLeft: "20px" }}>Ingin Konversi Berapa?</Text>
               </div>
-              <div class="row">
-                <div class="col-md-7">
-                  <Text
-                    class="h6"
-                    style={{ marginTop: "25px", marginLeft: "20px" }}
-                  >
-                    Ingin Konversi Berapa?
-                  </Text>
-                </div>
-                <div class="col-md-5">
-                  <Input
-                    mt={"15px"}
-                    size="sm"
-                    placeholder="Qty"
-                    boxShadow="md"
-                    onChange={(e) => setKonversiQty(e.target.value)}
-                  />
-                </div>
+              <div class="col-md-5">
+                <Input mt={"15px"} size="sm" placeholder='Qty' boxShadow='md' onChange={(e) => setKonversiQty(e.target.value)} />
               </div>
-            </ModalBody>
-          )}
+            </div>
+          </ModalBody>
           <ModalFooter>
             <Box me={"3px"}>
               <Button
