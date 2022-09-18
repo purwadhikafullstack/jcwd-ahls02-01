@@ -206,7 +206,6 @@ const RacikResepPage = (props) => {
 
     // console.log(`isi idProduct di dropdown setelah dipecah`, idProduct)
     // console.log(`isi idProduct di dropdown setelah dipecah lewat e.split("|")[0]`, e.split("|")[0])
-
     let temp = [...selectedMeds]
     temp[idx].idProduct = e.split("|")[0]
     temp[idx].idStock = e.split("|")[1]
@@ -260,7 +259,7 @@ const RacikResepPage = (props) => {
 
       let token = localStorage.getItem("tokenIdUser");
       if (token) {
-        let res = await Axios.post(`${API_URL}/transaction/adminAddTransactionDetailForRecipe`, {selectedMeds,idUser:detail.idUser,idTransaction:search.split("=")[1]}, {
+        let res = await Axios.post(`${API_URL}/transaction/adminAddTransactionDetailForRecipe`, { selectedMeds, idUser: detail.idUser, idTransaction: search.split("=")[1] }, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

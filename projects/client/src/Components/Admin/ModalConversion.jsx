@@ -38,7 +38,7 @@ function ModalConversion(props) {
   })
   console.log("getProducts", product)
   console.log("KonversionQty", konversiQty)
-  console.log(`props.idForConversion`,props.idForConversion)
+  console.log(`props.idForConversion di ModalConversion`,props.idForConversion)
 
   const getProducts = async () => {
     if (props.idForConversion) {
