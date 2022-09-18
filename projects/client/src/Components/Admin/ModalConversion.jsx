@@ -4,15 +4,42 @@ import React from "react";
 // import logo from "../../Assets/DevImage/LogoMedhika.png";
 import { API_URL } from "../../helper";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 // import { loginAction } from "../../Redux/Actions/userActions";
-import { useDisclosure, useToast } from '@chakra-ui/react';
+import { useDisclosure, useToast } from "@chakra-ui/react";
 import { useToastHook } from "../CustomToast";
 import {
-  Flex, Box, Input, Text, Divider, Spacer, ButtonGroup, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel,
-  TableContainer, Table, Thead, Tbody, Tfoot, Tr, Th, Td
-} from '@chakra-ui/react';
-import { getProducts, getProductActions } from "../../Redux/Actions/productsAction";
+  Flex,
+  Box,
+  Input,
+  Text,
+  Divider,
+  Spacer,
+  ButtonGroup,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  FormControl,
+  FormLabel,
+  TableContainer,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+} from "@chakra-ui/react";
+import {
+  getProducts,
+  getProductActions,
+} from "../../Redux/Actions/productsAction";
+
 
 function ModalConversion(props) {
   // const { isOpen, onOpen, onClose } = useDisclosure()
@@ -23,7 +50,7 @@ function ModalConversion(props) {
   const handleClick = () => setShow(!show);
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
-  const toast = useToast()
+  const toast = useToast();
   const [currentToast, newToast] = useToastHook();
   const [loadingStat, setLoadingStat] = React.useState(false);
 
@@ -51,20 +78,20 @@ function ModalConversion(props) {
             idProducts: props.idForConversion //! BUTUH ID PRODUCT DARI RACIKRESEP PAGE
           }, {
             headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          })
-          if (res.data) {
-            console.log("RES DATA GETPRODUCTS", res.data)
-            dispatch(getProductActions(res.data))
+              Authorization: `Bearer ${token}`,
+            },
           }
+        );
+        if (res.data) {
+          console.log("RES DATA GETPRODUCTS", res.data);
+          dispatch(getProductActions(res.data));
         }
-      } catch (error) {
-        console.log(error)
       }
+    } catch (error) {
+      console.log(error);
     }
-  }
-
+  };
+  
   const handleKonversi = async () => {
     try {
       let token = localStorage.getItem("tokenIdUser");
@@ -94,7 +121,6 @@ function ModalConversion(props) {
     }
   }
 
-
   return (
     <>
       <Modal
@@ -110,7 +136,7 @@ function ModalConversion(props) {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            <Text as={'b'}>Konversi Produk</Text>
+            <Text as={"b"}>Konversi Produk</Text>
           </ModalHeader>
           <ModalCloseButton onClick={props.onClose} />
           <Divider />
@@ -154,13 +180,19 @@ function ModalConversion(props) {
           </ModalBody>
           <ModalFooter>
             <Box me={"3px"}>
-              <Button isLoading={loadingStat} onClick={handleKonversi} class="btn-def_second2">Konversi Stok</Button>
+              <Button
+                isLoading={loadingStat}
+                onClick={handleKonversi}
+                class="btn-def_second2"
+              >
+                Konversi Stok
+              </Button>
             </Box>
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
-  )
+  );
 }
 
 export default ModalConversion;
