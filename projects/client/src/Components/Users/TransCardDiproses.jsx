@@ -119,8 +119,8 @@ const TransCardDiprosesComponent = (props) => {
     //TODO axios get seluruh transaksi yang berstatus Diproses
 
     const printDiproses = () => {
-        if (props.dbDiproses.length > 0) {
-            return props.dbDiproses.map((value, index) => {
+        if (transactionList.length > 0) {
+            return transactionList.map((value, index) => {
                 return (
                     <div
                         className="card mb-2" key={value.idTransaction}
@@ -248,7 +248,20 @@ const TransCardDiprosesComponent = (props) => {
 
     return (
         <>
-            {printDiproses()}
+            {
+                props.query.length > 0
+                    ?
+                    <>
+                        {printDiproses()}
+                    </>
+                    :
+                    <>
+                        {printDiproses()}
+                        <ButtonGroup>
+                            {printBtnPagination()}
+                        </ButtonGroup>
+                    </>
+            }
         </>
     )
 

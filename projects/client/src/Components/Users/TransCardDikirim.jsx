@@ -120,8 +120,8 @@ const TransCardDikirimComponent = (props) => {
     }
 
     const printDikirim = () => {
-        if (props.dbDikirim.length > 0) {
-            return props.dbDikirim.map((value, index) => {
+        if (transactionList.length > 0) {
+            return transactionList.map((value, index) => {
                 return (
                     <div
                         className="card mb-2" key={value.idTransaction}
