@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
 import { API_URL, BE_URL } from "../../helper";
-import { getUserDikirimAction, getUserFilterDikirimAction } from "../../Redux/Actions/transactionActions";
+import { getUserDikirimAction, getUserFilterDikirimAction, confirmReceivePackageAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
     Divider,
@@ -45,15 +45,18 @@ const TransCardDikirimComponent = (props) => {
             transactionLength: state.transactionReducers.transaction.filter(val => val.transactionStatus == "Dikirim").length
         }
     })
+    const [terimaPesanan, setTerimaPesanan] = useState(0);
 
     //& component did mount
     useEffect(() => {
         if (props.query.length > 0) {
             getArrayFilteredSortedTransaction();
+            setTerimaPesanan(0)
         } else {
             getPaginatedTransaction();
+            setTerimaPesanan(0)
         }
-    }, [props.query])
+    }, [props.query,terimaPesanan])
 
     //^ cek props, state
     console.log(`props.query`, props.query)
@@ -247,6 +250,7 @@ const TransCardDikirimComponent = (props) => {
                                 <Button
                                     className="btn-def_second"
                                     width={230}
+                                    onClick={() => btnTerimaPesanan(value.idTransaction, "Pesanan Dikonfirmasi")}
                                 >
                                     Konfirmasi Terima Pesanan
                                 </Button>
@@ -257,6 +261,12 @@ const TransCardDikirimComponent = (props) => {
                 )
             })
         }
+    }
+
+    const btnTerimaPesanan = (idTransaction, status) => {
+        dispatch(confirmReceivePackageAction(idTransaction, status))
+        getPaginatedTransaction();
+        setTerimaPesanan(1);
     }
 
     return (

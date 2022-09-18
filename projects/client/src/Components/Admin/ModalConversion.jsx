@@ -40,6 +40,7 @@ import {
   getProductActions,
 } from "../../Redux/Actions/productsAction";
 
+
 function ModalConversion(props) {
   // const { isOpen, onOpen, onClose } = useDisclosure()
   const dispatch = useDispatch();
@@ -55,8 +56,8 @@ function ModalConversion(props) {
   const [dataproduct,SetDataproduct] = React.useState([]);
 
   React.useEffect(() => {
-    getProducts();
-  }, []);
+    getProducts()
+  }, [])
 
   // const { dataproduct } = useSelector((state) => {
   //   console.log(state.productReducers,"test reducer")
@@ -80,6 +81,7 @@ function ModalConversion(props) {
 
           },
           {
+
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -97,12 +99,11 @@ function ModalConversion(props) {
     }
 
   };
-  console.log(dataproduct,"===============");
 
   const handleKonversi = async () => {
     try {
       let token = localStorage.getItem("tokenIdUser");
-      console.log("TOKENN PRODUCT JALAN", token);
+      console.log("TOKENN PRODUCT JALAN", token)
       // memeriksa adanya token
       if (token) {
         let res = await Axios.post(
@@ -120,8 +121,9 @@ function ModalConversion(props) {
             headers: {
               Authorization: `Bearer ${token}`,
             },
+
           }
-        );
+        })
         if (res.data) {
           console.log("RES DATA GETPRODUCTS KONVERSI", res.data);
           SetDataproduct(res.data);
@@ -129,20 +131,10 @@ function ModalConversion(props) {
         }
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   };
-console.log(dataproduct,"test test")
-  // return(
-  //   <div>
-  //     <h1>
-  //       ini tes
-  //     </h1>
-  //     <h1>
-  //       {dataproduct.length > 0 && dataproduct[0].productName}
-  //     </h1>
-  //   </div>
-  // )
+
   return (
     <>
       <Modal
@@ -150,9 +142,9 @@ console.log(dataproduct,"test test")
         initialFocusRef={initialRef}
         finalFocusRef={finalRef}
         size={"sm"}
-        isOpen={props.show}
-        onClose={props.onClose}
-        motionPreset="slideInBottom"
+        isOpen={props.toggleModal}
+        onClose={props.handleCloseModal}
+        motionPreset='slideInBottom'
       >
         {/* <OverlayOne /> */}
         <ModalOverlay />
@@ -207,28 +199,13 @@ console.log(dataproduct,"test test")
                   1 {dataproduct[0].defaultUnit} = {dataproduct[0].convertedQuantity}{" "}
                   {dataproduct[1].stockType}
                 </Text>
+
               </div>
-              <div class="row">
-                <div class="col-md-7">
-                  <Text
-                    class="h6"
-                    style={{ marginTop: "25px", marginLeft: "20px" }}
-                  >
-                    Ingin Konversi Berapa?
-                  </Text>
-                </div>
-                <div class="col-md-5">
-                  <Input
-                    mt={"15px"}
-                    size="sm"
-                    placeholder="Qty"
-                    boxShadow="md"
-                    onChange={(e) => setKonversiQty(e.target.value)}
-                  />
-                </div>
+              <div class="col-md-5">
+                <Input mt={"15px"} size="sm" placeholder='Qty' boxShadow='md' onChange={(e) => setKonversiQty(e.target.value)} />
               </div>
-            </ModalBody>
-          )}
+            </div>
+          </ModalBody>
           <ModalFooter>
             <Box me={"3px"}>
               <Button

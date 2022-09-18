@@ -4,14 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToastHook } from "../CustomToast";
 import { API_URL, BE_URL } from "../../helper";
-import { getAdminValidasiResepAction, getAdminFilterValidasiResepAction } from "../../Redux/Actions/transactionActions";
+import { getAdminValidasiResepAction, getAdminFilterValidasiResepAction,updateTransactionStatusOnlyAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
-    Flex,
     Divider,
-    VStack,
-    Center,
-    Stack,
     Image,
     Text,
     Button,
@@ -26,11 +22,6 @@ import {
     InputGroup,
     InputLeftAddon,
     Select,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel
 } from "@chakra-ui/react";
 
 const AdminTransCardValidasiResepComponent = (props) => {
@@ -46,15 +37,18 @@ const AdminTransCardValidasiResepComponent = (props) => {
             transactionLength: state.transactionReducers.transactionAdminView.filter(val => val.transactionStatus == "Menunggu Diproses Penjual").length
         }
     })
+    const [tagihDiklik,setTagihDiklik] = useState(0)
 
     //& component did mount
     useEffect(() => {
         if (props.query.length > 0) {
             getArrayFilteredSortedTransaction();
+            setTagihDiklik(0)
         } else {
             getPaginatedTransaction();
+            setTagihDiklik(0)
         }
-    }, [props.query])
+    }, [props.query,tagihDiklik])
 
     //^ cek props, state
     console.log(`props.query`, props.query)
@@ -121,7 +115,6 @@ const AdminTransCardValidasiResepComponent = (props) => {
     //! pending handling subtotal
     const printSemuaTransaksi = () => {
         if (transactionList.length > 0) {
-            console.log(`isi props.dbValidasiResep`, props.dbValidasiResep)
             return transactionList.map((value, index) => {
                 if (value.prescription != null && value.transactionStatus == "Menunggu Diproses Penjual") {
                     return (
@@ -161,7 +154,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                 <Button
                                     className="btn-def_second"
                                     mb={3}
-                                    onClick={() => navigate("/admin/racikResep")}
+                                    onClick={() => navigate(`/admin/racikResep?id=${value.idTransaction}`)}
                                 >
                                     Validasi Resep
                                 </Button>
@@ -169,7 +162,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                 {/* UPDATE V2.0 */}
                                 <>
                                     <Box
-                                        display='flex'
+                                        // display='flex-vertical'
                                         alignItems='start'
                                         justifyContent='space-between'
                                         className="font-brand"
@@ -184,36 +177,41 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                                         <Box
                                                             display='flex'
                                                             alignItems='start'
-                                                            justifyContent='start'
-                                                            gap={5}
-                                                            key={valProduct.idTransactionDetail}
+                                                            justifyContent='space-between'
+                                                            className="font-brand"
+                                                            pb={2}
+
                                                         >
-                                                            <Image
-                                                                borderRadius='xl'
-                                                                boxSize='70px'
-                                                                src={value.prescription.includes("http")
-                                                                    ?
-                                                                    value.prescription
-                                                                    :
-                                                                    `${BE_URL}${value.prescription}`}
-                                                                alt='Gambar resep dokter'
-                                                                className="d-md-block d-none imgResep"
-                                                            />
-                                                            <Text>
-                                                                <span>
-                                                                    {valProduct.productName}
-                                                                </span>
-                                                                <br />
-                                                                <span>
-                                                                    {valProduct.purchaseQuantity} {valProduct.stockType} x Rp {valProduct.priceSale.toLocaleString()}
-                                                                </span>
+                                                            <Box
+                                                                display='flex'
+                                                                alignItems='start'
+                                                                justifyContent='start'
+                                                                gap={5}
+                                                                key={valProduct.idTransactionDetail}
+                                                            >
+                                                                <Image
+                                                                    borderRadius='xl'
+                                                                    boxSize='70px'
+                                                                    src={BE_URL + valProduct.productPicture}
+                                                                    alt='Gambar resep dokter'
+                                                                    className="d-md-block d-none imgResep"
+                                                                />
+                                                                <Text>
+                                                                    <span>
+                                                                        {valProduct.productName}
+                                                                    </span>
+                                                                    <br />
+                                                                    <span>
+                                                                        {valProduct.purchaseQuantity} {valProduct.stockType} x Rp {valProduct.priceSale.toLocaleString()}
+                                                                    </span>
+                                                                </Text>
+                                                            </Box>
+                                                            <Text
+                                                                className="me-1"
+                                                            >
+                                                                Rp {valProduct.subTotal.toLocaleString()}
                                                             </Text>
                                                         </Box>
-                                                        <Text
-                                                            className="me-1"
-                                                        >
-                                                            Rp {valProduct.subTotal.toLocaleString()}
-                                                        </Text>
                                                     </>
                                                 )
                                             })
@@ -285,10 +283,10 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                                 textColor='var(--colorSix)'
                                             >
                                                 Rp {value.totalPayment != null
-                                                ?
-                                                value.totalPayment.toLocaleString()
-                                                :
-                                                value.freightCost.toLocaleString()
+                                                    ?
+                                                    value.totalPayment.toLocaleString()
+                                                    :
+                                                    value.freightCost.toLocaleString()
                                                 }
                                             </Text>
                                         </Box>
@@ -297,7 +295,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                 <div className="d-flex justify-content-end mt-2">
                                     <Button
                                         className="btn-def_second"
-                                    // onClick={() => btnTagihPembayaran(value.idTransaction)}
+                                        onClick={() => btnTagihPembayaran(value.idTransaction,"Menunggu Pembayaran")}
                                     >
                                         Tagih Pembayaran
                                     </Button>
@@ -309,6 +307,12 @@ const AdminTransCardValidasiResepComponent = (props) => {
             }
             )
         }
+    }
+
+    const btnTagihPembayaran = (idTransaction,status)=>{
+        dispatch(updateTransactionStatusOnlyAction(idTransaction, status))
+        getPaginatedTransaction();
+        setTagihDiklik(1);
     }
 
     return (
