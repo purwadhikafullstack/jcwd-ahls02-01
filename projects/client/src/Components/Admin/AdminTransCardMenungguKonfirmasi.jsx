@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
 import { API_URL, BE_URL } from "../../helper";
-import { getAdminMenungguKonfirmasiAction,getAdminFilterMenungguKonfirmasiAction } from "../../Redux/Actions/transactionActions";
+import { getAdminMenungguKonfirmasiAction, getAdminFilterMenungguKonfirmasiAction, updateTransactionStatusOnlyAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
     Divider,
@@ -53,15 +53,19 @@ const AdminTransCardMenungguKonfirmasiComponent = (props) => {
             transactionLength: state.transactionReducers.transactionAdminView.filter(val => val.transactionStatus == "Menunggu Konfirmasi").length
         }
     })
+    const [tolakDiKlik, setTolakDiKlik] = useState(0);
+    const [konfirmasiDiKlik, setKonfirmasiDiKlik] = useState(0);
 
     //& component did mount
     useEffect(() => {
         if (props.query.length > 0) {
             getArrayFilteredSortedTransaction();
+            setTolakDiKlik(0);
         } else {
             getPaginatedTransaction();
+            setTolakDiKlik(0);
         }
-    }, [props.query])
+    }, [props.query,konfirmasiDiKlik,tolakDiKlik])
 
     //^ cek props, state
     console.log(`props.query`, props.query)
@@ -288,12 +292,14 @@ const AdminTransCardMenungguKonfirmasiComponent = (props) => {
                                 < Button
                                     className="btn-def"
                                     width={180} ms={5}
+                                    onClick={() => btnTolakPembayaran(value.idTransaction, "Menunggu Pembayaran")}
                                 >
                                     Tolak Pembayaran
                                 </Button >
                                 <Button
                                     className="btn-def_second"
                                     width={180} ms={5}
+                                    onClick={() => btnKonfirmasiPembayaran(value.idTransaction, "Diproses")}
                                 >
                                     <Text class="h6b" style={{ color: "#FFFFFF" }}>
                                         Konfirmasi Pembayaran
@@ -306,6 +312,18 @@ const AdminTransCardMenungguKonfirmasiComponent = (props) => {
                 )
             })
         }
+    }
+
+    const btnKonfirmasiPembayaran = (idTransaction, status) => {
+        dispatch(updateTransactionStatusOnlyAction(idTransaction, status))
+        getPaginatedTransaction();
+        setKonfirmasiDiKlik(1);
+    }
+
+    const btnTolakPembayaran = (idTransaction, status) => {
+        dispatch(updateTransactionStatusOnlyAction(idTransaction, status))
+        getPaginatedTransaction();
+        setKonfirmasiDiKlik(1);
     }
 
     return (

@@ -3,8 +3,8 @@ import Axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToastHook } from "../../Components/CustomToast";
-import { API_URL,BE_URL } from "../../helper";
-import { getAdminDiprosesAction, getAdminFilterDiprosesAction } from "../../Redux/Actions/transactionActions";
+import { API_URL, BE_URL } from "../../helper";
+import { getAdminDiprosesAction, getAdminFilterDiprosesAction, updateTransactionStatusOnlyAction,cancellingOrderAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
     Image,
@@ -26,15 +26,21 @@ const AdminTransCardDiprosesComponent = (props) => {
             transactionLength: state.transactionReducers.transactionAdminView.filter(val => val.transactionStatus == "Diproses").length
         }
     })
+    const [kirimPesanan, setKirimPesanan] = useState(0)
+    const [batalkanPesanan, setBatalkanPesanan] = useState(0)
 
     //& component did mount
     useEffect(() => {
         if (props.query.length > 0) {
             getArrayFilteredSortedTransaction();
+            setKirimPesanan(0);
+            setBatalkanPesanan(0)
         } else {
             getPaginatedTransaction();
+            setKirimPesanan(0);
+            setBatalkanPesanan(0)
         }
-    }, [props.query])
+    }, [props.query, kirimPesanan, batalkanPesanan])
 
     //^ cek props, state
     console.log(`props.query`, props.query)
@@ -155,7 +161,7 @@ const AdminTransCardDiprosesComponent = (props) => {
                                                 <Image
                                                     borderRadius='xl'
                                                     boxSize='70px'
-                                                    src={BE_URL+valProduct.productPicture}
+                                                    src={BE_URL + valProduct.productPicture}
                                                     alt={`IMG-${valProduct.productName}`}
                                                     className="d-md-block d-none"
                                                 />
@@ -229,12 +235,14 @@ const AdminTransCardDiprosesComponent = (props) => {
                                 <Button
                                     className="btn-def"
                                     width={180} ms={5}
+                                    onClick={() => btnBatalkanPesanan(value.idTransaction, "Dibatalkan")}
                                 >
                                     Batalkan Pesanan
                                 </Button>
                                 <Button
                                     className="btn-def_second"
                                     width={180} ms={5}
+                                    onClick={() => btnKirimPesanan(value.idTransaction, "Dikirim")}
                                 >
                                     <Text class="h6b" style={{ color: "#FFFFFF" }}>
                                         Kirim Pesanan
@@ -246,6 +254,18 @@ const AdminTransCardDiprosesComponent = (props) => {
                 )
             })
         }
+    }
+
+    const btnKirimPesanan = (idTransaction, status) => {
+        dispatch(updateTransactionStatusOnlyAction(idTransaction, status))
+        getPaginatedTransaction();
+        setKirimPesanan(1);
+    }
+
+    const btnBatalkanPesanan = (idTransaction, status) => {
+        dispatch(cancellingOrderAction(idTransaction, status))
+        getPaginatedTransaction();
+        setBatalkanPesanan(1);
     }
 
     return (
