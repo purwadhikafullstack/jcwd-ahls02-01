@@ -5,8 +5,12 @@ import { getProvinceReducers } from "./getProvinceReducers";
 import { getCityReducers } from "./getCityReducers";
 import { getCostReducers } from "./getCostReducers";
 import { cartReducers } from "./cartReducers";
-import { transactionReducers } from "./transactionReducers";
+import { productHistoryReducers } from "./productHistoryReducers";
+import { salesReportProductReducers } from "./salesReportProductReducers";
+import { userSalesReportReducers } from "./salesReportUserReducers";
+import { salesInvoiceReducers } from "./salesReportInvoiceReducers";
 
 export const globalStore = combineReducers({
-  userReducers, addressReducers, getProvinceReducers, getCityReducers, cartReducers, getCostReducers, transactionReducers
+  userReducers, addressReducers, getProvinceReducers, getCityReducers, cartReducers, getCostReducers,
+  productHistoryReducers, salesReportProductReducers, userSalesReportReducers, salesInvoiceReducers
 })

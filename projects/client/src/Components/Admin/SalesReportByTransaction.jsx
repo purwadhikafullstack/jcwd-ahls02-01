@@ -1,11 +1,13 @@
 import Axios from "axios";
 import React from "react";
 import { API_URL } from "../../helper";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from "react-router-dom";
-import { Text, useMediaQuery, Box, Button, Flex, Divider, TableContainer, Table, TableCaption, Thead, Tbody, Tfoot,
+import { Text, useMediaQuery, Box, Button, ButtonGroup, Flex, Divider, TableContainer, Table, TableCaption, Thead, Tbody, Tfoot,
         Tr, Th, Td, Image, Input, Menu, MenuButton, MenuList, MenuItem, Spacer, MenuDivider} from '@chakra-ui/react';
 import { useToastHook } from "../../Components/CustomToast";
+import { getSalesInvoicePaginateAction, getSearchSalesInvoicePaginateAction, getFilterSalesInvoicePaginateAction, getInvoiceTanggalASCPaginateAction,
+    getInvoiceTanggalDSCPaginateAction, getInvoiceTotalASCPaginateAction, getInvoiceTotalDSCPaginateAction } from "../../Redux/Actions/salesReportInvoiceActions"
 
 
 
@@ -31,29 +33,89 @@ const SalesReportByTransaction=(props)=>{
   const [loadingStat, setLoadingStat]=React.useState(false);
   const [currentToast, newToast]=useToastHook();
 
+  const { salesInvoicePaginate, salesInvoicePaginateLength, salesSearchInvoicePaginate, salesSearchInvoicePaginateLength,
+    salesInvoiceTanggalASCPaginate, salesInvoiceTanggalASCPaginateLength, salesInvoiceTanggalDSCPaginate, salesInvoiceTanggalDSCPaginateLength,
+    salesFilterInvoicePaginate, salesFilterInvoicePaginateLength, salesInvoiceTotalASCPaginate, salesInvoiceTotalASCPaginateLength,
+    salesInvoiceTotalDSCPaginate, salesInvoiceTotalDSCPaginateLength } = useSelector((state) => {
+    return {
+        salesInvoicePaginate: state.salesInvoiceReducers.salesInvoicePaginate,
+        salesInvoicePaginateLength: state.salesInvoiceReducers.salesInvoicePaginateLength,
+        salesSearchInvoicePaginate: state.salesInvoiceReducers.salesSearchInvoicePaginate,
+        salesSearchInvoicePaginateLength: state.salesInvoiceReducers.salesSearchInvoicePaginateLength,
+        salesFilterInvoicePaginate: state.salesInvoiceReducers.salesFilterInvoicePaginate,
+        salesFilterInvoicePaginateLength: state.salesInvoiceReducers.salesFilterInvoicePaginateLength,
+        salesInvoiceTanggalASCPaginate: state.salesInvoiceReducers.salesInvoiceTanggalASCPaginate,
+        salesInvoiceTanggalASCPaginateLength: state.salesInvoiceReducers.salesInvoiceTanggalASCPaginateLength,
+        salesInvoiceTanggalDSCPaginate: state.salesInvoiceReducers.salesInvoiceTanggalDSCPaginate,
+        salesInvoiceTanggalDSCPaginateLength: state.salesInvoiceReducers.salesInvoiceTanggalDSCPaginateLength,
+        salesInvoiceTotalASCPaginate: state.salesInvoiceReducers.salesInvoiceTotalASCPaginate,
+        salesInvoiceTotalASCPaginateLength: state.salesInvoiceReducers.salesInvoiceTotalASCPaginateLength,
+        salesInvoiceTotalDSCPaginate: state.salesInvoiceReducers.salesInvoiceTotalDSCPaginate,
+        salesInvoiceTotalDSCPaginateLength: state.salesInvoiceReducers.salesInvoiceTotalDSCPaginateLength,
+    }
+})
+
   React.useEffect(()=>{
-    getSalesByInvoice()
+    // getSalesByInvoice()
+    getPaginatedSalesReportInvoice()
   }, [])
 
-  console.log("PROFIT HARI INIIII", salesByInvoice)
-  console.log("CHECK KONDISI", sortirTotalASC, sortirTotalDSC, sortirTanggalASC, sortirTanggalDSC)
+  const getPaginatedSalesReportInvoice = (page = 0) => {
+    console.log("getInvoice else jalannn")
+        dispatch(getSalesInvoicePaginateAction(page + 1))
+  }
 
-  const getSalesByInvoice = async() => {
-    try {
-      let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.get(`${API_URL}/salesReport/getSalesByInvoice`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (res.data) {
-        console.log("RES DATA GET SALES BY INVOICE", res.data)
-        setSalesByInvoice(res.data)
-      }
-    } catch (error) {
-      console.log(error)
-    }
+  const getPaginatedSearchInvoice = (page = 0) => {
+    dispatch(getSearchSalesInvoicePaginateAction(page + 1, searchInvoice))
 }
+
+const getPaginatedFilterInvoice = (page = 0) => {
+  dispatch(getFilterSalesInvoicePaginateAction(page + 1, filterTanggalAkhir, filterTanggalAwal))
+}
+
+const getPaginatedInvoiceTanggalASC = (page = 0) => {
+  dispatch(getInvoiceTanggalASCPaginateAction(page + 1))
+}
+
+const getPaginatedInvoiceTanggalDSC = (page = 0) => {
+  dispatch(getInvoiceTanggalDSCPaginateAction(page + 1))
+}
+
+const getPaginatedInvoiceTotalASC = (page = 0) => {
+  dispatch(getInvoiceTotalASCPaginateAction(page + 1))
+}
+
+const getPaginatedInvoiceTotalDSC = (page = 0) => {
+  dispatch(getInvoiceTotalDSCPaginateAction(page + 1))
+}
+
+  const handlePaginate = (paginate) => {
+    getPaginatedSalesReportInvoice(paginate);
+  }
+
+  const handlePaginateSearchInvoice = (paginate) => {
+    getPaginatedSearchInvoice(paginate);
+  }
+
+  const handlePaginateFilterInvoice = (paginate) => {
+    getPaginatedFilterInvoice(paginate);
+  }
+
+  const handlePaginateInvoiceTanggalASC = (paginate) => {
+    getPaginatedInvoiceTanggalASC(paginate);
+  }
+  
+  const handlePaginateInvoiceTanggalDSC = (paginate) => {
+    getPaginatedInvoiceTanggalDSC(paginate);
+  }
+
+  const handlePaginateInvoiceTotalASC = (paginate) => {
+    getPaginatedInvoiceTotalASC(paginate);
+  }
+
+  const handlePaginateInvoiceTotalDSC = (paginate) => {
+    getPaginatedInvoiceTotalDSC(paginate);
+  }
 
 const handleSortTotalASC =async()=>{
   try {
@@ -61,16 +123,18 @@ const handleSortTotalASC =async()=>{
     setSortirTanggalASC(false)
     setSortirTanggalDSC(false)
     setSortirTotalASC(true)
-      let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.get(`${API_URL}/salesReport/getSalesByInvoiceTotalASC`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (res.data) {
-        console.log("RES DATA GET LAPORAN Invoice TotalASC", res.data)
-        setLaporanInvoiceTotalASC(res.data)
-      }
+    console.log("SORTIR TOTAL ASC JALANNNNNN")
+    {getPaginatedInvoiceTotalASC()}
+      // let token = localStorage.getItem("tokenIdUser");
+      // let res = await Axios.get(`${API_URL}/salesReport/getSalesByInvoiceTotalASC`, {
+      //   headers: {
+      //     'Authorization': `Bearer ${token}`
+      //   }
+      // })
+      // if (res.data) {
+      //   console.log("RES DATA GET LAPORAN Invoice TotalASC", res.data)
+      //   setLaporanInvoiceTotalASC(res.data)
+      // }
     } catch (err) {
   }
 }
@@ -81,36 +145,29 @@ const handleSortTotalDSC =async()=>{
     setSortirTanggalASC(false)
     setSortirTanggalDSC(false)
     setSortirTotalDSC(true)
-      let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.get(`${API_URL}/salesReport/getSalesByInvoiceTotalDSC`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (res.data) {
-        console.log("RES DATA GET LAPORAN Invoice TotalDSC", res.data)
-        setLaporanInvoiceTotalDSC(res.data)
-      }
+    console.log("SORTIR TOTAL DSC JALANNNNNN")
+    {getPaginatedInvoiceTotalDSC()}
+      // let token = localStorage.getItem("tokenIdUser");
+      // let res = await Axios.get(`${API_URL}/salesReport/getSalesByInvoiceTotalDSC`, {
+      //   headers: {
+      //     'Authorization': `Bearer ${token}`
+      //   }
+      // })
+      // if (res.data) {
+      //   console.log("RES DATA GET LAPORAN Invoice TotalDSC", res.data)
+      //   setLaporanInvoiceTotalDSC(res.data)
+      // }
     } catch (err) {
   }
 }
 const handleSortTanggalASC =async()=>{
   try {
-    console.log("sortir tanggal ASC JALAN")
     setSortirTotalASC(false)
     setSortirTotalDSC(false)
     setSortirTanggalDSC(false)
     setSortirTanggalASC(true)
-      let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.get(`${API_URL}/salesReport/getSalesByInvoiceTanggalASC`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (res.data) {
-        console.log("RES DATA GET LAPORAN Invoice TanggalASC", res.data)
-        setLaporanInvoiceTanggalASC(res.data)
-      }
+    console.log("SORTIR TANGGAL ASC JALANNNNNN")
+    {getPaginatedInvoiceTanggalASC()}
     } catch (err) {
   }
 }
@@ -122,67 +179,343 @@ const handleSortTanggalDSC =async()=>{
     setSortirTotalDSC(false)
     setSortirTanggalASC(false)
     setSortirTanggalDSC(true)
-      let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.get(`${API_URL}/salesReport/getSalesByInvoiceTanggalDSC`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (res.data) {
-        console.log("RES DATA GET LAPORAN Invoice TanggalDSC", res.data)
-        setLaporanInvoiceTanggalDSC(res.data)
-      }
+    console.log("SORTIR TANGGAL DSC JALANNNNNN")
+    {getPaginatedInvoiceTanggalDSC()}
+      // let token = localStorage.getItem("tokenIdUser");
+      // let res = await Axios.get(`${API_URL}/salesReport/getSalesByInvoiceTanggalDSC`, {
+      //   headers: {
+      //     'Authorization': `Bearer ${token}`
+      //   }
+      // })
+      // if (res.data) {
+      //   console.log("RES DATA GET LAPORAN Invoice TanggalDSC", res.data)
+      //   setLaporanInvoiceTanggalDSC(res.data)
+      // }
     } catch (err) {
   }
 }
 
+console.log("math.ceil",salesInvoiceTanggalASCPaginateLength)
+const printBtnPagination = () => {
+  let btn = []
+  if (searchOn == true){
+    for (let i = 0; i < Math.ceil(salesSearchInvoicePaginateLength / 10); i++) {
+      btn.push(
+          <Box
+              as='button'
+              height='30px'
+              lineHeight='1.5'
+              transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+              border='1px'
+              px='8px'
+              borderRadius='4px'
+              className="font-brand"
+              fontSize='14px'
+              fontWeight='bold'
+              bg='var(--colorTwo)'
+              borderColor='var(--colorSix)'
+              color='var(--colorSix)'
+              _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+              _active={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)'
+              }}
+              _focus={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)',
+                  boxShadow:
+                      '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+              }}
+              onClick={() => handlePaginateSearchInvoice(i)}
+          >
+              {i + 1}
+          </Box>
+      )
+  }
+  return btn;
+  } else if (filterOn == true){
+    for (let i = 0; i < Math.ceil(salesFilterInvoicePaginateLength / 10); i++) {
+      btn.push(
+          <Box
+              as='button'
+              height='30px'
+              lineHeight='1.5'
+              transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+              border='1px'
+              px='8px'
+              borderRadius='4px'
+              className="font-brand"
+              fontSize='14px'
+              fontWeight='bold'
+              bg='var(--colorTwo)'
+              borderColor='var(--colorSix)'
+              color='var(--colorSix)'
+              _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+              _active={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)'
+              }}
+              _focus={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)',
+                  boxShadow:
+                      '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+              }}
+              onClick={() => handlePaginateFilterInvoice(i)}
+          >
+              {i + 1}
+          </Box>
+      )
+  }
+  return btn;
+  } else if(sortirTanggalASC == true){
+    for (let i = 0; i < Math.ceil(salesInvoiceTanggalASCPaginateLength / 10); i++) {
+      btn.push(
+          <Box
+              as='button'
+              height='30px'
+              lineHeight='1.5'
+              transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+              border='1px'
+              px='8px'
+              borderRadius='4px'
+              className="font-brand"
+              fontSize='14px'
+              fontWeight='bold'
+              bg='var(--colorTwo)'
+              borderColor='var(--colorSix)'
+              color='var(--colorSix)'
+              _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+              _active={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)'
+              }}
+              _focus={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)',
+                  boxShadow:
+                      '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+              }}
+              onClick={() => handlePaginateInvoiceTanggalASC(i)}
+          >
+              {i + 1}
+          </Box>
+      )
+  }
+  return btn;
+  } else if(sortirTanggalDSC == true){
+    for (let i = 0; i < Math.ceil(salesInvoiceTanggalDSCPaginateLength / 10); i++) {
+      btn.push(
+          <Box
+              as='button'
+              height='30px'
+              lineHeight='1.5'
+              transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+              border='1px'
+              px='8px'
+              borderRadius='4px'
+              className="font-brand"
+              fontSize='14px'
+              fontWeight='bold'
+              bg='var(--colorTwo)'
+              borderColor='var(--colorSix)'
+              color='var(--colorSix)'
+              _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+              _active={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)'
+              }}
+              _focus={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)',
+                  boxShadow:
+                      '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+              }}
+              onClick={() => handlePaginateInvoiceTanggalDSC(i)}
+          >
+              {i + 1}
+          </Box>
+      )
+  }
+  return btn;
+  } else if(sortirTotalASC == true){
+    for (let i = 0; i < Math.ceil(salesInvoiceTotalASCPaginateLength / 10); i++) {
+      btn.push(
+          <Box
+              as='button'
+              height='30px'
+              lineHeight='1.5'
+              transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+              border='1px'
+              px='8px'
+              borderRadius='4px'
+              className="font-brand"
+              fontSize='14px'
+              fontWeight='bold'
+              bg='var(--colorTwo)'
+              borderColor='var(--colorSix)'
+              color='var(--colorSix)'
+              _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+              _active={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)'
+              }}
+              _focus={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)',
+                  boxShadow:
+                      '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+              }}
+              onClick={() => handlePaginateInvoiceTotalASC(i)}
+          >
+              {i + 1}
+          </Box>
+      )
+  }
+  return btn;
+  } else if(sortirTotalDSC == true){
+    for (let i = 0; i < Math.ceil(salesInvoiceTotalDSCPaginateLength / 10); i++) {
+      btn.push(
+          <Box
+              as='button'
+              height='30px'
+              lineHeight='1.5'
+              transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+              border='1px'
+              px='8px'
+              borderRadius='4px'
+              className="font-brand"
+              fontSize='14px'
+              fontWeight='bold'
+              bg='var(--colorTwo)'
+              borderColor='var(--colorSix)'
+              color='var(--colorSix)'
+              _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+              _active={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)'
+              }}
+              _focus={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)',
+                  boxShadow:
+                      '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+              }}
+              onClick={() => handlePaginateInvoiceTotalDSC(i)}
+          >
+              {i + 1}
+          </Box>
+      )
+  }
+  return btn;
+  }else {
+    for (let i = 0; i < Math.ceil(salesInvoicePaginateLength / 10); i++) {
+        btn.push(
+            <Box
+                as='button'
+                height='30px'
+                lineHeight='1.5'
+                transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                border='1px'
+                px='8px'
+                borderRadius='4px'
+                className="font-brand"
+                fontSize='14px'
+                fontWeight='bold'
+                bg='var(--colorTwo)'
+                borderColor='var(--colorSix)'
+                color='var(--colorSix)'
+                _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                _active={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)'
+                }}
+                _focus={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)',
+                    boxShadow:
+                        '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                }}
+                onClick={() => handlePaginate(i)}
+            >
+                {i + 1}
+            </Box>
+        )
+    }
+    return btn;
+  }
+  // console.log(`transactionLength di printBtnPagination`, transactionLength);
+}
+
   const printSalesByInvoice = () => {
     if(searchOn == true){
-      return searchByInvoice.map((value, index)=>{
-        if (index % 2 == 0){
-          return (
-            <Tr>
-              <Td>{index+1}</Td>
-              <Td>{value.dateFE}</Td>
-              <Td>{value.invoiceNumber}</Td>
-              <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
-            </Tr>
-          )
-        } else {
-          return (
-            <Tr style={{backgroundColor:"#ebeef3"}}>
-              <Td>{index+1}</Td>
-              <Td>{value.dateFE}</Td>
-              <Td>{value.invoiceNumber}</Td>
-              <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
-            </Tr>
-          )
-        }
-      })
+      if (salesSearchInvoicePaginate == undefined){
+        return <div></div>
+      } else {
+        return salesSearchInvoicePaginate.map((value, index)=>{
+          if (index % 2 == 0){
+            return (
+              <Tr>
+                <Td>{index+1}</Td>
+                <Td>{value.dateFE}</Td>
+                <Td>{value.invoiceNumber}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          } else {
+            return (
+              <Tr style={{backgroundColor:"#ebeef3"}}>
+                <Td>{index+1}</Td>
+                <Td>{value.dateFE}</Td>
+                <Td>{value.invoiceNumber}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          }
+        })
+      }
     } else if (filterOn == true){
-      return filterByInvoice.map((value, index)=>{
-        if (index % 2 == 0){
-          return (
-            <Tr>
-              <Td>{index+1}</Td>
-              <Td>{value.dateFE}</Td>
-              <Td>{value.invoiceNumber}</Td>
-              <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
-            </Tr>
-          )
-        } else {
-          return (
-            <Tr style={{backgroundColor:"#ebeef3"}}>
-              <Td>{index+1}</Td>
-              <Td>{value.dateFE}</Td>
-              <Td>{value.invoiceNumber}</Td>
-              <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
-            </Tr>
-          )
-        }
-      })
+      if (salesFilterInvoicePaginate == undefined){
+        return <div></div>
+      } else {
+        return salesFilterInvoicePaginate.map((value, index)=>{
+          if (index % 2 == 0){
+            return (
+              <Tr>
+                <Td>{index+1}</Td>
+                <Td>{value.dateFE}</Td>
+                <Td>{value.invoiceNumber}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          } else {
+            return (
+              <Tr style={{backgroundColor:"#ebeef3"}}>
+                <Td>{index+1}</Td>
+                <Td>{value.dateFE}</Td>
+                <Td>{value.invoiceNumber}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          }
+        })
+      }
     } else if (sortirTotalASC == true){
-      if(laporanInvoiceTotalASC == undefined){
+      if(salesInvoiceTotalASCPaginate == undefined){
         return (
           <Tr>
             <Td></Td>
@@ -192,7 +525,7 @@ const handleSortTanggalDSC =async()=>{
           </Tr>
         )
       } else {
-        return laporanInvoiceTotalASC.map((value, index)=>{
+        return salesInvoiceTotalASCPaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
@@ -215,7 +548,7 @@ const handleSortTanggalDSC =async()=>{
         })
       }
     } else if (sortirTotalDSC == true){
-      if(laporanInvoiceTotalDSC == undefined){
+      if(salesInvoiceTotalDSCPaginate == undefined){
         return (
           <Tr>
             <Td></Td>
@@ -225,7 +558,7 @@ const handleSortTanggalDSC =async()=>{
           </Tr>
         )
       } else{
-        return laporanInvoiceTotalDSC.map((value, index)=>{
+        return salesInvoiceTotalDSCPaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
@@ -248,7 +581,7 @@ const handleSortTanggalDSC =async()=>{
         })
       }
     } else if (sortirTanggalASC == true){
-      if(laporanInvoiceTanggalASC == undefined){
+      if(salesInvoiceTanggalASCPaginate == undefined){
         return (
           <Tr>
             <Td></Td>
@@ -258,7 +591,7 @@ const handleSortTanggalDSC =async()=>{
           </Tr>
         )
       } else {
-        return laporanInvoiceTanggalASC.map((value, index)=>{
+        return salesInvoiceTanggalASCPaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
@@ -281,7 +614,7 @@ const handleSortTanggalDSC =async()=>{
         })
       }
     } else if (sortirTanggalDSC == true){
-      if(laporanInvoiceTanggalDSC == undefined){
+      if(salesInvoiceTanggalDSCPaginate == undefined){
         return (
           <Tr>
             <Td></Td>
@@ -291,7 +624,7 @@ const handleSortTanggalDSC =async()=>{
           </Tr>
         )
       } else{
-        return laporanInvoiceTanggalDSC.map((value, index)=>{
+        return salesInvoiceTanggalDSCPaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
@@ -314,7 +647,7 @@ const handleSortTanggalDSC =async()=>{
         })
       }
     } else {
-      return salesByInvoice.map((value, index)=>{
+      return salesInvoicePaginate.map((value, index)=>{
         if (index % 2 == 0){
           return (
             <Tr>
@@ -341,20 +674,22 @@ const handleSortTanggalDSC =async()=>{
   const handleSearch =async()=>{
     try {
       if(searchInvoice){
-        let token = localStorage.getItem("tokenIdUser");
-        let res = await Axios.post(`${API_URL}/salesReport/getSearchInvoice`, {
-          inputInvoice: searchInvoice
-        }, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        if (res.data) {
-          console.log("res.data SEARCH INVOICE", res.data)
-          setSearchByInvoice(res.data)
-          setSearchOn(true)
-          }
-        } else {
+        setSearchOn(true)
+        console.log("searchOn JALANNNNNN")
+        getPaginatedSearchInvoice()
+        // let token = localStorage.getItem("tokenIdUser");
+        // let res = await Axios.post(`${API_URL}/salesReport/getSearchInvoice`, {
+        //   inputInvoice: searchInvoice
+        // }, {
+        //   headers: {
+        //     'Authorization': `Bearer ${token}`
+        //   }
+        // })
+        // if (res.data) {
+        //   console.log("res.data SEARCH INVOICE", res.data)
+        //   setSearchByInvoice(res.data)
+        //   }
+        // } else {
 
         }
       } catch (err) {
@@ -364,21 +699,23 @@ const handleSortTanggalDSC =async()=>{
   const handleFilter =async()=>{
     try {
       if(filterTanggalAwal && filterTanggalAkhir){
-        let token = localStorage.getItem("tokenIdUser");
-        let res = await Axios.post(`${API_URL}/salesReport/getFilterInvoice`, {
-          tanggalAwal: filterTanggalAwal,
-          tanggalAkhir: filterTanggalAkhir
-        }, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        if (res.data) {
-          console.log("res.data FILTER INVOICE", res.data)
-          setFilterByInvoice(res.data)
-          setFilterOn(true)
-          }
-        } else {
+        setFilterOn(true)
+        console.log("filterOn JALANNNNNN")
+        getPaginatedFilterInvoice()
+        // let token = localStorage.getItem("tokenIdUser");
+        // let res = await Axios.post(`${API_URL}/salesReport/getFilterInvoice`, {
+        //   tanggalAwal: filterTanggalAwal,
+        //   tanggalAkhir: filterTanggalAkhir
+        // }, {
+        //   headers: {
+        //     'Authorization': `Bearer ${token}`
+        //   }
+        // })
+        // if (res.data) {
+        //   console.log("res.data FILTER INVOICE", res.data)
+        //   setFilterByInvoice(res.data)
+        //   }
+        // } else {
 
         }
       } catch (err) {
@@ -463,15 +800,22 @@ const handleSortTanggalDSC =async()=>{
               <Th isNumeric style={{color:"#FFFFFF"}}>Total</Th>
             </Tr>
           </Thead>
-          <Tbody>
-            {
-              salesByInvoice == undefined ?
-              <div>
-              </div>
+          {
+            salesInvoicePaginate == undefined ?
+              <Tbody>
+                <div>
+                </div>
+              </Tbody>
             :
-              printSalesByInvoice()
-            }
-          </Tbody>
+              <>
+                <Tbody>
+                  {printSalesByInvoice()}
+                </Tbody>
+                <ButtonGroup ms={"20px"} mt={"20px"} mb={"20px"}>
+                  {printBtnPagination()}
+                </ButtonGroup>
+              </>
+          }
         </Table>
       </TableContainer>
     </Box>

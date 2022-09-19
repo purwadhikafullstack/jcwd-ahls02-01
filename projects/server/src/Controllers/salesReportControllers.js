@@ -8,12 +8,16 @@ module.exports = {
   getSalesByInvoice: async (req, res, next) => {
     try {
       if (req.dataUser.idUser) {
+        let salesByInvoicePaginate = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
+          JOIN users u ON t.idUser = u.idUser
+          ORDER BY t.addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
+
         let salesByInvoice = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
           JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC;`);
 
         let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
 
-        salesByInvoice.forEach(valueSalesByInvoice => {
+        salesByInvoicePaginate.forEach(valueSalesByInvoice => {
           valueSalesByInvoice.dateSlice = valueSalesByInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
           valueSalesByInvoice.dYear = valueSalesByInvoice.dateSlice.slice(0, 4)
           valueSalesByInvoice.dMonth = valueSalesByInvoice.dateSlice.slice(5, 7)
@@ -30,7 +34,10 @@ module.exports = {
             }
           })
         })
-        return res.status(200).send(salesByInvoice);
+
+        let salesInvoicePaginateLength = 0
+        salesInvoicePaginateLength += salesByInvoice.length
+        return res.status(200).send({ salesByInvoicePaginate, salesInvoicePaginateLength });
       }
     } catch (error) {
       return next(error)
@@ -39,12 +46,15 @@ module.exports = {
   getSalesByInvoiceTotalASC: async (req, res, next) => {
     try {
       if (req.dataUser.idUser) {
+        let salesByInvoicePaginate = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
+          JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
+
         let salesByInvoice = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
           JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC;`);
 
         let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
 
-        salesByInvoice.forEach(valueSalesByInvoice => {
+        salesByInvoicePaginate.forEach(valueSalesByInvoice => {
           valueSalesByInvoice.dateSlice = valueSalesByInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
           valueSalesByInvoice.dYear = valueSalesByInvoice.dateSlice.slice(0, 4)
           valueSalesByInvoice.dMonth = valueSalesByInvoice.dateSlice.slice(5, 7)
@@ -61,7 +71,14 @@ module.exports = {
             }
           })
         })
-        return res.status(200).send(salesByInvoice.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi }));
+
+        let invoiceTotalASCPaginated = salesByInvoicePaginate.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi })
+        let invoiceTotalASCPaginateLength = 0
+        invoiceTotalASCPaginateLength += salesByInvoice.length
+        // console.log("dataUserrrrrrrrr", dataUser)
+        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        return res.status(200).send({ invoiceTotalASCPaginated, invoiceTotalASCPaginateLength });
+        // return res.status(200).send(salesByInvoice.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi }));
       }
     } catch (error) {
       return next(error)
@@ -70,12 +87,15 @@ module.exports = {
   getSalesByInvoiceTotalDSC: async (req, res, next) => {
     try {
       if (req.dataUser.idUser) {
+        let salesByInvoicePaginate = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
+          JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
+
         let salesByInvoice = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
           JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC;`);
 
         let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
 
-        salesByInvoice.forEach(valueSalesByInvoice => {
+        salesByInvoicePaginate.forEach(valueSalesByInvoice => {
           valueSalesByInvoice.dateSlice = valueSalesByInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
           valueSalesByInvoice.dYear = valueSalesByInvoice.dateSlice.slice(0, 4)
           valueSalesByInvoice.dMonth = valueSalesByInvoice.dateSlice.slice(5, 7)
@@ -92,7 +112,14 @@ module.exports = {
             }
           })
         })
-        return res.status(200).send(salesByInvoice.sort((a, b) => { return b.totalTransaksi - a.totalTransaksi }));
+
+        let invoiceTotalDSCPaginated = salesByInvoicePaginate.sort((a, b) => { return b.totalTransaksi - a.totalTransaksi })
+        let invoiceTotalDSCPaginateLength = 0
+        invoiceTotalDSCPaginateLength += salesByInvoice.length
+        console.log("dataUserrrrrrrrr", invoiceTotalDSCPaginated)
+        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        return res.status(200).send({ invoiceTotalDSCPaginated, invoiceTotalDSCPaginateLength });
+        // return res.status(200).send(salesByInvoice.sort((a, b) => { return b.totalTransaksi - a.totalTransaksi }));
       }
     } catch (error) {
       return next(error)
@@ -102,12 +129,15 @@ module.exports = {
     try {
       if (req.dataUser.idUser) {
         console.log("TANGGAL ASC JALAN")
+        let salesByInvoiceASCPaginate = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
+          JOIN users u ON t.idUser = u.idUser ORDER BY t.addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
+
         let salesByInvoice = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
           JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC;`);
 
         let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
 
-        salesByInvoice.forEach(valueSalesByInvoice => {
+        salesByInvoiceASCPaginate.forEach(valueSalesByInvoice => {
           valueSalesByInvoice.dateSlice = valueSalesByInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
           valueSalesByInvoice.dYear = valueSalesByInvoice.dateSlice.slice(0, 4)
           valueSalesByInvoice.dMonth = valueSalesByInvoice.dateSlice.slice(5, 7)
@@ -124,8 +154,15 @@ module.exports = {
             }
           })
         })
-        // console.log("========>", salesByInvoice.sort((a, b) => { return a.addDate - b.addDate }));
-        return res.status(200).send(salesByInvoice.sort((a, b) => { return b.addDate - a.addDate }));
+
+        let invoiceTanggalASCPaginated = salesByInvoiceASCPaginate.sort((a, b) => { return b.addDate - a.addDate })
+        let invoiceTanggalASCLength = 0
+        invoiceTanggalASCLength += salesByInvoice.length
+        console.log("invoiceTanggalASCPaginated", invoiceTanggalASCPaginated)
+        console.log("invoiceTanggalASCPaginatedLength======", salesByInvoice.length)
+        return res.status(200).send({ invoiceTanggalASCPaginated, invoiceTanggalASCLength });
+        // // console.log("========>", salesByInvoice.sort((a, b) => { return a.addDate - b.addDate }));
+        // return res.status(200).send(salesByInvoice.sort((a, b) => { return b.addDate - a.addDate }));
       }
     } catch (error) {
       return next(error)
@@ -136,12 +173,15 @@ module.exports = {
       if (req.dataUser.idUser) {
 
         console.log("TANGGAL DSC JALAN")
+        let salesByInvoiceDSCPaginate = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
+          JOIN users u ON t.idUser = u.idUser ORDER BY t.addDate LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
+
         let salesByInvoice = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
-          JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC;`);
+          JOIN users u ON t.idUser = u.idUser ORDER BY t.addDate DESC;`);
 
         let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
 
-        salesByInvoice.forEach(valueSalesByInvoice => {
+        salesByInvoiceDSCPaginate.forEach(valueSalesByInvoice => {
           valueSalesByInvoice.dateSlice = valueSalesByInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
           valueSalesByInvoice.dYear = valueSalesByInvoice.dateSlice.slice(0, 4)
           valueSalesByInvoice.dMonth = valueSalesByInvoice.dateSlice.slice(5, 7)
@@ -158,7 +198,14 @@ module.exports = {
             }
           })
         })
-        return res.status(200).send(salesByInvoice.sort((a, b) => { return a.addDate - b.addDate }));
+
+        let invoiceTanggalDSCPaginated = salesByInvoiceDSCPaginate.sort((a, b) => { return a.addDate - b.addDate })
+        let invoiceTanggalDSCLength = 0
+        invoiceTanggalDSCLength += salesByInvoice.length
+        console.log("invoiceTanggalASCPaginated", invoiceTanggalDSCPaginated)
+        // console.log("invoiceTanggalASCPaginatedLength======", salesByInvoice.length)
+        return res.status(200).send({ invoiceTanggalDSCPaginated, invoiceTanggalDSCLength });
+        // return res.status(200).send(salesByInvoice.sort((a, b) => { return a.addDate - b.addDate }));
       }
     } catch (error) {
       return next(error)
@@ -541,11 +588,14 @@ module.exports = {
         let getTransactionsdetail = await dbQuery(`SELECT productName as nama2, stockType, purchaseQuantity, subTotal, addDate FROM transactionsdetail
         ORDER BY addDate DESC;`);
 
+        let getProductPaginate = await dbQuery(`SELECT productName FROM products
+        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`)
+
         let getProduct = await dbQuery(`SELECT productName FROM products;`)
         namaObat = []
         obatTemp = []
 
-        getProduct.map((val, idx) => {
+        getProductPaginate.map((val, idx) => {
           namaObat.push(val)
         })
 
@@ -561,8 +611,10 @@ module.exports = {
           })
         })
 
+        let productPaginateLength = 0
+        productPaginateLength += getProduct.length
         // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
-        return res.status(200).send(namaObat);
+        return res.status(200).send({ namaObat, productPaginateLength });
       }
     } catch (error) {
       return next(error)
@@ -575,11 +627,14 @@ module.exports = {
         ORDER BY addDate DESC;`);
 
 
+        let getProductPaginate = await dbQuery(`SELECT productName FROM products
+        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`)
+
         let getProduct = await dbQuery(`SELECT productName FROM products;`)
         namaObat = []
         obatTemp = []
 
-        getProduct.map((val, idx) => {
+        getProductPaginate.map((val, idx) => {
           namaObat.push(val)
         })
 
@@ -595,8 +650,13 @@ module.exports = {
           })
         })
 
+        let productASCPaginated = namaObat.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi })
+        let productASCPaginateLength = 0
+        productASCPaginateLength += getProduct.length
+        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        return res.status(200).send({ productASCPaginated, productASCPaginateLength });
         // console.log("namaObatttttt", namaObat)
-        return res.status(200).send(namaObat.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi }));
+        // return res.status(200).send(namaObat.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi }));
       }
     } catch (error) {
       return next(error)
@@ -608,11 +668,14 @@ module.exports = {
         let getTransactionsdetail = await dbQuery(`SELECT productName as nama2, stockType, purchaseQuantity, subTotal, addDate FROM transactionsdetail
         ORDER BY addDate DESC;`);
 
+        let getProductPaginate = await dbQuery(`SELECT productName FROM products
+        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`)
+
         let getProduct = await dbQuery(`SELECT productName FROM products;`)
         namaObat = []
         obatTemp = []
 
-        getProduct.map((val, idx) => {
+        getProductPaginate.map((val, idx) => {
           namaObat.push(val)
         })
 
@@ -628,8 +691,11 @@ module.exports = {
           })
         })
 
-        // console.log("namaObatttttt", namaObat)
-        return res.status(200).send(namaObat.sort((a, b) => { return b.totalTransaksi - a.totalTransaksi }));
+        let productDSCPaginated = namaObat.sort((a, b) => { return b.totalTransaksi - a.totalTransaksi })
+        let productDSCPaginateLength = 0
+        productDSCPaginateLength += getProduct.length
+        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        return res.status(200).send({ productDSCPaginated, productDSCPaginateLength });
       }
     } catch (error) {
       return next(error)
@@ -638,13 +704,16 @@ module.exports = {
   getLaporanUser: async (req, res, next) => {
     try {
       if (req.dataUser.idUser) {
+        let getUsersPaginate = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users
+        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
+
         let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users ORDER BY addDate DESC;`);
 
         let getTransactionsdetail = await dbQuery(`SELECT idUser as idUser2, subTotal FROM transactionsdetail;`)
         dataUser = []
         // obatTemp = []
 
-        getUsers.map((val, idx) => {
+        getUsersPaginate.map((val, idx) => {
           dataUser.push(val)
         })
 
@@ -658,8 +727,12 @@ module.exports = {
           })
         })
 
-        // console.log("getUserss", getUsers)
-        return res.status(200).send(getUsers);
+        let userPaginateLength = 0
+        userPaginateLength += getUsers.length
+        console.log("dataUser itu apa?", dataUser, "=>", userPaginateLength)
+        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        return res.status(200).send({ dataUser, userPaginateLength });
+        // return res.status(200).send(getUsers);
       }
     } catch (error) {
       return next(error)
@@ -668,14 +741,17 @@ module.exports = {
   getLaporanUserTotalASC: async (req, res, next) => {
     try {
       if (req.dataUser.idUser) {
-        let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users ORDER BY addDate DESC;`);
+        let getUsersPaginate = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users
+        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
+
+        let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users ORDER BY addDate;`);
 
         let getTransactionsdetail = await dbQuery(`SELECT idUser as idUser2, subTotal FROM transactionsdetail;`)
         dataUser = []
         // obatTemp = []
 
-        getUsers.map((val, idx) => {
-          dataUser.push(val)
+        getUsersPaginate.map((vals, idx) => {
+          dataUser.push(vals)
         })
 
         dataUser.forEach(valueUser => {
@@ -688,8 +764,12 @@ module.exports = {
           })
         })
 
-        // console.log("getUserss", getUsers)
-        return res.status(200).send(getUsers.sort((a, b) => { return a.totalTransaksiUser - b.totalTransaksiUser }));
+        let userASCPaginated = dataUser.sort((a, b) => { return a.totalTransaksiUser - b.totalTransaksiUser })
+        let userASCPaginateLength = 0
+        userASCPaginateLength += getUsers.length
+        console.log("dataUserrrrrrrrr", dataUser)
+        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        return res.status(200).send({ userASCPaginated, userASCPaginateLength });
       }
     } catch (error) {
       return next(error)
@@ -698,13 +778,16 @@ module.exports = {
   getLaporanUserTotalDSC: async (req, res, next) => {
     try {
       if (req.dataUser.idUser) {
-        let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users ORDER BY addDate DESC;`);
+        let getUsersPaginate = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users
+        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
+
+        let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users ORDER BY addDate;`);
 
         let getTransactionsdetail = await dbQuery(`SELECT idUser as idUser2, subTotal FROM transactionsdetail;`)
         dataUser = []
         // obatTemp = []
 
-        getUsers.map((val, idx) => {
+        getUsersPaginate.map((val, idx) => {
           dataUser.push(val)
         })
 
@@ -718,8 +801,11 @@ module.exports = {
           })
         })
 
-        // console.log("getUserss", getUsers)
-        return res.status(200).send(getUsers.sort((a, b) => { return b.totalTransaksiUser - a.totalTransaksiUser }));
+        let userDSCPaginated = dataUser.sort((a, b) => { return b.totalTransaksiUser - a.totalTransaksiUser })
+        let userDSCPaginateLength = 0
+        userDSCPaginateLength += getUsers.length
+        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        return res.status(200).send({ userDSCPaginated, userDSCPaginateLength });
       }
     } catch (error) {
       return next(error)
@@ -729,12 +815,15 @@ module.exports = {
     try {
       console.log("search invoice", req.dataUser, req.body)
       if (req.dataUser.idUser) {
+        let searchInvoicePaginate = await dbQuery(`SELECT * FROM transactions WHERE invoiceNumber LIKE '%${req.body.inputInvoice}%'
+        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
+
         let searchInvoice = await dbQuery(`SELECT * FROM transactions WHERE invoiceNumber LIKE
         '%${req.body.inputInvoice}%' ORDER BY addDate DESC;`);
 
         let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
 
-        searchInvoice.forEach(valueSearchInvoice => {
+        searchInvoicePaginate.forEach(valueSearchInvoice => {
           valueSearchInvoice.dateSlice = valueSearchInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
           valueSearchInvoice.dYear = valueSearchInvoice.dateSlice.slice(0, 4)
           valueSearchInvoice.dMonth = valueSearchInvoice.dateSlice.slice(5, 7)
@@ -751,8 +840,11 @@ module.exports = {
             }
           })
         })
-        console.log("search Invoice", searchInvoice)
-        return res.status(200).send(searchInvoice);
+
+        let searchInvoicePaginateLength = 0
+        searchInvoicePaginateLength += searchInvoice.length
+        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        return res.status(200).send({ searchInvoicePaginate, searchInvoicePaginateLength });
       }
     } catch (error) {
       return next(error)
@@ -762,19 +854,23 @@ module.exports = {
     try {
       if (req.dataUser.idUser) {
         // console.log("filter invoice", parseInt(req.body.tanggalAkhir.slice(8, 11)) + 1)
-        setTanggalAwal = parseInt(req.body.tanggalAkhir.slice(8, 11)) - 1
+        setTanggalAwal = parseInt(req.body.tanggalAwal.slice(8, 11)) - 1
         setTanggalAkhir = parseInt(req.body.tanggalAkhir.slice(8, 11)) + 1
         setAwal = req.body.tanggalAkhir.slice(0, 8)
         setAkhir = req.body.tanggalAkhir.slice(0, 8)
         setAwal += setTanggalAwal
         setAkhir += setTanggalAkhir
-        // console.log("Awal", setAwal, "Akhir", setAkhir)
+        console.log("TanggalAwal", setTanggalAwal)
+        console.log("Awal", setAwal, "Akhir", setAkhir)
+        let filterInvoicePaginate = await dbQuery(`SELECT * FROM transactions WHERE addDate BETWEEN '${setAwal}' AND '${setAkhir}'
+        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
+
         let filterInvoice = await dbQuery(`SELECT * FROM transactions WHERE addDate BETWEEN
         '${setAwal}' AND '${setAkhir}';`);
 
         let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
 
-        filterInvoice.forEach(valueFilterInvoice => {
+        filterInvoicePaginate.forEach(valueFilterInvoice => {
           valueFilterInvoice.dateSlice = valueFilterInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
           valueFilterInvoice.dYear = valueFilterInvoice.dateSlice.slice(0, 4)
           valueFilterInvoice.dMonth = valueFilterInvoice.dateSlice.slice(5, 7)
@@ -791,8 +887,11 @@ module.exports = {
             }
           })
         })
-        // console.log("FILTERRR Invoice", filterInvoice)
-        return res.status(200).send(filterInvoice);
+
+        let filterInvoiceLength = 0
+        filterInvoiceLength += filterInvoice.length
+        console.log("filterInvoicePaginate", filterInvoicePaginate, "&", filterInvoiceLength)
+        return res.status(200).send({ filterInvoicePaginate, filterInvoiceLength });
       }
     } catch (error) {
       return next(error)
@@ -805,11 +904,14 @@ module.exports = {
         let getTransactionsdetail = await dbQuery(`SELECT productName as nama2, stockType, purchaseQuantity, subTotal, addDate FROM transactionsdetail
         ORDER BY addDate DESC;`);
 
+        let getProductPaginate = await dbQuery(`SELECT productName FROM products WHERE productName LIKE '%${req.body.inputProduct}%'
+        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`)
+
         let getProduct = await dbQuery(`SELECT productName FROM products WHERE productName LIKE '%${req.body.inputProduct}%';`)
         namaObat = []
         obatTemp = []
 
-        getProduct.map((val, idx) => {
+        getProductPaginate.map((val, idx) => {
           namaObat.push(val)
         })
 
@@ -825,8 +927,10 @@ module.exports = {
           })
         })
 
-        // console.log("namaObatttttt", namaObat)
-        return res.status(200).send(namaObat);
+        let searchPaginateLength = 0
+        searchPaginateLength += getProduct.length
+        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        return res.status(200).send({ namaObat, searchPaginateLength });
       }
     } catch (error) {
       return next(error)
@@ -835,28 +939,34 @@ module.exports = {
   getSearchUser: async (req, res, next) => {
     try {
       if (req.dataUser.idUser) {
-        let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users WHERE email LIKE '%${req.body.inputUser}%' ORDER BY addDate DESC;`);
+        let getUsersPaginate = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users WHERE email LIKE '%${req.body.inputUser}%'
+        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
+
+        let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users WHERE email LIKE '%${req.body.inputUser}%'
+        ORDER BY addDate DESC;`);
 
         let getTransactionsdetail = await dbQuery(`SELECT idUser as idUser2, subTotal FROM transactionsdetail;`)
         dataUser = []
         // obatTemp = []
 
-        getUsers.map((val, idx) => {
+        getUsersPaginate.map((val, idx) => {
           dataUser.push(val)
         })
 
         dataUser.forEach(valueUser => {
           valueUser.totalTransaksiUser = 0
 
-          getTransactionsdetail.forEach(val => {
-            if (valueUser.idUser == val.idUser2) {
-              valueUser.totalTransaksiUser += val.subTotal
+          getTransactionsdetail.forEach(vals => {
+            if (valueUser.idUser == vals.idUser2) {
+              valueUser.totalTransaksiUser += vals.subTotal
             }
           })
         })
 
-        // console.log("getUserss", getUsers)
-        return res.status(200).send(getUsers);
+        let searchUserPaginateLength = 0
+        searchUserPaginateLength += getUsers.length
+        // console.log("getUserss", getUsers, "dataUsers", dataUser)
+        return res.status(200).send({ dataUser, searchUserPaginateLength });
       }
     } catch (error) {
       return next(error)

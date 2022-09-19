@@ -3,159 +3,399 @@ import React from "react";
 import {Bar, Line} from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
 import { API_URL } from "../../helper";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from "react-router-dom";
-import { Text, useMediaQuery, Box, Button, Flex, Divider, TableContainer, Table, TableCaption, Thead, Tbody, Tfoot,
+import { Text, useMediaQuery, Box, Button, ButtonGroup, Spinner, Flex, Divider, TableContainer, Table, TableCaption, Thead, Tbody, Tfoot,
         Tr, Th, Td, Input, Spacer, Menu, MenuButton, MenuList, MenuItem, MenuDivider} from '@chakra-ui/react';
 import logo2 from "../../Assets/DevImage/LogoMedhikaPutih.png";
 import Sidebar from "../../Components/Admin/Sidebar";
+import { getProductHistoryPaginateAction, getSearchProductHistoryPaginateAction, getSortTanggalASCPaginateAction,
+        getSortTanggalDSCPaginateAction, getFilterProductHistoryPaginateAction} from "../../Redux/Actions/productHistoryActions";
 
 
 const ProductHistory=(props)=>{
   const [isLargerThan1280] = useMediaQuery('(min-width: 1280px)')
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [produkHistory, setProdukHistory] = React.useState();
-  const [produkHistoryTanggalASC, setProdukHistoryTanggalASC] = React.useState();
-  const [produkHistoryTanggalDSC, setProdukHistoryTanggalDSC] = React.useState();
   const [sortirTanggalASC, setSortirTanggalASC] = React.useState(false);
   const [sortirTanggalDSC, setSortirTanggalDSC] = React.useState(false);
   const [searchProduk, setSearchProduk] = React.useState("");
   const [filterTanggalAwal, setFilterTanggalAwal] = React.useState("");
   const [filterTanggalAkhir, setFilterTanggalAkhir] = React.useState("");
-  const [searchByProduk, setSearchByProduk] = React.useState();
-  const [filterByProduk, setFilterByProduk] = React.useState();
   const [searchOn, setSearchOn]=React.useState(false);
   const [filterOn, setFilterOn]=React.useState(false);
 
-  React.useEffect(()=>{
-    getProdukHistory()
-  }, [])
-
-  console.log("PRODUK HISTORY", produkHistory)
-
-  const getProdukHistory = async() => {
-    try {
-      let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.get(`${API_URL}/productHistory/getProdukHistory`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (res.data) {
-        console.log("RES DATA GET LAPORAN PRODUK", res.data)
-        setProdukHistory(res.data)
-      }
-    } catch (error) {
-      console.log(error)
+  const { produkHistoryPaginate, produkHistoryPaginateLength, produkSearchPaginate, produkSearchPaginateLength,
+    produkTanggalASCPaginate, produkTanggalASCPaginateLength, produkTanggalDSCPaginate, produkTanggalDSCPaginateLength,
+    produkFilterPaginate, produkFilterPaginateLength } = useSelector((state) => {
+    return {
+        produkHistoryPaginate: state.productHistoryReducers.productHistoryPaginate,
+        produkHistoryPaginateLength: state.productHistoryReducers.productHistoryPaginateLength,
+        produkSearchPaginate: state.productHistoryReducers.productSearchPaginate,
+        produkSearchPaginateLength: state.productHistoryReducers.productSearchPaginateLength,
+        produkFilterPaginate: state.productHistoryReducers.productFilterPaginate,
+        produkFilterPaginateLength: state.productHistoryReducers.productFilterPaginateLength,
+        produkTanggalASCPaginate: state.productHistoryReducers.productTanggalASCPaginate,
+        produkTanggalASCPaginateLength: state.productHistoryReducers.productTanggalASCPaginateLength,
+        produkTanggalDSCPaginate: state.productHistoryReducers.productTanggalDSCPaginate,
+        produkTanggalDSCPaginateLength: state.productHistoryReducers.productTanggalDSCPaginateLength,
     }
+})
+
+  React.useEffect(()=>{
+    getPaginatedProdukHistory()
+  }, [])
+  
+  console.log("Sort Tanggal ASC Check", sortirTanggalASC)
+  console.log("Sort Tanggal DSC Check", sortirTanggalDSC)
+  console.log("SearchOn Check", searchOn)
+  console.log("FilterOn Check", filterOn)
+  
+  const getPaginatedProdukHistory = (page = 0) => {
+    console.log("getProduct else jalannn")
+        dispatch(getProductHistoryPaginateAction(page + 1))
   }
+
+  const getPaginatedSearch = (page = 0) => {
+        dispatch(getSearchProductHistoryPaginateAction(page + 1, searchProduk))
+  }
+
+  const getPaginatedFilter = (page = 0) => {
+        dispatch(getFilterProductHistoryPaginateAction(page + 1, filterTanggalAwal, filterTanggalAkhir))
+  }
+
+  const getPaginatedSortTanggalASC = (page = 0) => {
+        dispatch(getSortTanggalASCPaginateAction(page + 1))
+  }
+
+  const getPaginatedSortTanggalDSC = (page = 0) => {
+        dispatch(getSortTanggalDSCPaginateAction(page + 1))
+  }
+
+const handlePaginate = (paginate) => {
+    getPaginatedProdukHistory(paginate);
+  }
+
+const handlePaginateSearch = (paginate) => {
+    getPaginatedSearch(paginate);
+}
+
+const handlePaginateFilter = (paginate) => {
+    getPaginatedFilter(paginate);
+}
+
+const handlePaginateTanggalASC = (paginate) => {
+    getPaginatedSortTanggalASC(paginate);
+}
+
+const handlePaginateTanggalDSC = (paginate) => {
+    getPaginatedSortTanggalDSC(paginate);
+}
+
+const printBtnPagination = () => {
+    let btn = []
+    if (searchOn == true){
+      for (let i = 0; i < Math.ceil(produkSearchPaginateLength / 10); i++) {
+        btn.push(
+            <Box
+                as='button'
+                height='30px'
+                lineHeight='1.5'
+                transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                border='1px'
+                px='8px'
+                borderRadius='4px'
+                className="font-brand"
+                fontSize='14px'
+                fontWeight='bold'
+                bg='var(--colorTwo)'
+                borderColor='var(--colorSix)'
+                color='var(--colorSix)'
+                _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                _active={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)'
+                }}
+                _focus={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)',
+                    boxShadow:
+                        '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                }}
+                onClick={() => handlePaginateSearch(i)}
+            >
+                {i + 1}
+            </Box>
+        )
+    }
+    return btn;
+    } else if (filterOn == true){
+      for (let i = 0; i < Math.ceil(produkFilterPaginateLength / 10); i++) {
+        btn.push(
+            <Box
+                as='button'
+                height='30px'
+                lineHeight='1.5'
+                transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                border='1px'
+                px='8px'
+                borderRadius='4px'
+                className="font-brand"
+                fontSize='14px'
+                fontWeight='bold'
+                bg='var(--colorTwo)'
+                borderColor='var(--colorSix)'
+                color='var(--colorSix)'
+                _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                _active={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)'
+                }}
+                _focus={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)',
+                    boxShadow:
+                        '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                }}
+                onClick={() => handlePaginateFilter(i)}
+            >
+                {i + 1}
+            </Box>
+        )
+    }
+    return btn;
+    } else if(sortirTanggalASC == true){
+      for (let i = 0; i < Math.ceil(produkTanggalASCPaginateLength / 10); i++) {
+        btn.push(
+            <Box
+                as='button'
+                height='30px'
+                lineHeight='1.5'
+                transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                border='1px'
+                px='8px'
+                borderRadius='4px'
+                className="font-brand"
+                fontSize='14px'
+                fontWeight='bold'
+                bg='var(--colorTwo)'
+                borderColor='var(--colorSix)'
+                color='var(--colorSix)'
+                _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                _active={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)'
+                }}
+                _focus={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)',
+                    boxShadow:
+                        '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                }}
+                onClick={() => handlePaginateTanggalASC(i)}
+            >
+                {i + 1}
+            </Box>
+        )
+    }
+    return btn;
+    } else if(sortirTanggalDSC == true){
+      for (let i = 0; i < Math.ceil(produkTanggalDSCPaginateLength / 10); i++) {
+        btn.push(
+            <Box
+                as='button'
+                height='30px'
+                lineHeight='1.5'
+                transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                border='1px'
+                px='8px'
+                borderRadius='4px'
+                className="font-brand"
+                fontSize='14px'
+                fontWeight='bold'
+                bg='var(--colorTwo)'
+                borderColor='var(--colorSix)'
+                color='var(--colorSix)'
+                _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                _active={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)'
+                }}
+                _focus={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)',
+                    boxShadow:
+                        '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                }}
+                onClick={() => handlePaginateTanggalDSC(i)}
+            >
+                {i + 1}
+            </Box>
+        )
+    }
+    return btn;
+    } else {
+      for (let i = 0; i < Math.ceil(produkHistoryPaginateLength / 10); i++) {
+          btn.push(
+              <Box
+                  as='button'
+                  height='30px'
+                  lineHeight='1.5'
+                  transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                  border='1px'
+                  px='8px'
+                  borderRadius='4px'
+                  className="font-brand"
+                  fontSize='14px'
+                  fontWeight='bold'
+                  bg='var(--colorTwo)'
+                  borderColor='var(--colorSix)'
+                  color='var(--colorSix)'
+                  _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                  _active={{
+                      bg: 'var(--colorSix)',
+                      color: 'var(--colorOne)',
+                      borderColor: 'var(--colorOne)'
+                  }}
+                  _focus={{
+                      bg: 'var(--colorSix)',
+                      color: 'var(--colorOne)',
+                      borderColor: 'var(--colorOne)',
+                      boxShadow:
+                          '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                  }}
+                  onClick={() => handlePaginate(i)}
+              >
+                  {i + 1}
+              </Box>
+          )
+      }
+      return btn;
+    }
+    // console.log(`transactionLength di printBtnPagination`, transactionLength);
+}
 
   const handleSortTanggalASC =async()=>{
     try {
-      // console.log("sortir tanggal ASC JALAN")
       setSortirTanggalDSC(false)
       setSortirTanggalASC(true)
-        let token = localStorage.getItem("tokenIdUser");
-        let res = await Axios.get(`${API_URL}/productHistory/getProdukHistoryTanggalASC`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        if (res.data) {
-          console.log("RES DATA GET ProdukHistory TanggalASC", res.data)
-          setProdukHistoryTanggalASC(res.data)
-        }
+      console.log("SORTIR TANGGAL ASC JALANNNNNN")
+      {getPaginatedSortTanggalASC()}
       } catch (err) {
     }
   }
   
   const handleSortTanggalDSC =async()=>{
     try {
-      // console.log("sortir tanggal DSC JALAN")
       setSortirTanggalASC(false)
       setSortirTanggalDSC(true)
-        let token = localStorage.getItem("tokenIdUser");
-        let res = await Axios.get(`${API_URL}/productHistory/getProdukHistoryTanggalDSC`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        if (res.data) {
-          console.log("RES DATA GET ProdukHistory TanggalDSC", res.data)
-          setProdukHistoryTanggalDSC(res.data)
-        }
+      console.log("SORTIR TANGGAL DSC JALANNNNNN")
+      {getPaginatedSortTanggalDSC()}
       } catch (err) {
     }
   }
 
 const printProdukHistory = () => {
   if(searchOn == true){
-    return searchByProduk.map((value, index)=>{
-      if (index % 2 == 0){
-        return (
-          <Tr>
-            <Td>{value.dateFE}</Td>
-            <Td>{value.productName.slice(0,40)}</Td>
-            <Td>{value.stockType}</Td>
-            <Td>{value.stockQuantity}</Td>
-            <Td>{value.mutationSource}</Td>
-            <Td>{value.mutationType}</Td>
-          </Tr>
-        )
-      } else {
-        return (
-          <Tr style={{backgroundColor:"#ebeef3"}}>
-            <Td>{value.dateFE}</Td>
-            <Td>{value.productName.slice(0,40)}</Td>
-            <Td>{value.stockType}</Td>
-            <Td>{value.stockQuantity}</Td>
-            <Td>{value.mutationSource}</Td>
-            <Td>{value.mutationType}</Td>
-          </Tr>
-        )
-      }
-    })
-  } else if (filterOn == true){
-    return filterByProduk.map((value, index)=>{
-      if (index % 2 == 0){
-        return (
-          <Tr>
-            <Td>{value.dateFE}</Td>
-            <Td>{value.productName.slice(0,40)}</Td>
-            <Td>{value.stockType}</Td>
-            <Td>{value.stockQuantity}</Td>
-            <Td>{value.mutationSource}</Td>
-            <Td>{value.mutationType}</Td>
-          </Tr>
-        )
-      } else {
-        return (
-          <Tr style={{backgroundColor:"#ebeef3"}}>
-            <Td>{value.dateFE}</Td>
-            <Td>{value.productName.slice(0,40)}</Td>
-            <Td>{value.stockType}</Td>
-            <Td>{value.stockQuantity}</Td>
-            <Td>{value.mutationSource}</Td>
-            <Td>{value.mutationType}</Td>
-          </Tr>
-        )
-      }
-    })
-  } else if (sortirTanggalASC == true){
-    if(produkHistoryTanggalASC == undefined){
-      return (
-        <Tr>
-          <Td></Td>
-          <Td></Td>
-          <Td></Td>
-          <Td></Td>
-          <Td></Td>
-          <Td></Td>
-        </Tr>
-      )
+    if(produkSearchPaginate == undefined) {
+      return <div>
+        <Text class="h5b mt-5 mb-5">Loading</Text>
+        <Spinner
+          thickness='6px'
+          speed='0.65s'
+          emptyColor='gray.200'
+          color='#DE1B51'
+          size='xl'
+        />
+      </div>
     } else {
-      return produkHistoryTanggalASC.map((value, index)=>{
+      return produkSearchPaginate.map((value, index)=>{
+        if (index % 2 == 0){
+          return (
+            <Tr>
+              <Td>{value.dateFE}</Td>
+              <Td>{value.productName.slice(0,40)}</Td>
+              <Td>{value.stockType}</Td>
+              <Td>{value.stockQuantity}</Td>
+              <Td>{value.mutationSource}</Td>
+              <Td>{value.mutationType}</Td>
+            </Tr>
+          )
+        } else {
+          return (
+            <Tr style={{backgroundColor:"#ebeef3"}}>
+              <Td>{value.dateFE}</Td>
+              <Td>{value.productName.slice(0,40)}</Td>
+              <Td>{value.stockType}</Td>
+              <Td>{value.stockQuantity}</Td>
+              <Td>{value.mutationSource}</Td>
+              <Td>{value.mutationType}</Td>
+            </Tr>
+          )
+        }
+      })
+    }
+  } else if (filterOn == true){
+    if(produkFilterPaginate == undefined) {
+      return <div>
+        <Text class="h5b mt-5 mb-5">Loading</Text>
+        <Spinner
+          thickness='6px'
+          speed='0.65s'
+          emptyColor='gray.200'
+          color='#DE1B51'
+          size='xl'
+        />
+      </div>
+    } else {
+      return produkFilterPaginate.map((value, index)=>{
+        if (index % 2 == 0){
+          return (
+            <Tr>
+              <Td>{value.dateFE}</Td>
+              <Td>{value.productName.slice(0,40)}</Td>
+              <Td>{value.stockType}</Td>
+              <Td>{value.stockQuantity}</Td>
+              <Td>{value.mutationSource}</Td>
+              <Td>{value.mutationType}</Td>
+            </Tr>
+          )
+        } else {
+          return (
+            <Tr style={{backgroundColor:"#ebeef3"}}>
+              <Td>{value.dateFE}</Td>
+              <Td>{value.productName.slice(0,40)}</Td>
+              <Td>{value.stockType}</Td>
+              <Td>{value.stockQuantity}</Td>
+              <Td>{value.mutationSource}</Td>
+              <Td>{value.mutationType}</Td>
+            </Tr>
+          )
+        }
+      })
+    }
+  } else if (sortirTanggalASC == true){
+    if(produkTanggalASCPaginate == undefined) {
+      return <div>
+        <Text class="h5b mt-5 mb-5">Loading</Text>
+        <Spinner
+          thickness='6px'
+          speed='0.65s'
+          emptyColor='gray.200'
+          color='#DE1B51'
+          size='xl'
+        />
+      </div>
+    } else {
+      return produkTanggalASCPaginate.map((value, index)=>{
         if (index % 2 == 0){
           return (
             <Tr>
@@ -182,19 +422,19 @@ const printProdukHistory = () => {
       })
     }
   } else if (sortirTanggalDSC == true){
-    if(produkHistoryTanggalDSC == undefined){
-      return (
-        <Tr>
-          <Td></Td>
-          <Td></Td>
-          <Td></Td>
-          <Td></Td>
-          <Td></Td>
-          <Td></Td>
-        </Tr>
-      )
-    } else{
-      return produkHistoryTanggalDSC.map((value, index)=>{
+    if(produkTanggalDSCPaginate == undefined) {
+      return <div>
+        <Text class="h5b mt-5 mb-5">Loading</Text>
+        <Spinner
+          thickness='6px'
+          speed='0.65s'
+          emptyColor='gray.200'
+          color='#DE1B51'
+          size='xl'
+        />
+      </div>
+    } else {
+      return produkTanggalDSCPaginate.map((value, index)=>{
         if (index % 2 == 0){
           return (
             <Tr>
@@ -221,8 +461,8 @@ const printProdukHistory = () => {
       })
     }
   } else {
-    return produkHistory.map((value, index)=>{
-      if (index % 2 == 0){
+      return produkHistoryPaginate.map((value, index)=>{
+        if (index % 2 == 0){
         return (
           <Tr>
             <Td>{value.dateFE}</Td>
@@ -246,27 +486,15 @@ const printProdukHistory = () => {
         )
       }
     })
-  }
 }
-  
+}
+
 const handleSearch =async()=>{
   try {
     if(searchProduk){
-      let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.post(`${API_URL}/productHistory/getSearchProdukHistory`, {
-        inputProduk: searchProduk
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (res.data) {
-        console.log("res.data SEARCH PRODUK", res.data)
-        setSearchByProduk(res.data)
         setSearchOn(true)
-        }
-      } else {
-
+        console.log("searchOn JALANNNNNN")
+        getPaginatedSearch()
       }
     } catch (err) {
   }
@@ -275,22 +503,9 @@ const handleSearch =async()=>{
 const handleFilter =async()=>{
   try {
     if(filterTanggalAwal && filterTanggalAkhir){
-      let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.post(`${API_URL}/productHistory/getFilterProdukHistory`, {
-        tanggalAwal: filterTanggalAwal,
-        tanggalAkhir: filterTanggalAkhir
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (res.data) {
-        console.log("res.data FILTER PRODUK", res.data)
-        setFilterByProduk(res.data)
         setFilterOn(true)
-        }
-      } else {
-
+        console.log("filterOn JALANNNNNN")
+        getPaginatedFilter()
       }
     } catch (err) {
   }
@@ -304,7 +519,7 @@ const handleCancel = () => {
   return( <>
     <Box
         w='100%'
-        h='100%'
+        h='100vh'
         bgGradient='linear(to-br, #dadeec,  #FFFFFF)'
       >
       <div class="container-fluid" >
@@ -319,7 +534,7 @@ const handleCancel = () => {
             <Box mt={"35px"} mb={"20px"}>
               <Text class="h5b">Laporan Produk</Text>
             </Box>
-              <div class="row">
+              <div class="row mb-5">
                 <div class="mt-2 col-md-10">
                   <div class="rounded-4 shadow p-3" style={{backgroundColor:"#f6f8fc", height:"100%"}}>
                     <div class="row mb-4" style={{marginLeft:"10px", marginRight:"10px"}}>
@@ -377,7 +592,7 @@ const handleCancel = () => {
                         </Flex>
                       </div>
                     </div>
-                    <Box ms={"20px"} me={"20px"}>
+                    <Box ms={"20px"} me={"20px"} >
                       <TableContainer borderRadius={"10px"}>
                         <Table variant='simple'>
                           <Thead>
@@ -390,15 +605,22 @@ const handleCancel = () => {
                               <Th style={{color:"#FFFFFF"}}>Keterangan</Th>
                             </Tr>
                           </Thead>
-                          <Tbody>
                             {
-                              produkHistory == undefined ?
-                              <div>
-                              </div>
+                              produkHistoryPaginate == undefined ?
+                              <Tbody>
+                                <div>
+                                </div>
+                              </Tbody>
                             :
-                              printProdukHistory()
+                            <>
+                              <Tbody>
+                                {printProdukHistory()}
+                              </Tbody>
+                              <ButtonGroup ms={"20px"} mt={"20px"} mb={"20px"}>
+                                  {printBtnPagination()}
+                              </ButtonGroup>
+                            </>
                             }
-                          </Tbody>
                         </Table>
                       </TableContainer>
                     </Box>
