@@ -14,7 +14,7 @@ const INITIAL_STATE = {
     admindiproses: [], //^ OK
     admindikirim: [], //^ OK
     adminpesanandikonfirmasi: [], //^ OK
-    admindibatalkan: [] //^ PAGINATION FILTER SORT
+    admindibatalkan: [] //^ OK
 }
 
 export const transactionReducers = (state = INITIAL_STATE, action) => {

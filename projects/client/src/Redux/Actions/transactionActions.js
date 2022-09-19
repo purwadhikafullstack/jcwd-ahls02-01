@@ -14,7 +14,7 @@ export const savedTransactionAction = (data) => {
 
 //* SAVED USER VALIDASI RESEP ACTION -- U1
 export const savedUserValidasiResepAction = (data) => {
-    console.log("savedTransactionAdminAction", data);
+    console.log("savedUserValidasiResepAction", data);
 
     return {
         type: "USER_VALIDASI_RESEP",
@@ -200,7 +200,7 @@ export const getUserFilterMenungguPembayaranAction = (query) => {
             let token = localStorage.getItem("tokenIdUser");
 
             //^ cek ada token atau tidak
-            console.log(`getUserFilterValidasiMenungguPembayaranAction tokenIdUser`, token);
+            console.log(`getUserFilterMenungguPembayaranAction tokenIdUser`, token);
 
             if (token) {
                 let res = await Axios.get(`${API_URL}/transaction/userFilterMenungguPembayaran${query}`, {
@@ -210,7 +210,7 @@ export const getUserFilterMenungguPembayaranAction = (query) => {
                 })
 
                 //^ cek isi res.data
-                console.log(`res.data getUserFilterValidasiMenungguPembayaranAction`, res.data);
+                console.log(`res.data getUserFilterMenungguPembayaranAction`, res.data);
 
                 dispatch(savedUserMenungguPembayaranAction(res.data));
             }

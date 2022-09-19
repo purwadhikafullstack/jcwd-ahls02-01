@@ -46,9 +46,10 @@ const ProductDetail = (props) => {
     });
   };
 
-  const { databaseCart } = useSelector((state) => {
+  const { isVerified, databaseCart } = useSelector((state) => {
     return {
       databaseCart: state.cartReducers.cart.filter(val => val.isActive == "true"),
+      isVerified: state.userReducers.isVerified,
     }
   })
 
@@ -65,47 +66,58 @@ const ProductDetail = (props) => {
       console.log(`btnCheckout tokenIdUser`, token);
 
       if (token) {
-        if ((databaseCart.findIndex(val => val.productName == productName)) == -1) {
 
-          let res = await Axios.post(`${API_URL}/cart/add`, {
-            idProduct
-          }, {
-            headers: {
-              'Authorization': `Bearer ${token}`
+        if (isVerified == "verified") {
+
+          if ((databaseCart.findIndex(val => val.productName == productName)) == -1) {
+
+            let res = await Axios.post(`${API_URL}/cart/add`, {
+              idProduct
+            }, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            })
+
+            if (res.data) {
+              console.log("isi res.data saat btnCart diklik", res.data);
+              dispatch(getCartAction());
+              setLoadingStat(false);
+              navigate("/cart");
             }
-          })
 
-          if (res.data) {
-            console.log("isi res.data saat btnCart diklik", res.data);
-            dispatch(getCartAction());
-            setLoadingStat(false);
-            navigate("/cart");
+          } else {
+
+            let idxInDatabaseCart = databaseCart.findIndex(val => val.productName == productName);
+
+            let idCart = databaseCart[idxInDatabaseCart].idCart;
+            let previousCartQuantity = databaseCart[idxInDatabaseCart].cartQuantity;
+            let newQuantity = previousCartQuantity + 1;
+
+            let res = await Axios.patch(`${API_URL}/cart/idCart`, {
+              idProduct,
+              cartQuantity: newQuantity
+            }, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            })
+
+            if (res.data) {
+              console.log("isi res.data saat btnCart diklik", res.data);
+              dispatch(getCartAction());
+              setLoadingStat(false);
+              navigate("/cart");
+            }
+
           }
-
         } else {
-
-          let idxInDatabaseCart = databaseCart.findIndex(val => val.productName == productName);
-
-          let idCart = databaseCart[idxInDatabaseCart].idCart;
-          let previousCartQuantity = databaseCart[idxInDatabaseCart].cartQuantity;
-          let newQuantity = previousCartQuantity + 1;
-
-          let res = await Axios.patch(`${API_URL}/cart/idCart`, {
-            idProduct,
-            cartQuantity: newQuantity
-          }, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          })
-
-          if (res.data) {
-            console.log("isi res.data saat btnCart diklik", res.data);
-            dispatch(getCartAction());
-            setLoadingStat(false);
-            navigate("/cart");
-          }
-
+          newToast({
+            title: "Error",
+            description: "Verifikasi dahulu akun Anda",
+            status: "error",
+          });
+          setLoadingStat(false);
         }
       }
 

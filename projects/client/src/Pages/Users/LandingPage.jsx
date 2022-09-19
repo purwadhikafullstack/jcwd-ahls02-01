@@ -103,12 +103,27 @@ const LandingPage = (props) => {
     }
   };
 
+  const btnUnggahResep = () => {
+    setLoadingStat(true);
+    if (isVerified == "verified") {
+      setLoadingStat(false);
+      navigate(`/uploadresep`)
+    } else {
+      setLoadingStat(false);
+      newToast({
+        title: "Error",
+        description: "Verifikasi dahulu akun Anda",
+        status: "error",
+      });
+    }
+  }
+
   return (
     <>
       <div>
         <NavbarComponent />
-       
-        
+
+
       </div>
       <div class="HeaderBG" style={{ height: "100%" }}>
         <div class="Vector">
@@ -160,7 +175,8 @@ const LandingPage = (props) => {
                           <Button
                             style={{ marginRight: "0px", marginTop: "75px" }}
                             class="btn-def_second"
-                            onClick={() => navigate(`/uploadresep`)}
+                            isLoading={loadingStat}
+                            onClick={btnUnggahResep}
                           >
                             Unggah Resep
                           </Button>
@@ -168,6 +184,8 @@ const LandingPage = (props) => {
                           <Button
                             style={{ marginLeft: "8%", marginTop: "15px" }}
                             class="btn-def_second"
+                            isLoading={loadingStat}
+                            onClick={btnUnggahResep}
                           >
                             Unggah Resep
                           </Button>
