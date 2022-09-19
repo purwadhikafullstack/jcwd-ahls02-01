@@ -24,8 +24,7 @@ const app = express();
 app.use(cors());
 app.use(bearerTokens());
 app.use(express.json());
-app.use(express.static("./src/Public"));
-
+app.use("/", express.static(__dirname + "/Public"));
 // DB Check Connection
 const { dbConf } = require("./Config/database");
 
