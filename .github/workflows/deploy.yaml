@@ -21,6 +21,8 @@ jobs:
         run: |
           npm install
           npm run build
+        env:
+          CI: false
       - name: Deploy to Linode
         uses: appleboy/scp-action@master
         with:
