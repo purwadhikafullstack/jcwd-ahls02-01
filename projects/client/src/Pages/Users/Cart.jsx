@@ -106,8 +106,6 @@ const CartPage = (props) => {
         console.log(`subTotal ${subTotalAllCartItems}`);
         console.log(`arrayIdCart onCLick btnCheckout ${arrayIdCart}`);
 
-        navigate("/checkout", { state: arrayIdCart });
-
         if (arrayIdCart.length == 0) {
             console.log(`arrayIdCart ${arrayIdCart}`);
 

@@ -41,7 +41,7 @@ const TransCardDibatalkanComponent = (props) => {
     //^ state management
     const { transactionList, transactionLength } = useSelector((state) => {
         return {
-            transactionList: state.transactionReducers.userpesanandikonfirmasi,
+            transactionList: state.transactionReducers.userdibatalkan,
             transactionLength: state.transactionReducers.transaction.filter(val => val.transactionStatus == "Dibatalkan").length
         }
     })
@@ -119,8 +119,8 @@ const TransCardDibatalkanComponent = (props) => {
     //TODO axios get seluruh transaksi yang berstatus Dibatalkan
 
     const printDibatalkan = () => {
-        if (props.dbDibatalkan.length > 0) {
-            return props.dbDibatalkan.map((value, index) => {
+        if (transactionList.length > 0) {
+            return transactionList.map((value, index) => {
                 return (
                     <div
                         className="card mb-2" key={value.idTransaction}

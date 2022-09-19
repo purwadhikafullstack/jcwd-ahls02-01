@@ -10,28 +10,17 @@ import { API_URL, BE_URL } from "../../helper";
 import {
   Box,
   Divider,
-  VStack,
-  Center,
-  Stack,
   Image,
   Text,
   Button,
   ButtonGroup,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Input,
   InputGroup,
   InputLeftAddon,
   Select,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel
+  FormControl,
+  FormHelperText,
+  FormErrorMessage
 } from "@chakra-ui/react";
 
 import { AiOutlineDelete } from "react-icons/ai";
@@ -64,15 +53,16 @@ const RacikResepPage = (props) => {
     priceSale: 0,
     subTotal: 0
   });
-  const [toggleModal, setToggleModal] = useState(false)
-  const [idForConversion, setIdForConversion] = useState(null)
+  const [idForConversion, setIdForConversion] = useState(null);
+  const [show, setShow] = useState(false);
+  const [isError, setIsError] = useState([]);
 
-  const { transactionList, transactionLength } = useSelector((state) => {
-    return {
-      transactionList: state.transactionReducers.adminvalidasiresep,
-      transactionLength: state.transactionReducers.transactionAdminView.filter(val => val.transactionStatus == "Menunggu Diproses Penjual").length
-    }
-  })
+  // const { transactionList, transactionLength } = useSelector((state) => {
+  //   return {
+  //     transactionList: state.transactionReducers.adminvalidasiresep,
+  //     transactionLength: state.transactionReducers.transactionAdminView.filter(val => val.transactionStatus == "Menunggu Diproses Penjual").length
+  //   }
+  // })
 
   //& component did mount
   useEffect(() => {
@@ -110,7 +100,13 @@ const RacikResepPage = (props) => {
       })
   }
 
+  const handleStockChangesAfterConversion = () => {
+    getAllProducts();
+    handleMaxQuantity();
+  }
+
   const btnTambahProduk = () => {
+    setAddProductClicked(1)
     let temp = [...selectedMeds];
     temp.push({
       idProduct: "",
@@ -141,6 +137,7 @@ const RacikResepPage = (props) => {
                 onChange={(e) => handleProdukTerpilih(e.target.value, index)}
                 size="sm"
                 width={334}
+                value={`${value.idProduct}|${value.idStock}|${value.productName}|${value.stockType}|${value.stockQuantity}|${value.priceSale}|${value.productPicture}`}
               >
                 {
                   allProducts.map((value2, index2) => {
@@ -165,7 +162,15 @@ const RacikResepPage = (props) => {
                   size="sm"
                   style={{ width: "80px" }}
                   onClick={() => { handleKonversi(value, index) }}
-                >Konversi</Button>
+                >
+                  Konversi
+                </Button>
+                <ModalConversion
+                  handleStockChangesAfterConversion={handleStockChangesAfterConversion}
+                  idForConversion={idForConversion}
+                  onClose={() => setShow(!show)}
+                  show={show}
+                />
                 <Button
                   outline
                   className="btn-def"
@@ -184,18 +189,11 @@ const RacikResepPage = (props) => {
                   width="fit-content"
                   onChange={(e) => handlePurchaseQuantity(e, index)}
                   size="sm"
+                  type="number"
                 />
               </InputGroup>
-              {/* <InputGroup size="sm">
-                <InputLeftAddon children="Type" width={150} />
-                <Input
-                  width="fit-content"
-                  onChange={(e) => handleStockType(e, index)}
-                  size="sm"
-                />
-              </InputGroup> */}
-            </div>
-          </div>
+            </div >
+          </div >
         )
       })
     }
@@ -232,10 +230,10 @@ const RacikResepPage = (props) => {
     setSelectedMeds(temp)
   }
 
-  const handleKonversi = (value, index) => { //! error di product reducer line 36
+  const handleKonversi = (value, index) => {
     if (value.idProduct) {
+      setShow(!show)
       console.log(`handleKonversi diklik`)
-      setToggleModal(true)
       setIdForConversion(value.idProduct)
       console.log(`idForConversion`, idForConversion)
     } else {
@@ -249,28 +247,93 @@ const RacikResepPage = (props) => {
 
   console.log(`idForConversion`, idForConversion);
 
-  const handleCLoseModal = () => {
-    setToggleModal(false)
+  const handleMaxQuantity = () => {
+    let temp = [...isError]
+    allProducts.map((valueAllProduct) => {
+      selectedMeds.map((valueSelectedMeds => {
+        if (selectedMeds.filter(val => val.purchaseQuantity == undefined).length == 0) {
+
+          if (valueSelectedMeds.idStock == valueAllProduct.idStock) {
+            console.log(`valueSelectedMeds.idStock == valueAllProduct.idStock`, valueSelectedMeds.idStock, valueAllProduct.idStock)
+
+            console.log(`selectedMeds.purchaseQuantity, valueAllProduct.stockQuantity`, valueSelectedMeds.purchaseQuantity, valueAllProduct.stockQuantity)
+
+            if (parseInt(valueSelectedMeds.purchaseQuantity) > parseInt(valueAllProduct.stockQuantity)) {
+              console.log(`valueSelectedMeds.purchaseQuantity > valueAllProduct.stockQuantity`)
+
+              temp.push(false)
+
+            } else if (parseInt(valueSelectedMeds.purchaseQuantity) <= parseInt(valueAllProduct.stockQuantity)) {
+              console.log(`valueSelectedMeds.purchaseQuantity <= valueAllProduct.stockQuantity`)
+
+              temp.push(true)
+            }
+          }
+
+        } else {
+          temp.push(true)
+        }
+
+      }))
+    })
+    // console.log(`isError di handleMaxQuantity`, isError)
+    setIsError([...isError, ...temp]);
+    return isError;
   }
 
   const btnSubmit = async () => {
-    try {
-      console.log(`isi selectedMeds sebelum submit`, selectedMeds);
+    if (selectedMeds.length > 0 && addProductClicked == 1) {
+      if (selectedMeds[0].idProduct != "") {
+        if (selectedMeds.filter(val => val.purchaseQuantity == 0).length == 0) {
+          handleMaxQuantity();
+          if (!isError.includes(val => val == true)) {
+            console.log(`isError di btnSubmit karena dianggap false`, isError)
+            try {
+              console.log(`isi selectedMeds sebelum submit`, selectedMeds);
+              let token = localStorage.getItem("tokenIdUser");
+              if (token) {
+                let res = await Axios.post(`${API_URL}/transaction/adminAddTransactionDetailForRecipe`, { selectedMeds, idUser: detail.idUser, idTransaction: search.split("=")[1] }, {
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  }
+                });
+                console.log("data yg teregister", res.data)
+                getTransactionAdminAction();
+                setAddProductClicked(0);
+                navigate("/admin/transactionList");
+              }
 
-      let token = localStorage.getItem("tokenIdUser");
-      if (token) {
-        let res = await Axios.post(`${API_URL}/transaction/adminAddTransactionDetailForRecipe`, { selectedMeds, idUser: detail.idUser, idTransaction: search.split("=")[1] }, {
-          headers: {
-            'Authorization': `Bearer ${token}`
+            } catch (error) {
+              console.log(error);
+            }
+          } else if (isError.includes(val => val == true)) {
+            console.log(`isError di btnSubmit karena dianggap true`, isError)
+            newToast({
+              title: `Informasi tidak lengkap`,
+              description: "Ada produk yang belum diisi kuantitinya",
+              status: 'error'
+            })
           }
-        });
-        console.log("data yg teregister", res.data)
-        getTransactionAdminAction();
-        navigate("/admin/transactionList")
+        } else {
+          newToast({
+            title: `Kuantitas produk berlebihan`,
+            description: "Ada produk yang diisi melebihi batas stok yang ada",
+            status: 'error'
+          })
+        }
+      } else {
+        newToast({
+          title: `Resep Belum Diproses`,
+          description: "Proses dahulu produk sesuai resep",
+          status: 'error'
+        })
       }
-
-    } catch (error) {
-      console.log(error);
+    } else {
+      newToast({
+        title: `Resep Belum Diproses`,
+        description: "Proses dahulu produk sesuai resep",
+        status: 'error'
+      })
     }
   }
 
@@ -349,16 +412,6 @@ const RacikResepPage = (props) => {
                             </Button>
                             {printProduct()}
 
-                            {
-                              idForConversion
-                              &&
-                              <ModalConversion
-                                toggleModal={toggleModal}
-                                handleCLoseModal={handleCLoseModal}
-                                idForConversion={idForConversion}
-                              />
-                            }
-
                           </div>
                         </div>
                         <Divider mt={5} />
@@ -375,7 +428,7 @@ const RacikResepPage = (props) => {
                                 size="sm"
                                 onClick={btnSubmit}
                               >
-                                Simpan & kembali ke daftar transaksi
+                                Simpan & Kembali ke Daftar Transaksi
                               </Button>
                             </div>
                           </div>
