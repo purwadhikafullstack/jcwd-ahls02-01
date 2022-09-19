@@ -1,12 +1,12 @@
 const multer = require("multer");
-
+const { join } = require("path");
 // fs untuk mengecek lokasi penyimpanan data
 const fs = require("fs");
 
 module.exports = {
   uploader: (directory, fileNamePrefix) => {
     // mendefine lokasi penyimpanan utama
-    let defaultDir = "./src/Public";
+    let defaultDir = join(__dirname, "../Public");
 
     // konfigurasi multer
     // diskStorage untuk menyimpan file
