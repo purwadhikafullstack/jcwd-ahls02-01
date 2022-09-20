@@ -1003,6 +1003,8 @@ export const updateTransactionStatusOnlyAction = (idTransaction, newTransactionS
                 dispatch(getAdminMenungguKonfirmasiAction());
                 dispatch(getAdminDiprosesAction());
                 dispatch(getAdminDikirimAction());
+                dispatch(getUserDibatalkanAction());
+                dispatch(getAdminDibatalkanAction());
                 
             }
 
