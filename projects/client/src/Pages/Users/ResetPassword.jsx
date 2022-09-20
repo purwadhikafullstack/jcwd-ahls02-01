@@ -1,7 +1,7 @@
 import Axios from "axios";
 import React from "react";
 import { API_URL } from "../../helper";
-import { Button, Text, Box, Input, InputGroup, InputRightElement, Image } from "@chakra-ui/react";
+import { Button, Text, Box, Input, InputGroup, InputRightElement, Image, Spinner } from "@chakra-ui/react";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from "react-router-dom";
 import { IoIosWarning } from "react-icons/io";
@@ -64,11 +64,11 @@ const ResetPassword=(props)=>{
     }
   }
 
-  console.log("password", password)
-  console.log("konfirmasi password", confirmPassword)
-  console.log("token reset", token)
-  console.log("params",params.token);
-  console.log("BOOLEAN TOKEN params",token == params.token);
+  // console.log("password", password)
+  // console.log("konfirmasi password", confirmPassword)
+  // console.log("token reset", token)
+  // console.log("params",params.token);
+  // console.log("BOOLEAN TOKEN params",token == params.token);
 
 
   const [inForm, setInForm] = React.useState({
@@ -226,7 +226,27 @@ const checkNumbers=()=>{
                     </InputRightElement>
                   </InputGroup>
               </Box>
-                <Button isLoading={loadingStat} style={{marginTop:"25px"}} class="btn-def_second" onClick={handleReset}>Reset Password</Button>
+              {
+                loadingStat == true ?
+                <>
+                  <Button style={{marginTop:"25px"}} class="btn-def_second">
+                    <Spinner
+                      thickness='2px'
+                      speed='0.50s'
+                      emptyColor='#DE1B51'
+                      color='#FFFFFF'
+                      size='md'
+                      marginTop={"5px"}
+                    />
+                  </Button>
+                </>
+              :
+                <>
+                  <Button style={{marginTop:"25px"}} class="btn-def_second"
+                    onClick={handleReset}> Reset Password
+                  </Button>
+                </>
+              }
                 <Image src={VectorChangePassword} width='100%' style={{ marginTop:"40px"}}/>
           </div>
           <div className="col-md-4 col-sm-0">

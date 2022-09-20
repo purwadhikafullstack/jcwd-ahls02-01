@@ -3,7 +3,7 @@ import React from "react";
 import { API_URL } from "../../helper";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from "react-router-dom";
-import { Text, useMediaQuery, Box, Button, ButtonGroup, Flex, Divider, TableContainer, Table, TableCaption, Thead, Tbody, Tfoot,
+import { Text, useMediaQuery, Box, Button, ButtonGroup, Flex, Divider, Spinner, TableContainer, Table, TableCaption, Thead, Tbody, Tfoot,
         Tr, Th, Td, Image, Input, Menu, MenuButton, MenuList, MenuItem, Spacer, MenuDivider} from '@chakra-ui/react';
 import { useToastHook } from "../../Components/CustomToast";
 import { getSalesInvoicePaginateAction, getSearchSalesInvoicePaginateAction, getFilterSalesInvoicePaginateAction, getInvoiceTanggalASCPaginateAction,
@@ -31,6 +31,7 @@ const SalesReportByTransaction=(props)=>{
   const [searchOn, setSearchOn]=React.useState(false);
   const [filterOn, setFilterOn]=React.useState(false);
   const [loadingStat, setLoadingStat]=React.useState(false);
+  const [limit, setLimit]=React.useState(10);
   const [currentToast, newToast]=useToastHook();
 
   const { salesInvoicePaginate, salesInvoicePaginateLength, salesSearchInvoicePaginate, salesSearchInvoicePaginateLength,
@@ -56,7 +57,6 @@ const SalesReportByTransaction=(props)=>{
 })
 
   React.useEffect(()=>{
-    // getSalesByInvoice()
     getPaginatedSalesReportInvoice()
   }, [])
 
@@ -125,16 +125,6 @@ const handleSortTotalASC =async()=>{
     setSortirTotalASC(true)
     console.log("SORTIR TOTAL ASC JALANNNNNN")
     {getPaginatedInvoiceTotalASC()}
-      // let token = localStorage.getItem("tokenIdUser");
-      // let res = await Axios.get(`${API_URL}/salesReport/getSalesByInvoiceTotalASC`, {
-      //   headers: {
-      //     'Authorization': `Bearer ${token}`
-      //   }
-      // })
-      // if (res.data) {
-      //   console.log("RES DATA GET LAPORAN Invoice TotalASC", res.data)
-      //   setLaporanInvoiceTotalASC(res.data)
-      // }
     } catch (err) {
   }
 }
@@ -147,16 +137,6 @@ const handleSortTotalDSC =async()=>{
     setSortirTotalDSC(true)
     console.log("SORTIR TOTAL DSC JALANNNNNN")
     {getPaginatedInvoiceTotalDSC()}
-      // let token = localStorage.getItem("tokenIdUser");
-      // let res = await Axios.get(`${API_URL}/salesReport/getSalesByInvoiceTotalDSC`, {
-      //   headers: {
-      //     'Authorization': `Bearer ${token}`
-      //   }
-      // })
-      // if (res.data) {
-      //   console.log("RES DATA GET LAPORAN Invoice TotalDSC", res.data)
-      //   setLaporanInvoiceTotalDSC(res.data)
-      // }
     } catch (err) {
   }
 }
@@ -181,16 +161,6 @@ const handleSortTanggalDSC =async()=>{
     setSortirTanggalDSC(true)
     console.log("SORTIR TANGGAL DSC JALANNNNNN")
     {getPaginatedInvoiceTanggalDSC()}
-      // let token = localStorage.getItem("tokenIdUser");
-      // let res = await Axios.get(`${API_URL}/salesReport/getSalesByInvoiceTanggalDSC`, {
-      //   headers: {
-      //     'Authorization': `Bearer ${token}`
-      //   }
-      // })
-      // if (res.data) {
-      //   console.log("RES DATA GET LAPORAN Invoice TanggalDSC", res.data)
-      //   setLaporanInvoiceTanggalDSC(res.data)
-      // }
     } catch (err) {
   }
 }
@@ -464,13 +434,23 @@ const printBtnPagination = () => {
   const printSalesByInvoice = () => {
     if(searchOn == true){
       if (salesSearchInvoicePaginate == undefined){
-        return <div></div>
+        return <div>
+          <Text class="h5b mt-5 mb-5">Loading</Text>
+          <Spinner
+            thickness='5px'
+            speed='0.50s'
+            emptyColor='#FFFFFF'
+            color='#DE1B51'
+            size='xl'
+            marginTop={"10px"}
+          />
+        </div>
       } else {
         return salesSearchInvoicePaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.dateFE}</Td>
                 <Td>{value.invoiceNumber}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -479,7 +459,7 @@ const printBtnPagination = () => {
           } else {
             return (
               <Tr style={{backgroundColor:"#ebeef3"}}>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.dateFE}</Td>
                 <Td>{value.invoiceNumber}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -490,13 +470,23 @@ const printBtnPagination = () => {
       }
     } else if (filterOn == true){
       if (salesFilterInvoicePaginate == undefined){
-        return <div></div>
+        return <div>
+          <Text class="h5b mt-5 mb-5">Loading</Text>
+          <Spinner
+            thickness='5px'
+            speed='0.50s'
+            emptyColor='#FFFFFF'
+            color='#DE1B51'
+            size='xl'
+            marginTop={"10px"}
+          />
+        </div>
       } else {
         return salesFilterInvoicePaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.dateFE}</Td>
                 <Td>{value.invoiceNumber}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -505,7 +495,7 @@ const printBtnPagination = () => {
           } else {
             return (
               <Tr style={{backgroundColor:"#ebeef3"}}>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.dateFE}</Td>
                 <Td>{value.invoiceNumber}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -517,19 +507,24 @@ const printBtnPagination = () => {
     } else if (sortirTotalASC == true){
       if(salesInvoiceTotalASCPaginate == undefined){
         return (
-          <Tr>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-          </Tr>
+          <div>
+            <Text class="h5b mt-5 mb-5">Loading</Text>
+            <Spinner
+              thickness='5px'
+              speed='0.50s'
+              emptyColor='#FFFFFF'
+              color='#DE1B51'
+              size='xl'
+              marginTop={"10px"}
+            />
+          </div>
         )
       } else {
         return salesInvoiceTotalASCPaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.dateFE}</Td>
                 <Td>{value.invoiceNumber}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -538,7 +533,7 @@ const printBtnPagination = () => {
           } else {
             return (
               <Tr style={{backgroundColor:"#ebeef3"}}>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.dateFE}</Td>
                 <Td>{value.invoiceNumber}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -550,19 +545,24 @@ const printBtnPagination = () => {
     } else if (sortirTotalDSC == true){
       if(salesInvoiceTotalDSCPaginate == undefined){
         return (
-          <Tr>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-          </Tr>
+          <div>
+            <Text class="h5b mt-5 mb-5">Loading</Text>
+            <Spinner
+              thickness='5px'
+              speed='0.50s'
+              emptyColor='#FFFFFF'
+              color='#DE1B51'
+              size='xl'
+              marginTop={"10px"}
+            />
+          </div>
         )
       } else{
         return salesInvoiceTotalDSCPaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.dateFE}</Td>
                 <Td>{value.invoiceNumber}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -571,7 +571,7 @@ const printBtnPagination = () => {
           } else {
             return (
               <Tr style={{backgroundColor:"#ebeef3"}}>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.dateFE}</Td>
                 <Td>{value.invoiceNumber}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -583,19 +583,24 @@ const printBtnPagination = () => {
     } else if (sortirTanggalASC == true){
       if(salesInvoiceTanggalASCPaginate == undefined){
         return (
-          <Tr>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-          </Tr>
+          <div>
+            <Text class="h5b mt-5 mb-5">Loading</Text>
+            <Spinner
+              thickness='5px'
+              speed='0.50s'
+              emptyColor='#FFFFFF'
+              color='#DE1B51'
+              size='xl'
+              marginTop={"10px"}
+            />
+          </div>
         )
       } else {
         return salesInvoiceTanggalASCPaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.dateFE}</Td>
                 <Td>{value.invoiceNumber}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -604,7 +609,7 @@ const printBtnPagination = () => {
           } else {
             return (
               <Tr style={{backgroundColor:"#ebeef3"}}>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.dateFE}</Td>
                 <Td>{value.invoiceNumber}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -616,19 +621,24 @@ const printBtnPagination = () => {
     } else if (sortirTanggalDSC == true){
       if(salesInvoiceTanggalDSCPaginate == undefined){
         return (
-          <Tr>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-          </Tr>
+          <div>
+            <Text class="h5b mt-5 mb-5">Loading</Text>
+            <Spinner
+              thickness='5px'
+              speed='0.50s'
+              emptyColor='#FFFFFF'
+              color='#DE1B51'
+              size='xl'
+              marginTop={"10px"}
+            />
+          </div>
         )
       } else{
         return salesInvoiceTanggalDSCPaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.dateFE}</Td>
                 <Td>{value.invoiceNumber}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -637,7 +647,7 @@ const printBtnPagination = () => {
           } else {
             return (
               <Tr style={{backgroundColor:"#ebeef3"}}>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.dateFE}</Td>
                 <Td>{value.invoiceNumber}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -651,7 +661,7 @@ const printBtnPagination = () => {
         if (index % 2 == 0){
           return (
             <Tr>
-              <Td>{index+1}</Td>
+              <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
               <Td>{value.dateFE}</Td>
               <Td>{value.invoiceNumber}</Td>
               <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -660,7 +670,7 @@ const printBtnPagination = () => {
         } else {
           return (
             <Tr style={{backgroundColor:"#ebeef3"}}>
-              <Td>{index+1}</Td>
+              <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
               <Td>{value.dateFE}</Td>
               <Td>{value.invoiceNumber}</Td>
               <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -677,20 +687,6 @@ const printBtnPagination = () => {
         setSearchOn(true)
         console.log("searchOn JALANNNNNN")
         getPaginatedSearchInvoice()
-        // let token = localStorage.getItem("tokenIdUser");
-        // let res = await Axios.post(`${API_URL}/salesReport/getSearchInvoice`, {
-        //   inputInvoice: searchInvoice
-        // }, {
-        //   headers: {
-        //     'Authorization': `Bearer ${token}`
-        //   }
-        // })
-        // if (res.data) {
-        //   console.log("res.data SEARCH INVOICE", res.data)
-        //   setSearchByInvoice(res.data)
-        //   }
-        // } else {
-
         }
       } catch (err) {
     }
@@ -702,21 +698,6 @@ const printBtnPagination = () => {
         setFilterOn(true)
         console.log("filterOn JALANNNNNN")
         getPaginatedFilterInvoice()
-        // let token = localStorage.getItem("tokenIdUser");
-        // let res = await Axios.post(`${API_URL}/salesReport/getFilterInvoice`, {
-        //   tanggalAwal: filterTanggalAwal,
-        //   tanggalAkhir: filterTanggalAkhir
-        // }, {
-        //   headers: {
-        //     'Authorization': `Bearer ${token}`
-        //   }
-        // })
-        // if (res.data) {
-        //   console.log("res.data FILTER INVOICE", res.data)
-        //   setFilterByInvoice(res.data)
-        //   }
-        // } else {
-
         }
       } catch (err) {
     }
@@ -729,7 +710,7 @@ const printBtnPagination = () => {
     setSortirTanggalDSC(false)
   };
 
-  console.log("Tanggal Awal", filterTanggalAwal, "Akhir", filterTanggalAkhir)
+  // console.log("Tanggal Awal", filterTanggalAwal, "Akhir", filterTanggalAkhir)
   return( <>
     <div class="row mb-4" style={{marginLeft:"10px", marginRight:"10px"}}>
       <Text class="h6">Filter Tanggal</Text>
@@ -743,7 +724,24 @@ const printBtnPagination = () => {
       </div>
       <div class="col-md-6">
         <Flex>
+        {
+          loadingStat == true ?
+            <>
+              <Button class="btn-def_second2">
+              <Spinner
+                thickness='2px'
+                speed='0.50s'
+                emptyColor='#DE1B51'
+                color='#FFFFFF'
+                size='md'
+                marginTop={"5px"}
+              />
+              </Button>
+            </>
+        :
           <Button class="btn-def_second2" onClick={handleFilter}>Filter</Button>
+        }
+          
             {
               filterOn == true &&
               <Box mt={"3px"} ms={"10px"}>
@@ -759,11 +757,28 @@ const printBtnPagination = () => {
       <div class="col-md-8 mt-4">
       <Flex>
             <Box mt={"3px"}>
-                <Button class="btn-def_second2" onClick={handleSearch}>Cari</Button>
+              {
+                loadingStat == true ?
+                  <>
+                    <Button class="btn-def_second2">
+                    <Spinner
+                      thickness='2px'
+                      speed='0.50s'
+                      emptyColor='#DE1B51'
+                      color='#FFFFFF'
+                      size='md'
+                      marginTop={"5px"}
+                    />
+                    </Button>
+                  </>
+            :
+              <Button class="btn-def_second2" onClick={handleSearch}>Cari</Button>
+            }
             </Box>
             {
               searchOn == true &&
             <Box mt={"3px"} ms={"10px"}>
+              
               <Button class="btn-def" onClick={()=> setSearchOn(false)}>Batal Cari</Button>
             </Box>
             }

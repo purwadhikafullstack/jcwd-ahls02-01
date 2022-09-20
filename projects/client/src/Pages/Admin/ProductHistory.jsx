@@ -24,6 +24,7 @@ const ProductHistory=(props)=>{
   const [filterTanggalAkhir, setFilterTanggalAkhir] = React.useState("");
   const [searchOn, setSearchOn]=React.useState(false);
   const [filterOn, setFilterOn]=React.useState(false);
+  const [loadingStat, setLoadingStat]=React.useState(false);
 
   const { produkHistoryPaginate, produkHistoryPaginateLength, produkSearchPaginate, produkSearchPaginateLength,
     produkTanggalASCPaginate, produkTanggalASCPaginateLength, produkTanggalDSCPaginate, produkTanggalDSCPaginateLength,
@@ -45,11 +46,6 @@ const ProductHistory=(props)=>{
   React.useEffect(()=>{
     getPaginatedProdukHistory()
   }, [])
-  
-  console.log("Sort Tanggal ASC Check", sortirTanggalASC)
-  console.log("Sort Tanggal DSC Check", sortirTanggalDSC)
-  console.log("SearchOn Check", searchOn)
-  console.log("FilterOn Check", filterOn)
   
   const getPaginatedProdukHistory = (page = 0) => {
     console.log("getProduct else jalannn")
@@ -309,11 +305,12 @@ const printProdukHistory = () => {
       return <div>
         <Text class="h5b mt-5 mb-5">Loading</Text>
         <Spinner
-          thickness='6px'
-          speed='0.65s'
-          emptyColor='gray.200'
+          thickness='5px'
+          speed='0.50s'
+          emptyColor='#FFFFFF'
           color='#DE1B51'
           size='xl'
+          marginTop={"10px"}
         />
       </div>
     } else {
@@ -348,11 +345,12 @@ const printProdukHistory = () => {
       return <div>
         <Text class="h5b mt-5 mb-5">Loading</Text>
         <Spinner
-          thickness='6px'
-          speed='0.65s'
-          emptyColor='gray.200'
+          thickness='5px'
+          speed='0.50s'
+          emptyColor='#FFFFFF'
           color='#DE1B51'
           size='xl'
+          marginTop={"10px"}
         />
       </div>
     } else {
@@ -387,11 +385,12 @@ const printProdukHistory = () => {
       return <div>
         <Text class="h5b mt-5 mb-5">Loading</Text>
         <Spinner
-          thickness='6px'
-          speed='0.65s'
-          emptyColor='gray.200'
+          thickness='5px'
+          speed='0.50s'
+          emptyColor='#FFFFFF'
           color='#DE1B51'
           size='xl'
+          marginTop={"10px"}
         />
       </div>
     } else {
@@ -426,11 +425,12 @@ const printProdukHistory = () => {
       return <div>
         <Text class="h5b mt-5 mb-5">Loading</Text>
         <Spinner
-          thickness='6px'
-          speed='0.65s'
-          emptyColor='gray.200'
+          thickness='5px'
+          speed='0.50s'
+          emptyColor='#FFFFFF'
           color='#DE1B51'
           size='xl'
+          marginTop={"10px"}
         />
       </div>
     } else {
@@ -549,7 +549,23 @@ const handleCancel = () => {
                       </div>
                       <div class="col-md-6">
                         <Flex>
-                          <Button class="btn-def_second2" onClick={handleFilter}>Filter</Button>
+                          {
+                            loadingStat == true ?
+                            <>
+                              <Button class="btn-def_second2">
+                                <Spinner
+                                  thickness='2px'
+                                  speed='0.50s'
+                                  emptyColor='#DE1B51'
+                                  color='#FFFFFF'
+                                  size='md'
+                                  marginTop={"5px"}
+                                />
+                              </Button>
+                            </>
+                          :
+                            <Button class="btn-def_second2" onClick={handleFilter}>Filter</Button>
+                          }
                             {
                               filterOn == true &&
                               <Box mt={"3px"} ms={"10px"}>
@@ -565,7 +581,23 @@ const handleCancel = () => {
                       <div class="col-md-8 mt-4">
                       <Flex>
                             <Box mt={"3px"}>
+                              {
+                                loadingStat == true ?
+                                <>
+                                  <Button class="btn-def_second2">
+                                    <Spinner
+                                      thickness='2px'
+                                      speed='0.50s'
+                                      emptyColor='#DE1B51'
+                                      color='#FFFFFF'
+                                      size='md'
+                                      marginTop={"5px"}
+                                    />
+                                  </Button>
+                                </>
+                              :
                                 <Button class="btn-def_second2" onClick={handleSearch}>Cari</Button>
+                              }
                             </Box>
                             {
                               searchOn == true &&
@@ -609,6 +641,15 @@ const handleCancel = () => {
                               produkHistoryPaginate == undefined ?
                               <Tbody>
                                 <div>
+                                  <Text class="h5b mt-5 mb-5">Loading</Text>
+                                  <Spinner
+                                    thickness='5px'
+                                    speed='0.50s'
+                                    emptyColor='#FFFFFF'
+                                    color='#DE1B51'
+                                    size='xl'
+                                    marginTop={"10px"}
+                                  />
                                 </div>
                               </Tbody>
                             :
