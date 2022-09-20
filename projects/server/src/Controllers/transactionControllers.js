@@ -1,6 +1,7 @@
 const { dbConf, dbQuery } = require("../Config/database");
 const { uploader } = require("../Config/uploader");
 const fs = require("fs");
+const { join } = require("path")
 
 module.exports = {
     userGetAllTransaction: async (req, res, next) => { //* USER GET ALL TRANSACTION
@@ -983,7 +984,7 @@ module.exports = {
                         return res.status(200).send({ success: true, message: 'Resep berhasil diunggah' });
 
                     } catch (error) {
-                        req.files.forEach(val => fs.unlinkSync(`./Public/Resep/${val.filename}`));
+                        req.files.forEach(val => fs.unlinkSync(join(__dirname, `../Public/Resep/${val.filename}`)));
                         return next(error);
                     }
 
@@ -1014,7 +1015,7 @@ module.exports = {
                         return res.status(200).send({ success: true, message: 'Bukti bayar berhasil diunggah' });
 
                     } catch (error) {
-                        req.files.forEach(val => fs.unlinkSync(`./Public/BuktiBayar/${val.filename}`));
+                        req.files.forEach(val => fs.unlinkSync(join(__dirname, `../Public/BuktiBayar/${val.filename}`)));
                         return next(error);
                     }
                 })

@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useDisclosure, useToast } from '@chakra-ui/react';
 import { logoutAction } from "../../Redux/Actions/userActions";
 import Modal from "../../Components/Users/ModalLogin";
-import { API_URL } from "../../helper";
+import { API_URL, BE_URL } from "../../helper";
 import { IoCart, IoCloseCircle, IoMenuOutline } from 'react-icons/io5';
 import { FaUser, FaUserSlash, FaUserCircle } from 'react-icons/fa';
 import { loginAction } from "../../Redux/Actions/userActions";
@@ -130,14 +130,14 @@ const NavbarComponent = (props) => {
                             <Image
                               borderRadius='full'
                               boxSize='35px'
-                              src={profilePicture}
+                              src={BE_URL+profilePicture}
                               alt='Foto Profile'
                             />
                           :
                           <Image
                             borderRadius='full'
                             boxSize='25px'
-                            src={profilePicture}
+                            src={BE_URL+profilePicture}
                             alt='Foto Profile'
                           />
                           }
@@ -165,7 +165,7 @@ const NavbarComponent = (props) => {
                           <Image
                             borderRadius='full'
                             boxSize='35px'
-                            src={profilePicture}
+                            src={BE_URL+profilePicture}
                             alt='Foto Profile'
                           />
                         </MenuButton>
@@ -200,7 +200,7 @@ const NavbarComponent = (props) => {
                     <Image
                       borderRadius='full'
                       boxSize='35px'
-                      src={profilePicture}
+                      src={BE_URL+profilePicture}
                       alt='Foto Profile'
                     />
                     </MenuButton>
