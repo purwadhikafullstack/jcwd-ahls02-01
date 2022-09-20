@@ -73,7 +73,7 @@ const SalesReport=(props)=>{
   return( <>
     <Box
         w='100%'
-        h='100%'
+        h='100vh'
         bgGradient='linear(to-br, #dadeec,  #FFFFFF)'
       >
       <div class="container-fluid" >
@@ -109,7 +109,7 @@ const SalesReport=(props)=>{
                                 bg: 'var(--colorSix)',
                                 }}
                               >
-                              Laporan Transaksi
+                              Laporan Transaksi Penjualan
                               </Tab>
                               <Tab
                                 _selected={{
@@ -117,7 +117,7 @@ const SalesReport=(props)=>{
                                 bg: 'var(--colorSix)',
                                 }}
                               >
-                                Laporan Produk
+                                Laporan Penjualan Produk
                               </Tab>
                               <Tab
                                 _selected={{
@@ -125,7 +125,7 @@ const SalesReport=(props)=>{
                                 bg: 'var(--colorSix)',
                                 }}
                               >
-                                Laporan User
+                                Laporan Total Transaksi User
                               </Tab>
                             </TabList>
                             <TabPanels>

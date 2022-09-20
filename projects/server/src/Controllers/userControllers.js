@@ -210,31 +210,20 @@ module.exports = {
           `Select idUser, name, email, role, phone, gender, birthDate, profilePicture, isVerified FROM users where idUser=${req.dataUser.idUser};`
         );
         console.log("resultsLogin keep =>", resultsLogin[0]);
-        console.log("resultsLogin keep length =>", resultsLogin.length);
-        if (resultsLogin.length == "1") {
-          console.log("resultsLogin.length == 1")
-          if (resultsLogin[0].birthDate == null) {
-            console.log("resultsLogin[0].birthDate == kosong ")
+        if (resultsLogin[0].birthDate == null) {
+          console.log("resultsLogin[0].birthDate == kosong ")
 
-            let { idUser, name, email, role, phone, gender, birthDate, profilePicture, isVerified } = resultsLogin[0]
-            let token = createToken({ idUser, email, role, isVerified })
-            return res.status(200).send({ ...resultsLogin[0], token });
-          } else {
-            console.log("resultsLogin[0].birthDate == ada ")
+          let { idUser, name, email, role, phone, gender, birthDate, profilePicture, isVerified } = resultsLogin[0]
+          let token = createToken({ idUser, email, role, isVerified })
+          return res.status(200).send({ ...resultsLogin[0], token });
+        } else {
+          console.log("resultsLogin[0].birthDate == ada ")
 
-            // let checkToken = await dbQuery(`SELECT token FROM tokenlist where idUser=${resultsLogin[0].idUser};`)
-            let birthDateFE = resultsLogin[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
-            let { idUser, name, email, role, phone, gender, birthDate, profilePicture, isVerified } = resultsLogin[0]
-            let token = createToken({ idUser, email, role, isVerified })
-            return res.status(200).send({ ...resultsLogin[0], birthDateFE, token });
-          }
-
-        }
-        else {
-          return res.status(404).send({
-            success: false,
-            message: "User not Found",
-          });
+          // let checkToken = await dbQuery(`SELECT token FROM tokenlist where idUser=${resultsLogin[0].idUser};`)
+          let birthDateFE = resultsLogin[0].birthDate.toISOString().slice(0, 10).replace('T', ' ')
+          let { idUser, name, email, role, phone, gender, birthDate, profilePicture, isVerified } = resultsLogin[0]
+          let token = createToken({ idUser, email, role, isVerified })
+          return res.status(200).send({ ...resultsLogin[0], birthDateFE, token });
         }
       } else {
         return res.status(401).send({
@@ -454,7 +443,6 @@ module.exports = {
           success: false,
           message: "invalid token"
         });
-
       }
     } catch (error) {
       return next(error)

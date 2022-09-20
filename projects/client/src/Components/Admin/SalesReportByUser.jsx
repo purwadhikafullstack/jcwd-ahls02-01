@@ -1,11 +1,11 @@
 import Axios from "axios";
 import React from "react";
 import { API_URL } from "../../helper";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from "react-router-dom";
-import { Text, useMediaQuery, Box, Button, Flex, Divider, TableContainer, Table, TableCaption, Thead, Tbody, Tfoot,
+import { Text, useMediaQuery, Box, Button, ButtonGroup, Flex, Divider, TableContainer, Table, TableCaption, Thead, Tbody, Tfoot,
         Tr, Th, Td, Input, Menu, MenuButton, MenuList, MenuItem, Spacer, MenuDivider} from '@chakra-ui/react';
-
+import { getUserSalesReportPaginateAction, getSearchUserPaginateAction, getUserTotalASCPaginateAction, getUserTotalDSCPaginateAction } from '../../Redux/Actions/salesReportUserActions'
 
 
 
@@ -13,86 +13,393 @@ const SalesReportByUser=(props)=>{
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [laporanUser, setLaporanUser] = React.useState();
-  const [sortirTotalPembeli, setSortirTotalPembeli] = React.useState(false);
-  const [sortirTanggalPembeli, setSortirTanggalPembeli] = React.useState(false);
+  const [laporanUserTotalASC, setLaporanUserTotalASC] = React.useState();
+  const [laporanUserTotalDSC, setLaporanUserTotalDSC] = React.useState();
+  const [sortirTotalASC, setSortirTotalASC] = React.useState(false);
+  const [sortirTotalDSC, setSortirTotalDSC] = React.useState(false);
   const [searchUser, setSearchUser] = React.useState("");
   const [searchByUser, setSearchByUser] = React.useState();
   const [searchOn, setSearchOn]=React.useState(false);
 
+  const { userSalesReportPaginate, userSalesReportPaginateLength, userSalesSearchPaginate, userSalesSearchPaginateLength,
+    userSalesTotalASCPaginate, userSalesTotalASCPaginateLength, userSalesTotalDSCPaginate, userSalesTotalDSCPaginateLength } = useSelector((state) => {
+    return {
+        userSalesReportPaginate: state.userSalesReportReducers.userSalesReportPaginate,
+        userSalesReportPaginateLength: state.userSalesReportReducers.userSalesReportPaginateLength,
+        userSalesSearchPaginate: state.userSalesReportReducers.userSalesSearchPaginate,
+        userSalesSearchPaginateLength: state.userSalesReportReducers.userSalesSearchPaginateLength,
+        userSalesTotalASCPaginate: state.userSalesReportReducers.userSalesTotalASCPaginate,
+        userSalesTotalASCPaginateLength: state.userSalesReportReducers.userSalesTotalASCPaginateLength,
+        userSalesTotalDSCPaginate: state.userSalesReportReducers.userSalesTotalDSCPaginate,
+        userSalesTotalDSCPaginateLength: state.userSalesReportReducers.userSalesTotalDSCPaginateLength,
+    }
+})
 
   React.useEffect(()=>{
-    getLaporanUser()
+    // getLaporanUser()
+    getPaginatedUserSalesReport()
   }, [])
 
-  console.log("LAPORAN USER", laporanUser)
+  const getPaginatedUserSalesReport = (page = 0) => {
+    console.log("getUserss else jalannnnnnn")
+        dispatch(getUserSalesReportPaginateAction(page + 1))
+  }
 
-  const getLaporanUser = async() => {
-    try {
-      let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.get(`${API_URL}/salesReport/getLaporanUser`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (res.data) {
-        console.log("RES DATA GET LAPORAN USER", res.data)
-        setLaporanUser(res.data)
-      }
-    } catch (error) {
-      console.log(error)
-    }
+  const getPaginatedSearchUser = (page = 0) => {
+    dispatch(getSearchUserPaginateAction(page + 1, searchUser))
 }
+
+  const getPaginatedUserTotalASC = (page = 0) => {
+    dispatch(getUserTotalASCPaginateAction(page + 1))
+}
+
+  const getPaginatedUserTotalDSC = (page = 0) => {
+    dispatch(getUserTotalDSCPaginateAction(page + 1))
+}
+
+  const handlePaginate = (paginate) => {
+    getPaginatedUserSalesReport(paginate);
+  }
+
+  const handlePaginateSearchUser = (paginate) => {
+    getPaginatedUserSalesReport(paginate);
+  }
+
+  const handlePaginateUserTotalASC = (paginate) => {
+    getPaginatedUserTotalASC(paginate);
+  }
+
+  const handlePaginateUserTotalDSC = (paginate) => {
+    getPaginatedUserTotalDSC(paginate);
+  }
+
+  console.log("check user reducers pagenate====", userSalesTotalDSCPaginate, "&", userSalesTotalDSCPaginateLength)
+  // const getLaporanUser = async() => {
+  //   try {
+  //     let token = localStorage.getItem("tokenIdUser");
+  //     let res = await Axios.get(`${API_URL}/salesReport/getLaporanUser`, {
+  //       headers: {
+  //         'Authorization': `Bearer ${token}`
+  //       }
+  //     })
+  //     if (res.data) {
+  //       console.log("RES DATA GET LAPORAN USER", res.data)
+  //       setLaporanUser(res.data)
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+
+  const handleSortTotalASC =async()=>{
+    try {
+      setSortirTotalDSC(false)
+      setSortirTotalASC(true)
+      console.log("SORTIR TOTAL ASC JALANNNNNN")
+      {getPaginatedUserTotalASC()}
+        // let token = localStorage.getItem("tokenIdUser");
+        // let res = await Axios.get(`${API_URL}/salesReport/getLaporanUserTotalASC`, {
+        //   headers: {
+        //     'Authorization': `Bearer ${token}`
+        //   }
+        // })
+        // if (res.data) {
+        //   console.log("RES DATA GET LAPORAN USER TotalASC", res.data)
+        //   setLaporanUserTotalASC(res.data)
+        // }
+      } catch (err) {
+    }
+  }
+  
+  const handleSortTotalDSC =async()=>{
+    try {
+      setSortirTotalASC(false)
+      setSortirTotalDSC(true)
+      console.log("SORTIR TOTAL DSC JALANNNNNN")
+      {getPaginatedUserTotalDSC()}
+        // let token = localStorage.getItem("tokenIdUser");
+        // let res = await Axios.get(`${API_URL}/salesReport/getLaporanUserTotalDSC`, {
+        //   headers: {
+        //     'Authorization': `Bearer ${token}`
+        //   }
+        // })
+        // if (res.data) {
+        //   console.log("RES DATA GET LAPORAN User TotalDSC", res.data)
+        //   setLaporanUserTotalDSC(res.data)
+        // }
+      } catch (err) {
+    }
+  }
 
 const handleSearch =async()=>{
   try {
     if(searchUser){
-      let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.post(`${API_URL}/salesReport/getSearchUser`, {
-        inputUser: searchUser
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (res.data) {
-        console.log("res.data SEARCH PRODUCT", res.data)
-        setSearchByUser(res.data)
         setSearchOn(true)
-        }
-      } else {
-
+        console.log("searchOn JALANNNNNN")
+        getPaginatedSearchUser()
       }
     } catch (err) {
   }
 }
 
+const printBtnPagination = () => {
+  let btn = []
+  if (searchOn == true){
+    for (let i = 0; i < Math.ceil(userSalesSearchPaginateLength / 10); i++) {
+      btn.push(
+          <Box
+              as='button'
+              height='30px'
+              lineHeight='1.5'
+              transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+              border='1px'
+              px='8px'
+              borderRadius='4px'
+              className="font-brand"
+              fontSize='14px'
+              fontWeight='bold'
+              bg='var(--colorTwo)'
+              borderColor='var(--colorSix)'
+              color='var(--colorSix)'
+              _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+              _active={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)'
+              }}
+              _focus={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)',
+                  boxShadow:
+                      '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+              }}
+              onClick={() => handlePaginateSearchUser(i)}
+          >
+              {i + 1}
+          </Box>
+      )
+  }
+  return btn;
+  } else if(sortirTotalASC == true){
+    for (let i = 0; i < Math.ceil(userSalesTotalASCPaginateLength / 10); i++) {
+      btn.push(
+          <Box
+              as='button'
+              height='30px'
+              lineHeight='1.5'
+              transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+              border='1px'
+              px='8px'
+              borderRadius='4px'
+              className="font-brand"
+              fontSize='14px'
+              fontWeight='bold'
+              bg='var(--colorTwo)'
+              borderColor='var(--colorSix)'
+              color='var(--colorSix)'
+              _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+              _active={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)'
+              }}
+              _focus={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)',
+                  boxShadow:
+                      '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+              }}
+              onClick={() => handlePaginateUserTotalASC(i)}
+          >
+              {i + 1}
+          </Box>
+      )
+  }
+  return btn;
+  } else if(sortirTotalDSC == true){
+    for (let i = 0; i < Math.ceil(userSalesTotalDSCPaginateLength / 10); i++) {
+      btn.push(
+          <Box
+              as='button'
+              height='30px'
+              lineHeight='1.5'
+              transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+              border='1px'
+              px='8px'
+              borderRadius='4px'
+              className="font-brand"
+              fontSize='14px'
+              fontWeight='bold'
+              bg='var(--colorTwo)'
+              borderColor='var(--colorSix)'
+              color='var(--colorSix)'
+              _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+              _active={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)'
+              }}
+              _focus={{
+                  bg: 'var(--colorSix)',
+                  color: 'var(--colorOne)',
+                  borderColor: 'var(--colorOne)',
+                  boxShadow:
+                      '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+              }}
+              onClick={() => handlePaginateUserTotalDSC(i)}
+          >
+              {i + 1}
+          </Box>
+      )
+  }
+  return btn;
+  } else {
+    // console.log(`Math.ceil(transactionLength)/3 di printBtnPagination`, Math.ceil(userSalesReportPaginateLength) / 10);
+    for (let i = 0; i < Math.ceil(userSalesReportPaginateLength / 10); i++) {
+        btn.push(
+            <Box
+                as='button'
+                height='30px'
+                lineHeight='1.5'
+                transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                border='1px'
+                px='8px'
+                borderRadius='4px'
+                className="font-brand"
+                fontSize='14px'
+                fontWeight='bold'
+                bg='var(--colorTwo)'
+                borderColor='var(--colorSix)'
+                color='var(--colorSix)'
+                _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                _active={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)'
+                }}
+                _focus={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)',
+                    boxShadow:
+                        '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                }}
+                onClick={() => handlePaginate(i)}
+            >
+                {i + 1}
+            </Box>
+        )
+    }
+    return btn;
+  }
+}
+
   const printLaporanUser = () => {
-    if(searchOn == false){
-      return laporanUser.map((value, index)=>{
-        if (index % 2 == 0){
-          return (
-            <Tr>
-              <Td>{index+1}</Td>
-              <Td>{value.name}</Td>
-              <Td>{value.email}</Td>
-              <Td>{value.phone}</Td>
-              <Td isNumeric>{value.totalTransaksiUser.toLocaleString()}</Td>
+    if(searchOn == true){
+      if(userSalesSearchPaginate == undefined){
+        return <div></div>
+      } else {
+        return userSalesSearchPaginate.map((value, index)=>{
+          if (index % 2 == 0){
+            return (
+              <Tr>
+                <Td>{index+1}</Td>
+                <Td>{value.name}</Td>
+                <Td>{value.email}</Td>
+                <Td>{value.phone}</Td>
+                <Td isNumeric>{value.totalTransaksiUser.toLocaleString()}</Td>
+              </Tr>
+            )
+          } else {
+            return (
+              <Tr style={{backgroundColor:"#ebeef3"}}>
+                <Td>{index+1}</Td>
+                <Td>{value.name}</Td>
+                <Td>{value.email}</Td>
+                <Td>{value.phone}</Td>
+                <Td isNumeric>{value.totalTransaksiUser.toLocaleString()}</Td>
+              </Tr>
+            )
+          }
+        })
+      }
+    } else if (sortirTotalASC == true){
+      if(userSalesTotalASCPaginate == undefined){
+        return (
+          <Tr>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
           </Tr>
-          )
-        } else {
-          return (
-            <Tr style={{backgroundColor:"#ebeef3"}}>
-              <Td>{index+1}</Td>
-              <Td>{value.name}</Td>
-              <Td>{value.email}</Td>
-              <Td>{value.phone}</Td>
-              <Td isNumeric>{value.totalTransaksiUser.toLocaleString()}</Td>
-            </Tr>
-          )
-        }
-      })
+        )
+      } else {
+        return userSalesTotalASCPaginate.map((value, index)=>{
+          console.log("VALUEEEE", value)
+          if (index % 2 == 0){
+            return (
+              <Tr>
+                <Td>{index+1}</Td>
+                <Td>{value.name}</Td>
+                <Td>{value.email}</Td>
+                <Td>{value.phone}</Td>
+                <Td isNumeric>{value.totalTransaksiUser.toLocaleString()}</Td>
+              </Tr>
+            )
+          } else {
+            return (
+              <Tr style={{backgroundColor:"#ebeef3"}}>
+                <Td>{index+1}</Td>
+                <Td>{value.name}</Td>
+                <Td>{value.email}</Td>
+                <Td>{value.phone}</Td>
+                <Td isNumeric>{value.totalTransaksiUser.toLocaleString()}</Td>
+              </Tr>
+            )
+          }
+        })
+      }
+    } else if (sortirTotalDSC == true){
+      if(userSalesTotalDSCPaginate == undefined){
+        return (
+          <Tr>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+          </Tr>
+        )
+      } else{
+        return userSalesTotalDSCPaginate.map((value, index)=>{
+          if (index % 2 == 0){
+            return (
+              <Tr>
+                <Td>{index+1}</Td>
+                <Td>{value.name}</Td>
+                <Td>{value.email}</Td>
+                <Td>{value.phone}</Td>
+                <Td isNumeric>{value.totalTransaksiUser.toLocaleString()}</Td>
+              </Tr>
+            )
+          } else {
+            return (
+              <Tr style={{backgroundColor:"#ebeef3"}}>
+                <Td>{index+1}</Td>
+                <Td>{value.name}</Td>
+                <Td>{value.email}</Td>
+                <Td>{value.phone}</Td>
+                <Td isNumeric>{value.totalTransaksiUser.toLocaleString()}</Td>
+              </Tr>
+            )
+          }
+        })
+      }
     } else {
-      return searchByUser.map((value, index)=>{
+      return userSalesReportPaginate.map((value, index)=>{
         if (index % 2 == 0){
           return (
             <Tr>
@@ -117,12 +424,16 @@ const handleSearch =async()=>{
       })
     }
   }
-  console.log("search PRODUKKKK", searchUser)
+  
+  const handleCancel = () => {
+    setSortirTotalASC(false)
+    setSortirTotalDSC(false)
+  };
 
   return( <>
     <div class="row mb-4 mt-4" style={{marginLeft:"10px", marginRight:"10px"}}>
       <div class="col-md-4">
-        <Input bgColor={"#FFFFFF"} boxShadow='md' fontSize={"l"} placeholder="Cari Nama Pembeli"
+        <Input bgColor={"#FFFFFF"} boxShadow='md' fontSize={"l"} placeholder="Cari Email Pembeli"
           onChange={(e)=>setSearchUser(e.target.value)}/>
       </div>
       <div class="col-md-8">
@@ -144,13 +455,10 @@ const handleSearch =async()=>{
                     {isOpen ? 'Close' : 'Sortir'}
                 </MenuButton>
                 <MenuList>
-                    <MenuItem onClick={() => setSortirTotalPembeli(false)}>Total Terkecil</MenuItem>
-                    <MenuItem onClick={() => setSortirTotalPembeli(true)}>Total Terbesar</MenuItem>
+                    <MenuItem onClick={handleSortTotalASC}>Total Terkecil</MenuItem>
+                    <MenuItem onClick={handleSortTotalDSC}>Total Terbesar</MenuItem>
                     <MenuDivider />
-                    <MenuItem onClick={() => setSortirTanggalPembeli(false)}>Tanggal Terdekat</MenuItem>
-                    <MenuItem onClick={() => setSortirTanggalPembeli(true)}>Tanggal Terjauh</MenuItem>
-                    <MenuDivider />
-                    <MenuItem >Batalkan Sortir</MenuItem>
+                    <MenuItem onClick={handleCancel}>Batalkan Sortir</MenuItem>
                 </MenuList>
             </>
                 )}
@@ -170,15 +478,22 @@ const handleSearch =async()=>{
               <Th isNumeric style={{color:"#FFFFFF"}}>Total</Th>
             </Tr>
           </Thead>
-          <Tbody>
-            {
-              laporanUser == undefined ?
-              <div>
-              </div>
+          {
+              userSalesReportPaginate == undefined ?
+              <Tbody>
+                <div>
+                </div>
+              </Tbody>
             :
-              printLaporanUser()
+            <>
+              <Tbody>
+                {printLaporanUser()}
+              </Tbody>
+              <ButtonGroup ms={"20px"} mt={"20px"} mb={"20px"}>
+                  {printBtnPagination()}
+              </ButtonGroup>
+            </>
             }
-          </Tbody>
         </Table>
       </TableContainer>
     </Box>

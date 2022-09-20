@@ -6,6 +6,7 @@ const fs = require("fs");
 module.exports = {
   uploader: (directory, fileNamePrefix) => {
     // mendefine lokasi penyimpanan utama
+
     let defaultDir = join(__dirname, "../Public");
 
     // konfigurasi multer
