@@ -12,6 +12,12 @@ import {
     Text,
     Button,
     ButtonGroup,
+    Modal,
+    ModalHeader,
+    ModalContent,
+    ModalBody,
+    ModalCloseButton,
+    ModalOverlay
 } from "@chakra-ui/react";
 
 const TransCardMenungguKonfirmasiComponent = (props) => {
@@ -26,7 +32,10 @@ const TransCardMenungguKonfirmasiComponent = (props) => {
             transactionLength: state.transactionReducers.transaction.filter(val => val.transactionStatus == "Menunggu Konfirmasi").length
         }
     })
-    const [batalkanPesanan, setBatalkanPesanan] = useState(0)
+    const [batalkanPesanan, setBatalkanPesanan] = useState(0);
+    const [openModalPembatalan, setOpenModalPembatalan] = useState(false);
+    const [idSoonBatal, setIdSoonBatal] = useState(null);
+    const [statusBaru, setStatusBaru] = useState(``);
 
     //& component did mount
     useEffect(() => {
@@ -245,13 +254,66 @@ const TransCardMenungguKonfirmasiComponent = (props) => {
     }
 
     const btnBatalkanPesanan = (idTransaction, status) => {
-        dispatch(cancellingOrderAction(idTransaction, status))
+        setOpenModalPembatalan(!openModalPembatalan)
+        setIdSoonBatal(idTransaction);
+        setStatusBaru(status);
+    }
+
+    const btnYaBatal = () => {
+        dispatch(cancellingOrderAction(idSoonBatal, statusBaru))
         getPaginatedTransaction();
         setBatalkanPesanan(1);
+        setOpenModalPembatalan(!openModalPembatalan);
+    }
+
+    const btnTidakBatal = () => {
+        setBatalkanPesanan(0)
+        setOpenModalPembatalan(!openModalPembatalan)
     }
 
     return (
         <>
+            <Modal
+                isOpen={openModalPembatalan}
+                onOverlayClick={() => setOpenModalPembatalan(!openModalPembatalan)}
+                onClose={() => setOpenModalPembatalan(!openModalPembatalan)}
+                isCentered
+                size="sm"
+            >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader
+                        className="h5b"
+                    >
+                        Konfirmasi Pembatalan
+                    </ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody
+                        className="font-brand"
+                    >
+                        <div className="mb-3">
+                            Anda yakin ingin membatalkan pesanan ini?
+                        </div>
+                        <div className="d-flex align-items-center justify-content-center">
+                            <Button
+                                className="btn-def"
+                                width={55}
+                                me={2}
+                                onClick={btnYaBatal}
+                            >
+                                Ya
+                            </Button>
+                            <Button
+                                className="btn-def_second"
+                                width={55}
+                                onClick={btnTidakBatal}
+                            >
+                                Tidak
+                            </Button>
+                        </div>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
             {
                 props.query.length > 0
                     ?

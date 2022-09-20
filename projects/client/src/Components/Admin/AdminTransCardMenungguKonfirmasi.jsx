@@ -21,20 +21,10 @@ import {
     ModalContent,
     ModalHeader,
     ModalBody,
-    ModalFooter,
-    Input,
-    InputGroup,
-    InputLeftAddon,
-    Select,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
+    ModalCloseButton,
     Popover,
     PopoverTrigger,
     PopoverArrow,
-    PopoverHeader,
     PopoverContent,
     PopoverCloseButton,
     PopoverBody
@@ -55,6 +45,10 @@ const AdminTransCardMenungguKonfirmasiComponent = (props) => {
     })
     const [tolakDiKlik, setTolakDiKlik] = useState(0);
     const [konfirmasiDiKlik, setKonfirmasiDiKlik] = useState(0);
+    const [openModalPenolakan, setOpenModalPenolakan] = useState(false);
+    const [idDitolak, setIdDitolak] = useState(null);
+    const [statusBaru, setStatusBaru] = useState(``);
+
 
     //& component did mount
     useEffect(() => {
@@ -65,7 +59,7 @@ const AdminTransCardMenungguKonfirmasiComponent = (props) => {
             getPaginatedTransaction();
             setTolakDiKlik(0);
         }
-    }, [props.query,konfirmasiDiKlik,tolakDiKlik])
+    }, [props.query, konfirmasiDiKlik, tolakDiKlik])
 
     //^ cek props, state
     console.log(`props.query`, props.query)
@@ -321,13 +315,69 @@ const AdminTransCardMenungguKonfirmasiComponent = (props) => {
     }
 
     const btnTolakPembayaran = (idTransaction, status) => {
-        dispatch(updateTransactionStatusOnlyAction(idTransaction, status))
+        // dispatch(updateTransactionStatusOnlyAction(idTransaction, status))
+        // getPaginatedTransaction();
+        // setKonfirmasiDiKlik(1);
+        setOpenModalPenolakan(!openModalPenolakan)
+        setIdDitolak(idTransaction);
+        setStatusBaru(status);
+    }
+
+    const btnYaTolak = () => {
+        dispatch(updateTransactionStatusOnlyAction(idDitolak, statusBaru))
         getPaginatedTransaction();
         setKonfirmasiDiKlik(1);
+        setOpenModalPenolakan(!openModalPenolakan)
+    }
+
+    const btnTidakTolak = () => {
+        setKonfirmasiDiKlik(0)
+        setOpenModalPenolakan(!openModalPenolakan)
     }
 
     return (
         <>
+            <Modal
+                isOpen={openModalPenolakan}
+                onOverlayClick={() => setOpenModalPenolakan(!openModalPenolakan)}
+                onClose={() => setOpenModalPenolakan(!openModalPenolakan)}
+                isCentered
+                size="sm"
+            >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader
+                        className="h5b"
+                    >
+                        Konfirmasi Penolakan
+                    </ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody
+                        className="font-brand"
+                    >
+                        <div className="mb-3">
+                            Anda yakin ingin menolak bukti bayar ini?
+                        </div>
+                        <div className="d-flex align-items-center justify-content-center">
+                            <Button
+                                className="btn-def"
+                                width={55}
+                                me={2}
+                                onClick={btnYaTolak}
+                            >
+                                Ya
+                            </Button>
+                            <Button
+                                className="btn-def_second"
+                                width={55}
+                                onClick={btnTidakTolak}
+                            >
+                                Tidak
+                            </Button>
+                        </div>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
             {
                 props.query.length > 0
                     ?
