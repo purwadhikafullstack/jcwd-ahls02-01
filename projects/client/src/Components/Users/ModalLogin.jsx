@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { loginAction } from "../../Redux/Actions/userActions";
 import { useDisclosure, useToast } from '@chakra-ui/react';
 import { useToastHook } from "../CustomToast";
-import { Flex, Box, Heading, Input, Image, Text, Divider, Spacer, ButtonGroup, Button, Link, extendTheme, InputGroup, InputLeftElement,
+import { Flex, Box, Heading, Spinner, Input, Image, Text, Divider, Spacer, ButtonGroup, Button, Link, extendTheme, InputGroup, InputLeftElement,
   InputRightElement, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel} from '@chakra-ui/react';
 
 function ModalLogin(props) {
@@ -132,9 +132,28 @@ function ModalLogin(props) {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button isLoading={loadingStat} class="btn-def_second2 me-3"
-              onClick={handleLogin}>Login</Button>
-            <Button class="btn-def" onClick={props.onClose}>Cancel</Button>
+            {
+              loadingStat == true ?
+              <>
+                <Button class="btn-def_second2 me-3">
+                  <Spinner
+                    thickness='2px'
+                    speed='0.50s'
+                    emptyColor='#DE1B51'
+                    color='#FFFFFF'
+                    size='md'
+                    marginTop={"5px"}
+                  />
+                </Button>
+                <Button isDisabled={true} class="btn-def">Cancel</Button>
+              </>
+            :
+              <>
+                <Button class="btn-def_second2 me-3"
+                  onClick={handleLogin}>Login</Button>
+                <Button class="btn-def" onClick={props.onClose}>Cancel</Button>
+              </>
+            }
           </ModalFooter>
         </ModalContent>
       </Modal>

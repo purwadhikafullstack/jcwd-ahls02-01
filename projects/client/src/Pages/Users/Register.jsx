@@ -4,7 +4,7 @@ import { API_URL } from "../../helper"
 import VectorRegister from "../../Assets/DevImage/Register.png";
 import logo from "../../Assets/DevImage/LogoMedhika.png";
 import NavbarComponent from "../../Components/Users/Navbar";
-import { Flex, Box, Heading, Input, Image, Text, Divider, Spacer, ButtonGroup, Button, Link, extendTheme, InputGroup, InputLeftElement,
+import { Flex, Box, Heading, Spinner, Input, Image, Text, Divider, Spacer, ButtonGroup, Button, Link, extendTheme, InputGroup, InputLeftElement,
   InputRightElement, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Popover,
   PopoverTrigger, PopoverContent, PopoverHeader, PopoverArrow, PopoverCloseButton, PopoverBody, PopoverFooter, InputLeftAddon } from '@chakra-ui/react';
 // import { PhoneIcon } from '@chakra-ui/icons'
@@ -227,8 +227,27 @@ const checkNumbers=()=>{
                     </InputRightElement>
                   </InputGroup>
               </Box>
-                <Button isLoading={loadingStat} style={{marginTop:"25px"}}
-                class="btn-def_second" onClick={handleRegister}>Register</Button>
+                {
+                  loadingStat == true ?
+                  <>
+                    <Button style={{marginTop:"25px"}} class="btn-def_second">
+                      <Spinner
+                        thickness='2px'
+                        speed='0.50s'
+                        emptyColor='#DE1B51'
+                        color='#FFFFFF'
+                        size='md'
+                        marginTop={"5px"}
+                      />
+                    </Button>
+                  </>
+                :
+                  <>
+                    <Button style={{marginTop:"25px"}} class="btn-def_second"
+                      onClick={handleRegister}> Register
+                    </Button>
+                  </>
+                }
             </Box>
           </div>
         </div>

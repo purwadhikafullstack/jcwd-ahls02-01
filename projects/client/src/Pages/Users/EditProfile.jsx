@@ -1,11 +1,11 @@
 import Axios from "axios";
 import React from "react";
-import { API_URL } from "../../helper";
+import { API_URL, BE_URL } from "../../helper";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { useDisclosure, useToast, useEditableControls } from '@chakra-ui/react';
 import { loginAction } from "../../Redux/Actions/userActions";
-import { Text, Button, Input, Box, Image, InputGroup, Flex, IconButton, Editable, EditablePreview, EditableInput,
+import { Text, Button, Input, Box, Image, InputGroup, Flex, Spinner, IconButton, Editable, EditablePreview, EditableInput,
           ButtonGroup, Select, useMediaQuery, FormControl, FormLabel, Textarea, Checkbox, Spacer, Divider} from '@chakra-ui/react';
 import { FaRegEdit } from 'react-icons/fa';
 import { HiCheck } from 'react-icons/hi';
@@ -106,6 +106,7 @@ const EditProfile=(props)=>{
 
       if (res.data.token) {
         localStorage.setItem("tokenIdUser", res.data.token);
+        console.log("res.data edit profilepict", res.data)
         dispatch(loginAction(res.data));
         setLoadingStat(false);
       }
@@ -499,8 +500,8 @@ const handleEditProfile=async()=>{
     })
   }
 
-  console.log("check ADD ADDRESS BARU", addLabel, addAlamat, getProvince2, addProvinsiId, getCity2, addKotaId, addPenerima, addTelfon, addKodePos)
-  // console.log("check users", gender, birthDateFE, editProfile)
+  // console.log("check ADD ADDRESS BARU", addLabel, addAlamat, getProvince2, addProvinsiId, getCity2, addKotaId, addPenerima, addTelfon, addKodePos)
+  // console.log("check users", BE_URL+profilePicture)
   // console.log("edit value", nameEdit, emailEdit, genderEdit, birthDateEdit)
 
   return (
@@ -520,13 +521,14 @@ const handleEditProfile=async()=>{
         <>
         <div class="row mt-5">
           <div class="d-flex justify-content-center">
-            <img src={profilePicture} alt="Profile Picture" style={{ width:"15%", borderRadius:"50%"}} />
+            <img src={BE_URL+profilePicture} alt="Profile Picture" style={{ width:"15%", borderRadius:"50%", cursor:"pointer"}} 
+              onClick={() => setEditProfile(!editProfile)}/>
           </div>
         </div>
         <div class="row">
           <div class="col-md-4"></div>
           <div class="col-md-4">
-            <div class="rounded-4 mt-5" style={{backgroundColor:"#edf0f4", paddingTop:"20px", cursor:"pointer"}}>
+            <div class="rounded-4 mt-5" style={{backgroundColor:"#edf0f4", paddingTop:"20px"}}>
               <Flex ms={"40px"}>
                 <Text class="h6b text-uppercase">{name}</Text>
               </Flex>
@@ -540,7 +542,7 @@ const handleEditProfile=async()=>{
                 <Text class="h6">{birthDateFE}</Text>
               </Flex>
               <Box mt={"10px"} ms={"40px"} pb={"20px"}>
-                <FaRegEdit shadow={"md"} color="#DE1B51" size={'20px'} onClick={() => setEditProfile(!editProfile)}/>
+                <FaRegEdit shadow={"md"} color="#DE1B51" size={'20px'} style={{cursor:"pointer"}} onClick={() => setEditProfile(!editProfile)}/>
               </Box>
             </div>
           </div>
@@ -559,18 +561,25 @@ const handleEditProfile=async()=>{
             />
             {
               previewPost == false ?
-              <img src={profilePicture} onDoubleClick={onButtonClick}
+            <>
+              <img src={BE_URL+profilePicture} onClick={onButtonClick}
                 alt="Profile Picture" style={{cursor:"pointer", width:"15%", borderRadius:"50%"}} />
+            </>
             :
-              <img src={file} onDoubleClick={onButtonClick}
+            <>
+              <img src={file} onClick={onButtonClick}
                 alt="Upload Profile Picture" style={{cursor:"pointer", width:"15%", borderRadius:"50%"}} />
+            </>
             }
           </div>
         </div>
         <div class="row">
           <div class="col-md-4"></div>
           <div class="col-md-4">
-            <div class="rounded-4 mt-5" style={{backgroundColor:"#edf0f4", paddingTop:"20px"}}>
+            <div class="d-flex justify-content-center mt-2">
+              <p class="text-muted">Ukuran file upload foto maksimal 1MB</p>
+            </div>
+            <div class="rounded-4 mt-3" style={{backgroundColor:"#edf0f4", paddingTop:"20px"}}>
               <Flex ms={"40px"} me={"40px"}>
                 <Input bgColor={"#FFFFFF"} boxShadow='md' fontSize={"l"} fontWeight="bold" textTransform={"uppercase"}
                   onChange={(e)=>setNameEdit(e.target.value)} defaultValue={name} />
@@ -591,8 +600,27 @@ const handleEditProfile=async()=>{
                   onChange={(e)=>setBirthDateEdit(e.target.value)} defaultValue={birthDateFE} />
               </Flex>
               <ButtonGroup mt={"10px"} ms={"40px"} pb={"10px"}>
-                <Button isLoading={loadingStat} class="btn-def_second2" onClick={handleEditProfile}>Submit</Button>
-                <Button class="btn-def" onClick={handleCancel}>Cancel</Button>
+                {
+                  loadingStat == true ?
+                  <>
+                    <Button class="btn-def_second2">
+                      <Spinner
+                        thickness='2px'
+                        speed='0.50s'
+                        emptyColor='#DE1B51'
+                        color='#FFFFFF'
+                        size='md'
+                        marginTop={"5px"}
+                      />
+                    </Button>
+                    <Button isDisabled={true} class="btn-def" >Cancel</Button>
+                  </>
+                :
+                  <>
+                    <Button class="btn-def_second2" onClick={handleEditProfile}>Submit</Button>
+                    <Button class="btn-def" onClick={handleCancel}>Cancel</Button>
+                  </>
+                }
               </ButtonGroup>
             </div>
           </div>
