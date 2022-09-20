@@ -21,16 +21,7 @@ import {
     ModalContent,
     ModalHeader,
     ModalBody,
-    ModalFooter,
-    Input,
-    InputGroup,
-    InputLeftAddon,
-    Select,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel
+    ModalCloseButton,
 } from "@chakra-ui/react";
 
 const TransCardDikirimComponent = (props) => {
@@ -46,6 +37,9 @@ const TransCardDikirimComponent = (props) => {
         }
     })
     const [terimaPesanan, setTerimaPesanan] = useState(0);
+    const [openModalTerimaPesanan, setOpenModalTerimaPesanan] = useState(false);
+    const [idTerimaPesanan, setIdTerimaPesanan] = useState(null);
+    const [statusBaru, setStatusBaru] = useState(``);
 
     //& component did mount
     useEffect(() => {
@@ -264,13 +258,66 @@ const TransCardDikirimComponent = (props) => {
     }
 
     const btnTerimaPesanan = (idTransaction, status) => {
-        dispatch(confirmReceivePackageAction(idTransaction, status))
+        setOpenModalTerimaPesanan(!openModalTerimaPesanan)
+        setIdTerimaPesanan(idTransaction);
+        setStatusBaru(status);
+    }
+
+    const btnYaTerima = () => {
+        dispatch(confirmReceivePackageAction(idTerimaPesanan, statusBaru))
         getPaginatedTransaction();
         setTerimaPesanan(1);
+        setOpenModalTerimaPesanan(!openModalTerimaPesanan);
+    }
+
+    const btnTidakTerima = () => {
+        setTerimaPesanan(0)
+        setOpenModalTerimaPesanan(!openModalTerimaPesanan)
     }
 
     return (
         <>
+        <Modal
+                isOpen={openModalTerimaPesanan}
+                onOverlayClick={() => setOpenModalTerimaPesanan(!openModalTerimaPesanan)}
+                onClose={() => setOpenModalTerimaPesanan(!openModalTerimaPesanan)}
+                isCentered
+                size="sm"
+            >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader
+                        className="h5b"
+                    >
+                        Konfirmasi Penerimaan
+                    </ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody
+                        className="font-brand"
+                    >
+                        <div className="mb-3">
+                            Anda yakin telah menerima pesanan Anda?
+                        </div>
+                        <div className="d-flex align-items-center justify-content-center">
+                            <Button
+                                className="btn-def"
+                                width={55}
+                                me={2}
+                                onClick={btnYaTerima}
+                            >
+                                Ya
+                            </Button>
+                            <Button
+                                className="btn-def_second"
+                                width={55}
+                                onClick={btnTidakTerima}
+                            >
+                                Tidak
+                            </Button>
+                        </div>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
             {
                 props.query.length > 0
                     ?
