@@ -165,15 +165,15 @@ const AdminTransactionListPage = (props) => {
             <div
                 className="container-fluid"
             >
-                <div class="row">
-                    <div class="col-md-3 col-sm-5">
+                <div className="row">
+                    <div className="col-md-3 col-sm-3 col-4">
                         <Sidebar />
                         <Text></Text>
                     </div>
-                    <div class="col-md-9 col-sm-8">
-                        <div class="row container mt-4">
+                    <div className="col-md-9 col-sm-9 col-8">
+                        <div className="row container mt-4">
                             <div
-                                className="col-12 col-md-3 order-2 order-md-1 py-3"
+                                className="col-12 col-sm-2 col-md-3 d-none d-xl-block order-md-1 py-3"
                             >
                                 <Box
                                     borderRadius={5}
@@ -273,7 +273,7 @@ const AdminTransactionListPage = (props) => {
                                 </Box>
                             </div>
                             <div
-                                className="col-12 col-md-9 order-1 order-md-2"
+                                className="col-12 col-sm-9 col-md-9 order-1 order-md-2"
                             >
                                 <Text
                                     className="h3"
@@ -294,7 +294,10 @@ const AdminTransactionListPage = (props) => {
                                         defaultIndex={tabIndex}
                                         onChange={(e) => setTabIndex(e)}
                                     >
-                                        <TabList>
+                                        <TabList
+                                            overflowX={{ base: "scroll", sm: "scroll", md: "scroll", xl: "hidden" }}
+                                            maxWidth="100vw"
+                                        >
                                             <Tab
                                                 _selected={{
                                                     color: 'var(--colorOne)',
@@ -355,50 +358,50 @@ const AdminTransactionListPage = (props) => {
                                         <TabPanels>
                                             <TabPanel>
                                                 <AdminTransCardValidasiResepComponent
-                                                dbValidasiResep={transactionList.filter(val => val.transactionStatus == "Menunggu Diproses Penjual")}
-                                                query={queryFilterSort}
+                                                    dbValidasiResep={transactionList.filter(val => val.transactionStatus == "Menunggu Diproses Penjual")}
+                                                    query={queryFilterSort}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardMenungguPembayaranComponent
-                                                dbMenungguPembayaran={transactionList.filter(val => val.transactionStatus == "Menunggu Pembayaran")}
-                                                query={queryFilterSort}
+                                                    dbMenungguPembayaran={transactionList.filter(val => val.transactionStatus == "Menunggu Pembayaran")}
+                                                    query={queryFilterSort}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardMenungguKonfirmasiComponent
-                                                dbMenungguKonfirmasi={transactionList.filter(val => val.transactionStatus == "Menunggu Konfirmasi")}
-                                                query={queryFilterSort}
+                                                    dbMenungguKonfirmasi={transactionList.filter(val => val.transactionStatus == "Menunggu Konfirmasi")}
+                                                    query={queryFilterSort}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardDiprosesComponent
-                                                dbDiproses={transactionList.filter(val => val.transactionStatus == "Diproses")}
-                                                query={queryFilterSort}
+                                                    dbDiproses={transactionList.filter(val => val.transactionStatus == "Diproses")}
+                                                    query={queryFilterSort}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardDikirimComponent
-                                                dbDikirim={transactionList.filter(val => val.transactionStatus == "Dikirim")}
-                                                query={queryFilterSort}
+                                                    dbDikirim={transactionList.filter(val => val.transactionStatus == "Dikirim")}
+                                                    query={queryFilterSort}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardPesananDikonfirmasiComponent
-                                                dbPesananDikonfirmasi={transactionList.filter(val => val.transactionStatus == "Pesanan Dikonfirmasi")}
-                                                query={queryFilterSort}
+                                                    dbPesananDikonfirmasi={transactionList.filter(val => val.transactionStatus == "Pesanan Dikonfirmasi")}
+                                                    query={queryFilterSort}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardDibatalkanComponent
-                                                dbDibatalkan={transactionList.filter(val => val.transactionStatus == "Dibatalkan")}
-                                                query={queryFilterSort}
+                                                    dbDibatalkan={transactionList.filter(val => val.transactionStatus == "Dibatalkan")}
+                                                    query={queryFilterSort}
 
                                                 />
                                             </TabPanel>
