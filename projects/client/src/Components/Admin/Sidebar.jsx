@@ -42,7 +42,7 @@ const Sidebar=(props)=>{
         <li onClick={btninventory}><a href="">Inventory</a></li>
         <li onClick={btncategory}><a href="">Category</a></li>
         <li><a href="/admin/salesReport">Sales Report</a></li>
-        <li><a href="#">Product History</a></li>
+        <li><a href="/admin/productHistory">Product History</a></li>
         <li onClick={btnLogout}><a href="#">Logout</a>
         </li>
       </ul>

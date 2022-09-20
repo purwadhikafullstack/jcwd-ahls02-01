@@ -1,98 +1,337 @@
 import Axios from "axios";
 import React from "react";
 import { API_URL } from "../../helper";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from "react-router-dom";
-import { Text, useMediaQuery, Box, Button, Flex, Divider, Menu, MenuButton, MenuList, MenuItem, Tr, Td, Th,
+import { Text, useMediaQuery, Box, Button, ButtonGroup, Flex, Divider, Menu, MenuButton, MenuList, MenuItem, Tr, Td, Th,
         Spacer, Image, Input, MenuDivider, TableContainer, Table, Thead, Tbody} from '@chakra-ui/react';
-
-
-
+import { getSalesReportPaginateAction, getSearchSalesReportPaginateAction, getSortTotalASCPaginateAction,
+        getSortTotalDSCPaginateAction, getFilterProductHistoryPaginateAction} from "../../Redux/Actions/salesReportProductActions";
 
 const SalesReportByProduct=(props)=>{
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [laporanProduk, setLaporanProduk] = React.useState();
   const [sortirTotalASC, setSortirTotalASC] = React.useState(false);
   const [sortirTotalDSC, setSortirTotalDSC] = React.useState(false);
-  const [sortirTanggalASC, setSortirTanggalASC] = React.useState(false);
-  const [sortirTanggalDSC, setSortirTanggalDSC] = React.useState(false);
   const [searchProduct, setSearchProduct] = React.useState("");
-  const [searchByProduct, setSearchByProduct] = React.useState();
   const [searchOn, setSearchOn]=React.useState(false);
 
+  const { salesReportPaginate, salesReportPaginateLength, salesSearchPaginate, salesSearchPaginateLength,
+    salesSortTotalASCPaginate, salesSortTotalASCPaginateLength, salesSortTotalDSCPaginate, salesSortTotalDSCPaginateLength } = useSelector((state) => {
+    return {
+        salesReportPaginate: state.salesReportProductReducers.salesReportPaginate,
+        salesReportPaginateLength: state.salesReportProductReducers.salesReportPaginateLength,
+        salesSearchPaginate: state.salesReportProductReducers.salesSearchPaginate,
+        salesSearchPaginateLength: state.salesReportProductReducers.salesSearchPaginateLength,
+        salesSortTotalASCPaginate: state.salesReportProductReducers.salesSortTotalASCPaginate,
+        salesSortTotalASCPaginateLength: state.salesReportProductReducers.salesSortTotalASCPaginateLength,
+        salesSortTotalDSCPaginate: state.salesReportProductReducers.salesSortTotalDSCPaginate,
+        salesSortTotalDSCPaginateLength: state.salesReportProductReducers.salesSortTotalDSCPaginateLength,
+    }
+})
+
   React.useEffect(()=>{
-    getLaporanProduk()
+    getPaginatedSalesReport()
   }, [])
 
-  console.log("Search Product", searchByProduct)
-  // console.log("LAPORAN Product", laporanProduk)
+  const getPaginatedSalesReport = (page = 0) => {
+    console.log("getProduct else jalannnnnnn")
+        dispatch(getSalesReportPaginateAction(page + 1))
+  }
 
-  const getLaporanProduk = async() => {
-    try {
-      let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.get(`${API_URL}/salesReport/getLaporanProduk`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (res.data) {
-        console.log("RES DATA GET LAPORAN PRODUK", res.data)
-        setLaporanProduk(res.data)
-      }
-    } catch (error) {
-      console.log(error)
+  const getPaginatedSearch = (page = 0) => {
+    dispatch(getSearchSalesReportPaginateAction(page + 1, searchProduct))
+}
+
+  const getPaginatedSortTotalASC = (page = 0) => {
+    dispatch(getSortTotalASCPaginateAction(page + 1))
+}
+
+  const getPaginatedSortTotalDSC = (page = 0) => {
+    dispatch(getSortTotalDSCPaginateAction(page + 1))
+}
+
+  const handlePaginate = (paginate) => {
+    getPaginatedSalesReport(paginate);
+  }
+
+  const handlePaginateSearch = (paginate) => {
+    getPaginatedSearch(paginate);
+  }
+
+  const handlePaginateTotalASC = (paginate) => {
+    getPaginatedSortTotalASC(paginate);
+  }
+
+  const handlePaginateTotalDSC = (paginate) => {
+    getPaginatedSortTotalDSC(paginate);
+  }
+
+  const printBtnPagination = () => {
+    let btn = []
+    if (searchOn == true){
+      for (let i = 0; i < Math.ceil(salesSearchPaginateLength / 10); i++) {
+        btn.push(
+            <Box
+                as='button'
+                height='30px'
+                lineHeight='1.5'
+                transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                border='1px'
+                px='8px'
+                borderRadius='4px'
+                className="font-brand"
+                fontSize='14px'
+                fontWeight='bold'
+                bg='var(--colorTwo)'
+                borderColor='var(--colorSix)'
+                color='var(--colorSix)'
+                _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                _active={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)'
+                }}
+                _focus={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)',
+                    boxShadow:
+                        '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                }}
+                onClick={() => handlePaginateSearch(i)}
+            >
+                {i + 1}
+            </Box>
+        )
     }
+    return btn;
+    } else if(sortirTotalASC == true){
+      for (let i = 0; i < Math.ceil(salesSortTotalASCPaginateLength / 10); i++) {
+        btn.push(
+            <Box
+                as='button'
+                height='30px'
+                lineHeight='1.5'
+                transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                border='1px'
+                px='8px'
+                borderRadius='4px'
+                className="font-brand"
+                fontSize='14px'
+                fontWeight='bold'
+                bg='var(--colorTwo)'
+                borderColor='var(--colorSix)'
+                color='var(--colorSix)'
+                _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                _active={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)'
+                }}
+                _focus={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)',
+                    boxShadow:
+                        '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                }}
+                onClick={() => handlePaginateTotalASC(i)}
+            >
+                {i + 1}
+            </Box>
+        )
+    }
+    return btn;
+    } else if(sortirTotalDSC == true){
+      for (let i = 0; i < Math.ceil(salesSortTotalDSCPaginateLength / 10); i++) {
+        btn.push(
+            <Box
+                as='button'
+                height='30px'
+                lineHeight='1.5'
+                transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                border='1px'
+                px='8px'
+                borderRadius='4px'
+                className="font-brand"
+                fontSize='14px'
+                fontWeight='bold'
+                bg='var(--colorTwo)'
+                borderColor='var(--colorSix)'
+                color='var(--colorSix)'
+                _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                _active={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)'
+                }}
+                _focus={{
+                    bg: 'var(--colorSix)',
+                    color: 'var(--colorOne)',
+                    borderColor: 'var(--colorOne)',
+                    boxShadow:
+                        '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                }}
+                onClick={() => handlePaginateTotalDSC(i)}
+            >
+                {i + 1}
+            </Box>
+        )
+    }
+    return btn;
+    } else {
+      for (let i = 0; i < Math.ceil(salesReportPaginateLength / 10); i++) {
+          btn.push(
+              <Box
+                  as='button'
+                  height='30px'
+                  lineHeight='1.5'
+                  transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                  border='1px'
+                  px='8px'
+                  borderRadius='4px'
+                  className="font-brand"
+                  fontSize='14px'
+                  fontWeight='bold'
+                  bg='var(--colorTwo)'
+                  borderColor='var(--colorSix)'
+                  color='var(--colorSix)'
+                  _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                  _active={{
+                      bg: 'var(--colorSix)',
+                      color: 'var(--colorOne)',
+                      borderColor: 'var(--colorOne)'
+                  }}
+                  _focus={{
+                      bg: 'var(--colorSix)',
+                      color: 'var(--colorOne)',
+                      borderColor: 'var(--colorOne)',
+                      boxShadow:
+                          '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                  }}
+                  onClick={() => handlePaginate(i)}
+              >
+                  {i + 1}
+              </Box>
+          )
+      }
+      return btn;
+    }
+}
+
+const handleSortTotalASC =async()=>{
+  try {
+    setSortirTotalDSC(false)
+    setSortirTotalASC(true)
+    console.log("SORTIR TOTAL ASC JALANNNNNN")
+    {getPaginatedSortTotalASC()}
+    } catch (err) {
+  }
+}
+
+const handleSortTotalDSC =async()=>{
+  try {
+    setSortirTotalASC(false)
+    setSortirTotalDSC(true)
+    console.log("SORTIR TOTAL DSC JALANNNNNN")
+    {getPaginatedSortTotalDSC()}
+    } catch (err) {
+  }
 }
 
 const handleSearch =async()=>{
   try {
     if(searchProduct){
-      let token = localStorage.getItem("tokenIdUser");
-      let res = await Axios.post(`${API_URL}/salesReport/getSearchProduct`, {
-        inputProduct: searchProduct
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (res.data) {
-        console.log("res.data SEARCH PRODUCT", res.data)
-        setSearchByProduct(res.data)
-        setSearchOn(true)
-        }
-      } else {
-
-      }
+      setSearchOn(true)
+      console.log("searchOn JALANNNNNN")
+      getPaginatedSearch()
+    }
     } catch (err) {
   }
 }
 
   const printLaporanProduk = () => {
-    if(searchOn == false){
-      return laporanProduk.map((value, index)=>{
-        if (index % 2 == 0){
-          return (
-            <Tr>
-              <Td>{index+1}</Td>
-              <Td>{value.productName.slice(0,40)}</Td>
-              <Td>{value.qty}</Td>
-              <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
-            </Tr>
-          )
-        } else {
-          return (
-            <Tr style={{backgroundColor:"#ebeef3"}}>
-              <Td>{index+1}</Td>
-              <Td>{value.productName.slice(0,40)}</Td>
-              <Td>{value.qty}</Td>
-              <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
-            </Tr>
-          )
-        }
-      })
+    if(searchOn == true){
+      if(salesSearchPaginate == undefined) {
+        return <div></div>
+      } else {
+        return salesSearchPaginate.map((value, index)=>{
+          if (index % 2 == 0){
+            return (
+              <Tr>
+                <Td>{index+1}</Td>
+                <Td>{value.productName.slice(0,40)}</Td>
+                <Td>{value.qty}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          } else {
+            return (
+              <Tr style={{backgroundColor:"#ebeef3"}}>
+                <Td>{index+1}</Td>
+                <Td>{value.productName.slice(0,40)}</Td>
+                <Td>{value.qty}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          }
+        })
+      }
+    } else if (sortirTotalASC == true){
+      if(salesSortTotalASCPaginate == undefined) {
+        return <div></div>
+      } else {
+        return salesSortTotalASCPaginate.map((value, index)=>{
+          if (index % 2 == 0){
+            return (
+              <Tr>
+                <Td>{index+1}</Td>
+                <Td>{value.productName.slice(0,40)}</Td>
+                <Td>{value.qty}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          } else {
+            return (
+              <Tr style={{backgroundColor:"#ebeef3"}}>
+                <Td>{index+1}</Td>
+                <Td>{value.productName.slice(0,40)}</Td>
+                <Td>{value.qty}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          }
+        })
+      }
+    } else if (sortirTotalDSC == true){
+      if(salesSortTotalDSCPaginate == undefined) {
+        return <div></div>
+      } else {
+        return salesSortTotalDSCPaginate.map((value, index)=>{
+          if (index % 2 == 0){
+            return (
+              <Tr>
+                <Td>{index+1}</Td>
+                <Td>{value.productName.slice(0,40)}</Td>
+                <Td>{value.qty}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          } else {
+            return (
+              <Tr style={{backgroundColor:"#ebeef3"}}>
+                <Td>{index+1}</Td>
+                <Td>{value.productName.slice(0,40)}</Td>
+                <Td>{value.qty}</Td>
+                <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
+              </Tr>
+            )
+          }
+        })
+      }
     } else {
-      return searchByProduct.map((value, index)=>{
+      return salesReportPaginate.map((value, index)=>{
         if (index % 2 == 0){
           return (
             <Tr>
@@ -115,8 +354,13 @@ const handleSearch =async()=>{
       })
     }
   }
-  console.log("search PRODUKKKK", searchProduct)
 
+  const handleCancel = () => {
+    setSortirTotalASC(false)
+    setSortirTotalDSC(false)
+  };
+
+  console.log("salesSortTotalDSCPaginate", salesReportPaginate)
   return( <>
     <div class="row mb-4 mt-4" style={{marginLeft:"10px", marginRight:"10px"}}>
       <div class="col-md-4">
@@ -142,13 +386,10 @@ const handleSearch =async()=>{
                     {isOpen ? 'Close' : 'Sortir'}
                 </MenuButton>
                 <MenuList>
-                    <MenuItem onClick={() => setSortirTotalASC(true)}>Total Terkecil</MenuItem>
-                    <MenuItem onClick={() => setSortirTotalDSC(true)}>Total Terbesar</MenuItem>
+                    <MenuItem onClick={handleSortTotalASC}>Total Terkecil</MenuItem>
+                    <MenuItem onClick={handleSortTotalDSC}>Total Terbesar</MenuItem>
                     <MenuDivider />
-                    <MenuItem onClick={() => setSortirTanggalASC(true)}>Tanggal Terdekat</MenuItem>
-                    <MenuItem onClick={() => setSortirTanggalDSC(true)}>Tanggal Terjauh</MenuItem>
-                    <MenuDivider />
-                    <MenuItem >Batalkan Sortir</MenuItem>
+                    <MenuItem onClick={handleCancel}>Batalkan Sortir</MenuItem>
                 </MenuList>
             </>
                 )}
@@ -167,15 +408,22 @@ const handleSearch =async()=>{
               <Th isNumeric style={{color:"#FFFFFF"}}>Total</Th>
             </Tr>
           </Thead>
-          <Tbody>
             {
-              laporanProduk == undefined ?
-              <div>
-              </div>
+              salesReportPaginate == undefined ?
+              <Tbody>
+                <div>
+                </div>
+              </Tbody>
             :
-              printLaporanProduk()
+            <>
+              <Tbody>
+                {printLaporanProduk()}
+              </Tbody>
+              <ButtonGroup ms={"20px"} mt={"20px"} mb={"20px"}>
+                  {printBtnPagination()}
+              </ButtonGroup>
+            </>
             }
-          </Tbody>
         </Table>
       </TableContainer>
     </Box>

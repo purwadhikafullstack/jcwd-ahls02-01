@@ -3,6 +3,10 @@ const { salesReportControllers } = require('../Controllers');
 const router = require('express').Router();
 
 router.get('/getSalesByInvoice', readToken, salesReportControllers.getSalesByInvoice);
+router.get('/getSalesByInvoiceTotalASC', readToken, salesReportControllers.getSalesByInvoiceTotalASC);
+router.get('/getSalesByInvoiceTotalDSC', readToken, salesReportControllers.getSalesByInvoiceTotalDSC);
+router.get('/getSalesByInvoiceTanggalASC', readToken, salesReportControllers.getSalesByInvoiceTanggalASC);
+router.get('/getSalesByInvoiceTanggalDSC', readToken, salesReportControllers.getSalesByInvoiceTanggalDSC);
 router.get('/getProfitHariIni', readToken, salesReportControllers.getProfitHariIni);
 router.get('/getPenjualanHariIni', readToken, salesReportControllers.getPenjualanHariIni);
 router.get('/getMenungguPembayaran', readToken, salesReportControllers.getMenungguPembayaran);
@@ -17,8 +21,13 @@ router.get('/getPenjualanObatMingguan', readToken, salesReportControllers.getPen
 router.get('/getProfitBulanan', readToken, salesReportControllers.getProfitBulanan);
 router.get('/getPenjualanObatBulanan', readToken, salesReportControllers.getPenjualanObatBulanan);
 router.get('/getLaporanProduk', readToken, salesReportControllers.getLaporanProduk);
+router.get('/getLaporanProdukTotalASC', readToken, salesReportControllers.getLaporanProdukTotalASC);
+router.get('/getLaporanProdukTotalDSC', readToken, salesReportControllers.getLaporanProdukTotalDSC);
 router.get('/getLaporanUser', readToken, salesReportControllers.getLaporanUser);
+router.get('/getLaporanUserTotalASC', readToken, salesReportControllers.getLaporanUserTotalASC);
+router.get('/getLaporanUserTotalDSC', readToken, salesReportControllers.getLaporanUserTotalDSC);
 router.post('/getSearchInvoice', readToken, salesReportControllers.getSearchInvoice);
+router.post('/getFilterInvoice', readToken, salesReportControllers.getFilterInvoice);
 router.post('/getSearchProduct', readToken, salesReportControllers.getSearchProduct);
 router.post('/getSearchUser', readToken, salesReportControllers.getSearchUser);
 
