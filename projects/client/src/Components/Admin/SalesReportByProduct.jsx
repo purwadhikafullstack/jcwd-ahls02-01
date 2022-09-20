@@ -3,7 +3,7 @@ import React from "react";
 import { API_URL } from "../../helper";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from "react-router-dom";
-import { Text, useMediaQuery, Box, Button, ButtonGroup, Flex, Divider, Menu, MenuButton, MenuList, MenuItem, Tr, Td, Th,
+import { Text, useMediaQuery, Box, Button, Spinner, ButtonGroup, Flex, Divider, Menu, MenuButton, MenuList, MenuItem, Tr, Td, Th,
         Spacer, Image, Input, MenuDivider, TableContainer, Table, Thead, Tbody} from '@chakra-ui/react';
 import { getSalesReportPaginateAction, getSearchSalesReportPaginateAction, getSortTotalASCPaginateAction,
         getSortTotalDSCPaginateAction, getFilterProductHistoryPaginateAction} from "../../Redux/Actions/salesReportProductActions";
@@ -15,6 +15,7 @@ const SalesReportByProduct=(props)=>{
   const [sortirTotalDSC, setSortirTotalDSC] = React.useState(false);
   const [searchProduct, setSearchProduct] = React.useState("");
   const [searchOn, setSearchOn]=React.useState(false);
+  const [loadingStat, setLoadingStat]=React.useState(false);
 
   const { salesReportPaginate, salesReportPaginateLength, salesSearchPaginate, salesSearchPaginateLength,
     salesSortTotalASCPaginate, salesSortTotalASCPaginateLength, salesSortTotalDSCPaginate, salesSortTotalDSCPaginateLength } = useSelector((state) => {
@@ -254,13 +255,23 @@ const handleSearch =async()=>{
   const printLaporanProduk = () => {
     if(searchOn == true){
       if(salesSearchPaginate == undefined) {
-        return <div></div>
+        return <div>
+          <Text class="h5b mt-5 mb-5">Loading</Text>
+          <Spinner
+            thickness='5px'
+            speed='0.50s'
+            emptyColor='#FFFFFF'
+            color='#DE1B51'
+            size='xl'
+            marginTop={"10px"}
+          />
+        </div>
       } else {
         return salesSearchPaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.productName.slice(0,40)}</Td>
                 <Td>{value.qty}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -269,7 +280,7 @@ const handleSearch =async()=>{
           } else {
             return (
               <Tr style={{backgroundColor:"#ebeef3"}}>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.productName.slice(0,40)}</Td>
                 <Td>{value.qty}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -280,13 +291,23 @@ const handleSearch =async()=>{
       }
     } else if (sortirTotalASC == true){
       if(salesSortTotalASCPaginate == undefined) {
-        return <div></div>
+        return <div>
+          <Text class="h5b mt-5 mb-5">Loading</Text>
+          <Spinner
+            thickness='5px'
+            speed='0.50s'
+            emptyColor='#FFFFFF'
+            color='#DE1B51'
+            size='xl'
+            marginTop={"10px"}
+          />
+        </div>
       } else {
         return salesSortTotalASCPaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.productName.slice(0,40)}</Td>
                 <Td>{value.qty}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -295,7 +316,7 @@ const handleSearch =async()=>{
           } else {
             return (
               <Tr style={{backgroundColor:"#ebeef3"}}>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.productName.slice(0,40)}</Td>
                 <Td>{value.qty}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -306,13 +327,23 @@ const handleSearch =async()=>{
       }
     } else if (sortirTotalDSC == true){
       if(salesSortTotalDSCPaginate == undefined) {
-        return <div></div>
+        return <div>
+          <Text class="h5b mt-5 mb-5">Loading</Text>
+          <Spinner
+            thickness='5px'
+            speed='0.50s'
+            emptyColor='#FFFFFF'
+            color='#DE1B51'
+            size='xl'
+            marginTop={"10px"}
+          />
+        </div>
       } else {
         return salesSortTotalDSCPaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.productName.slice(0,40)}</Td>
                 <Td>{value.qty}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -321,7 +352,7 @@ const handleSearch =async()=>{
           } else {
             return (
               <Tr style={{backgroundColor:"#ebeef3"}}>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.productName.slice(0,40)}</Td>
                 <Td>{value.qty}</Td>
                 <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -335,7 +366,7 @@ const handleSearch =async()=>{
         if (index % 2 == 0){
           return (
             <Tr>
-              <Td>{index+1}</Td>
+              <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
               <Td>{value.productName.slice(0,40)}</Td>
               <Td>{value.qty}</Td>
               <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -344,7 +375,7 @@ const handleSearch =async()=>{
         } else {
           return (
             <Tr style={{backgroundColor:"#ebeef3"}}>
-              <Td>{index+1}</Td>
+              <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
               <Td>{value.productName.slice(0,40)}</Td>
               <Td>{value.qty}</Td>
               <Td isNumeric>{value.totalTransaksi.toLocaleString()}</Td>
@@ -370,18 +401,34 @@ const handleSearch =async()=>{
       <div class="col-md-8">
         <Flex>
             <Box mt={"3px"}>
-                <Button class="btn-def_second2" onClick={handleSearch}>Cari</Button>
-            </Box>
+            {
+              loadingStat == true ?
+              <>
+              <Button class="btn-def_second2">
+                <Spinner
+                  thickness='2px'
+                  speed='0.50s'
+                  emptyColor='#DE1B51'
+                  color='#FFFFFF'
+                  size='md'
+                  marginTop={"5px"}
+                />
+              </Button>
+            </>
+            :
+              <Button class="btn-def_second2" onClick={handleSearch}>Cari</Button>
+                          }
             {
               searchOn == true &&
             <Box mt={"3px"} ms={"10px"}>
               <Button class="btn-def" onClick={()=> {(setSearchOn(false));(setSearchProduct(""))}}>Batal Cari</Button>
             </Box>
             }
+          </Box>
             <Spacer/>
             <Menu>
                 {({ isOpen }) => (
-            <>
+              <>
                 <MenuButton isActive={isOpen} as={Button} size={"sm"} mt={"3px"} me={"25px"} width={"100px"} boxShadow={"md"}>
                     {isOpen ? 'Close' : 'Sortir'}
                 </MenuButton>
@@ -391,8 +438,8 @@ const handleSearch =async()=>{
                     <MenuDivider />
                     <MenuItem onClick={handleCancel}>Batalkan Sortir</MenuItem>
                 </MenuList>
-            </>
-                )}
+              </>
+              )}
             </Menu>
         </Flex>
       </div>
@@ -412,6 +459,15 @@ const handleSearch =async()=>{
               salesReportPaginate == undefined ?
               <Tbody>
                 <div>
+                  <Text class="h5b mt-5 mb-5">Loading</Text>
+                  <Spinner
+                    thickness='5px'
+                    speed='0.50s'
+                    emptyColor='#FFFFFF'
+                    color='#DE1B51'
+                    size='xl'
+                    marginTop={"10px"}
+                  />
                 </div>
               </Tbody>
             :

@@ -877,7 +877,7 @@ module.exports = {
   },
   profilePicture: (req, res) => {
     // console.log('profilePicture')
-    const uploadFile = uploader('/Profile', 'PROFILE-PICTURE-').array('Profile', 5)
+    const uploadFile = uploader('/Profile', 'PROFILE-PICTURE-').array('Profile', 1)
 
     uploadFile(req, res, async (error) => {
       try {
@@ -890,12 +890,15 @@ module.exports = {
           if (req.files[0].size <= 1000000) {
             let { idUserLogin } = JSON.parse(req.body.data);
 
-            let imgData = req.files.map(val => {
-              return `${dbConf.escape(`${process.env.PORT_URL}/Profile/${val.filename}`)}`;
-            })
-            console.log("imgData", imgData.join(','))
+            // let imgData = req.files.map(val => {
+            //   return `${dbConf.escape(`${process.env.PORT_URL}/Profile/${val.filename}`)}`;
+            // })
+            // console.log("imgData", imgData.join(','))
 
-            let edit = await dbQuery(`UPDATE users SET profilePicture=${imgData.join(',')}
+            let media = req.files[0].filename;
+            console.log("MEDIAAAA", media)
+
+            let edit = await dbQuery(`UPDATE users SET profilePicture=${dbConf.escape(`/Profile/${media}`)}
             WHERE idUser = ${req.dataUser.idUser};`)
             let resultsLogin = await dbQuery(`Select * FROM users
             WHERE idUser = ${req.dataUser.idUser};`);
@@ -917,7 +920,7 @@ module.exports = {
           })
         }
       } catch (error) {
-        req.files.forEach(val => fs.unlinkSync(`./Public/`))
+        req.files.forEach(val => fs.unlinkSync(`./Public/Resep/${val.filename}`))
         console.log(error)
       }
     })

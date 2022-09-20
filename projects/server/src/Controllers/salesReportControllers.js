@@ -25,6 +25,8 @@ module.exports = {
           valueSalesByInvoice.dateFE = `${valueSalesByInvoice.dDate}-${valueSalesByInvoice.dMonth}-${valueSalesByInvoice.dYear}`
           valueSalesByInvoice.detail = []
           valueSalesByInvoice.totalTransaksi = 0
+          valueSalesByInvoice.pageNumber = (req.query._page - 1) * 10
+
 
 
           transDetail.forEach(valueTransDetail => {
@@ -46,15 +48,12 @@ module.exports = {
   getSalesByInvoiceTotalASC: async (req, res, next) => {
     try {
       if (req.dataUser.idUser) {
-        let salesByInvoicePaginate = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
-          JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
-
         let salesByInvoice = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
           JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC;`);
 
         let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
 
-        salesByInvoicePaginate.forEach(valueSalesByInvoice => {
+        salesByInvoice.forEach(valueSalesByInvoice => {
           valueSalesByInvoice.dateSlice = valueSalesByInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
           valueSalesByInvoice.dYear = valueSalesByInvoice.dateSlice.slice(0, 4)
           valueSalesByInvoice.dMonth = valueSalesByInvoice.dateSlice.slice(5, 7)
@@ -62,6 +61,7 @@ module.exports = {
           valueSalesByInvoice.dateFE = `${valueSalesByInvoice.dDate}-${valueSalesByInvoice.dMonth}-${valueSalesByInvoice.dYear}`
           valueSalesByInvoice.detail = []
           valueSalesByInvoice.totalTransaksi = 0
+          valueSalesByInvoice.pageNumber = (req.query._page - 1) * 10
 
 
           transDetail.forEach(valueTransDetail => {
@@ -72,13 +72,14 @@ module.exports = {
           })
         })
 
-        let invoiceTotalASCPaginated = salesByInvoicePaginate.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi })
+        let invoiceTotalASCPaginate = salesByInvoice.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi })
         let invoiceTotalASCPaginateLength = 0
         invoiceTotalASCPaginateLength += salesByInvoice.length
-        // console.log("dataUserrrrrrrrr", dataUser)
-        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        let sliceA = (req.query._page - 1) * 10
+        let sliceB = (req.query._page * 10)
+        let invoiceTotalASCPaginated = invoiceTotalASCPaginate.slice(sliceA, sliceB)
+
         return res.status(200).send({ invoiceTotalASCPaginated, invoiceTotalASCPaginateLength });
-        // return res.status(200).send(salesByInvoice.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi }));
       }
     } catch (error) {
       return next(error)
@@ -87,15 +88,12 @@ module.exports = {
   getSalesByInvoiceTotalDSC: async (req, res, next) => {
     try {
       if (req.dataUser.idUser) {
-        let salesByInvoicePaginate = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
-          JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
-
         let salesByInvoice = await dbQuery(`SELECT t.*, u.name, u.email, u.phone, u.gender, u.birthDate FROM transactions t
           JOIN users u ON t.idUser = u.idUser ORDER BY addDate DESC;`);
 
         let transDetail = await dbQuery(`SELECT * FROM transactionsdetail;`)
 
-        salesByInvoicePaginate.forEach(valueSalesByInvoice => {
+        salesByInvoice.forEach(valueSalesByInvoice => {
           valueSalesByInvoice.dateSlice = valueSalesByInvoice.addDate.toISOString().slice(0, 10).replace('T', ' ');
           valueSalesByInvoice.dYear = valueSalesByInvoice.dateSlice.slice(0, 4)
           valueSalesByInvoice.dMonth = valueSalesByInvoice.dateSlice.slice(5, 7)
@@ -103,7 +101,7 @@ module.exports = {
           valueSalesByInvoice.dateFE = `${valueSalesByInvoice.dDate}-${valueSalesByInvoice.dMonth}-${valueSalesByInvoice.dYear}`
           valueSalesByInvoice.detail = []
           valueSalesByInvoice.totalTransaksi = 0
-
+          valueSalesByInvoice.pageNumber = (req.query._page - 1) * 10
 
           transDetail.forEach(valueTransDetail => {
             if (valueSalesByInvoice.idTransaction == valueTransDetail.idTransaction) {
@@ -113,13 +111,14 @@ module.exports = {
           })
         })
 
-        let invoiceTotalDSCPaginated = salesByInvoicePaginate.sort((a, b) => { return b.totalTransaksi - a.totalTransaksi })
+        let invoiceTotalDSCPaginate = salesByInvoice.sort((a, b) => { return b.totalTransaksi - a.totalTransaksi })
         let invoiceTotalDSCPaginateLength = 0
         invoiceTotalDSCPaginateLength += salesByInvoice.length
-        console.log("dataUserrrrrrrrr", invoiceTotalDSCPaginated)
-        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        let sliceA = (req.query._page - 1) * 10
+        let sliceB = (req.query._page * 10)
+        let invoiceTotalDSCPaginated = invoiceTotalDSCPaginate.slice(sliceA, sliceB)
+
         return res.status(200).send({ invoiceTotalDSCPaginated, invoiceTotalDSCPaginateLength });
-        // return res.status(200).send(salesByInvoice.sort((a, b) => { return b.totalTransaksi - a.totalTransaksi }));
       }
     } catch (error) {
       return next(error)
@@ -145,6 +144,7 @@ module.exports = {
           valueSalesByInvoice.dateFE = `${valueSalesByInvoice.dDate}-${valueSalesByInvoice.dMonth}-${valueSalesByInvoice.dYear}`
           valueSalesByInvoice.detail = []
           valueSalesByInvoice.totalTransaksi = 0
+          valueSalesByInvoice.pageNumber = (req.query._page - 1) * 10
 
 
           transDetail.forEach(valueTransDetail => {
@@ -189,6 +189,7 @@ module.exports = {
           valueSalesByInvoice.dateFE = `${valueSalesByInvoice.dDate}-${valueSalesByInvoice.dMonth}-${valueSalesByInvoice.dYear}`
           valueSalesByInvoice.detail = []
           valueSalesByInvoice.totalTransaksi = 0
+          valueSalesByInvoice.pageNumber = (req.query._page - 1) * 10
 
 
           transDetail.forEach(valueTransDetail => {
@@ -602,6 +603,7 @@ module.exports = {
         namaObat.forEach(valueObat => {
           valueObat.qty = 0
           valueObat.totalTransaksi = 0
+          valueObat.pageNumber = (req.query._page - 1) * 10
 
           getTransactionsdetail.forEach(val => {
             if (valueObat.productName == val.nama2) {
@@ -626,21 +628,17 @@ module.exports = {
         let getTransactionsdetail = await dbQuery(`SELECT productName as nama2, stockType, purchaseQuantity, subTotal, addDate FROM transactionsdetail
         ORDER BY addDate DESC;`);
 
-
-        let getProductPaginate = await dbQuery(`SELECT productName FROM products
-        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`)
-
         let getProduct = await dbQuery(`SELECT productName FROM products;`)
         namaObat = []
-        obatTemp = []
 
-        getProductPaginate.map((val, idx) => {
+        getProduct.map((val, idx) => {
           namaObat.push(val)
         })
 
         namaObat.forEach(valueObat => {
           valueObat.qty = 0
           valueObat.totalTransaksi = 0
+          valueObat.pageNumber = (req.query._page - 1) * 10
 
           getTransactionsdetail.forEach(val => {
             if (valueObat.productName == val.nama2) {
@@ -650,13 +648,14 @@ module.exports = {
           })
         })
 
-        let productASCPaginated = namaObat.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi })
+        let productASCPaginate = namaObat.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi })
         let productASCPaginateLength = 0
         productASCPaginateLength += getProduct.length
-        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        let sliceA = (req.query._page - 1) * 10
+        let sliceB = (req.query._page * 10)
+        let productASCPaginated = productASCPaginate.slice(sliceA, sliceB)
+
         return res.status(200).send({ productASCPaginated, productASCPaginateLength });
-        // console.log("namaObatttttt", namaObat)
-        // return res.status(200).send(namaObat.sort((a, b) => { return a.totalTransaksi - b.totalTransaksi }));
       }
     } catch (error) {
       return next(error)
@@ -668,20 +667,17 @@ module.exports = {
         let getTransactionsdetail = await dbQuery(`SELECT productName as nama2, stockType, purchaseQuantity, subTotal, addDate FROM transactionsdetail
         ORDER BY addDate DESC;`);
 
-        let getProductPaginate = await dbQuery(`SELECT productName FROM products
-        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`)
-
         let getProduct = await dbQuery(`SELECT productName FROM products;`)
         namaObat = []
-        obatTemp = []
 
-        getProductPaginate.map((val, idx) => {
+        getProduct.map((val, idx) => {
           namaObat.push(val)
         })
 
         namaObat.forEach(valueObat => {
           valueObat.qty = 0
           valueObat.totalTransaksi = 0
+          valueObat.pageNumber = (req.query._page - 1) * 10
 
           getTransactionsdetail.forEach(val => {
             if (valueObat.productName == val.nama2) {
@@ -691,10 +687,13 @@ module.exports = {
           })
         })
 
-        let productDSCPaginated = namaObat.sort((a, b) => { return b.totalTransaksi - a.totalTransaksi })
+        let productDSCPaginate = namaObat.sort((a, b) => { return b.totalTransaksi - a.totalTransaksi })
         let productDSCPaginateLength = 0
         productDSCPaginateLength += getProduct.length
-        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        let sliceA = (req.query._page - 1) * 10
+        let sliceB = (req.query._page * 10)
+        let productDSCPaginated = productDSCPaginate.slice(sliceA, sliceB)
+
         return res.status(200).send({ productDSCPaginated, productDSCPaginateLength });
       }
     } catch (error) {
@@ -711,7 +710,6 @@ module.exports = {
 
         let getTransactionsdetail = await dbQuery(`SELECT idUser as idUser2, subTotal FROM transactionsdetail;`)
         dataUser = []
-        // obatTemp = []
 
         getUsersPaginate.map((val, idx) => {
           dataUser.push(val)
@@ -719,6 +717,7 @@ module.exports = {
 
         dataUser.forEach(valueUser => {
           valueUser.totalTransaksiUser = 0
+          valueUser.pageNumber = (req.query._page - 1) * 10
 
           getTransactionsdetail.forEach(val => {
             if (valueUser.idUser == val.idUser2) {
@@ -741,21 +740,18 @@ module.exports = {
   getLaporanUserTotalASC: async (req, res, next) => {
     try {
       if (req.dataUser.idUser) {
-        let getUsersPaginate = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users
-        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
-
         let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users ORDER BY addDate;`);
 
         let getTransactionsdetail = await dbQuery(`SELECT idUser as idUser2, subTotal FROM transactionsdetail;`)
         dataUser = []
-        // obatTemp = []
 
-        getUsersPaginate.map((vals, idx) => {
+        getUsers.map((vals, idx) => {
           dataUser.push(vals)
         })
 
         dataUser.forEach(valueUser => {
           valueUser.totalTransaksiUser = 0
+          valueUser.pageNumber = (req.query._page - 1) * 10
 
           getTransactionsdetail.forEach(val => {
             if (valueUser.idUser == val.idUser2) {
@@ -764,11 +760,13 @@ module.exports = {
           })
         })
 
-        let userASCPaginated = dataUser.sort((a, b) => { return a.totalTransaksiUser - b.totalTransaksiUser })
+        let userASCPaginate = dataUser.sort((a, b) => { return a.totalTransaksiUser - b.totalTransaksiUser })
         let userASCPaginateLength = 0
         userASCPaginateLength += getUsers.length
-        console.log("dataUserrrrrrrrr", dataUser)
-        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        let sliceA = (req.query._page - 1) * 10
+        let sliceB = (req.query._page * 10)
+        let userASCPaginated = userASCPaginate.slice(sliceA, sliceB)
+
         return res.status(200).send({ userASCPaginated, userASCPaginateLength });
       }
     } catch (error) {
@@ -778,21 +776,18 @@ module.exports = {
   getLaporanUserTotalDSC: async (req, res, next) => {
     try {
       if (req.dataUser.idUser) {
-        let getUsersPaginate = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users
-        ORDER BY addDate DESC LIMIT 10 OFFSET ${dbConf.escape((req.query._page - 1) * 10)};`);
-
         let getUsers = await dbQuery(`SELECT idUser, name, email, phone, addDate FROM users ORDER BY addDate;`);
 
         let getTransactionsdetail = await dbQuery(`SELECT idUser as idUser2, subTotal FROM transactionsdetail;`)
         dataUser = []
-        // obatTemp = []
 
-        getUsersPaginate.map((val, idx) => {
+        getUsers.map((val, idx) => {
           dataUser.push(val)
         })
 
         dataUser.forEach(valueUser => {
           valueUser.totalTransaksiUser = 0
+          valueUser.pageNumber = (req.query._page - 1) * 10
 
           getTransactionsdetail.forEach(val => {
             if (valueUser.idUser == val.idUser2) {
@@ -801,10 +796,13 @@ module.exports = {
           })
         })
 
-        let userDSCPaginated = dataUser.sort((a, b) => { return b.totalTransaksiUser - a.totalTransaksiUser })
+        let userDSCPaginate = dataUser.sort((a, b) => { return b.totalTransaksiUser - a.totalTransaksiUser })
         let userDSCPaginateLength = 0
         userDSCPaginateLength += getUsers.length
-        // console.log("namaObatttttt SORT", namaObat.sort((i, j) => { return j.totalTransaksi - i.totalTransaksi }))
+        let sliceA = (req.query._page - 1) * 10
+        let sliceB = (req.query._page * 10)
+        let userDSCPaginated = userDSCPaginate.slice(sliceA, sliceB)
+
         return res.status(200).send({ userDSCPaginated, userDSCPaginateLength });
       }
     } catch (error) {
@@ -831,6 +829,7 @@ module.exports = {
           valueSearchInvoice.dateFE = `${valueSearchInvoice.dDate}-${valueSearchInvoice.dMonth}-${valueSearchInvoice.dYear}`
           valueSearchInvoice.detail = []
           valueSearchInvoice.totalTransaksi = 0
+          valueSearchInvoice.pageNumber = (req.query._page - 1) * 10
 
 
           transDetail.forEach(valueTransDetail => {
@@ -878,6 +877,7 @@ module.exports = {
           valueFilterInvoice.dateFE = `${valueFilterInvoice.dDate}-${valueFilterInvoice.dMonth}-${valueFilterInvoice.dYear}`
           valueFilterInvoice.detail = []
           valueFilterInvoice.totalTransaksi = 0
+          valueFilterInvoice.pageNumber = (req.query._page - 1) * 10
 
 
           transDetail.forEach(valueTransDetail => {
@@ -918,6 +918,7 @@ module.exports = {
         namaObat.forEach(valueObat => {
           valueObat.qty = 0
           valueObat.totalTransaksi = 0
+          valueObat.pageNumber = (req.query._page - 1) * 10
 
           getTransactionsdetail.forEach(val => {
             if (valueObat.productName == val.nama2) {
@@ -955,6 +956,7 @@ module.exports = {
 
         dataUser.forEach(valueUser => {
           valueUser.totalTransaksiUser = 0
+          valueUser.pageNumber = (req.query._page - 1) * 10
 
           getTransactionsdetail.forEach(vals => {
             if (valueUser.idUser == vals.idUser2) {
