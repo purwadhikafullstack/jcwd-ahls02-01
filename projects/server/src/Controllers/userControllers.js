@@ -6,6 +6,8 @@ const { transporter } = require("../Config/nodemailer");
 const { uploader } = require("../Config/uploader");
 const fs = require("fs");
 const productUserController = require("./Randy/productUsercontroller");
+const { join } = require("path")
+
 
 module.exports = {
   ...productUserController,
@@ -920,7 +922,8 @@ module.exports = {
           })
         }
       } catch (error) {
-        req.files.forEach(val => fs.unlinkSync(`./Public/Resep/${val.filename}`))
+
+        req.files.forEach(val => fs.unlinkSync(join(__dirname, `../Public/Profile/${val.filename}`)))
         console.log(error)
       }
     })
