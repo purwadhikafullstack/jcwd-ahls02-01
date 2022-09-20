@@ -9,8 +9,10 @@ import { productHistoryReducers } from "./productHistoryReducers";
 import { salesReportProductReducers } from "./salesReportProductReducers";
 import { userSalesReportReducers } from "./salesReportUserReducers";
 import { salesInvoiceReducers } from "./salesReportInvoiceReducers";
+import { transactionReducers } from "./transactionReducers";
+import { productReducers } from "./productReducers";
 
 export const globalStore = combineReducers({
   userReducers, addressReducers, getProvinceReducers, getCityReducers, cartReducers, getCostReducers,
-  productHistoryReducers, salesReportProductReducers, userSalesReportReducers, salesInvoiceReducers
+  productHistoryReducers, salesReportProductReducers, userSalesReportReducers, salesInvoiceReducers, transactionReducers, productReducers
 })

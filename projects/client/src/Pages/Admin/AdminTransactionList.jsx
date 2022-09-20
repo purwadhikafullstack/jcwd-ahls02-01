@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
-import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
 import AdminTransCardValidasiResepComponent from "../../Components/Admin/AdminTransCardValidasiResep";
 import AdminTransCardMenungguPembayaranComponent from "../../Components/Admin/AdminTransCardMenungguPembayaran";
@@ -16,10 +15,6 @@ import { getTransactionAdminAction } from "../../Redux/Actions/transactionAction
 import {
     Box,
     Divider,
-    VStack,
-    Center,
-    Stack,
-    Image,
     Text,
     Button,
     ButtonGroup,
@@ -40,9 +35,6 @@ import {
     TabPanel
 } from "@chakra-ui/react";
 
-import { TiArrowBack } from "react-icons/ti";
-import { FaCircle } from "react-icons/fa";
-
 const AdminTransactionListPage = (props) => {
 
     //* assign function
@@ -52,10 +44,11 @@ const AdminTransactionListPage = (props) => {
 
     //^ STATE MANAGEMENT
     const [orderData, setOrderData] = useState("null");
-    const [filterInvoiceNo, setFilterInvoiceNo] = useState("");
+    const [filterInvoice, setFilterInvoice] = useState("");
     const [filterDateBegin, setFilterDateBegin] = useState("");
     const [filterDateEnd, setFilterDateEnd] = useState("");
     const [tabIndex, setTabIndex] = useState(0);
+    const [queryFilterSort, setQueryFilterSort] = useState("");
     // const { state, search } = useLocation();
 
     //& component did mount
@@ -81,37 +74,90 @@ const AdminTransactionListPage = (props) => {
 
         if (sortValue != "null") {
             setOrderData(sortValue);
-            let property = sortValue.split('-')[0];
-            let order = sortValue.split('-')[1];
-
-            //TODO axios paginated sorted data here
-        } else {
-            // setOrderData(sortValue);
-            newToast({
-                description: "Reset urutan dengan mengklik tombol reset",
-                status: 'warning'
-            })
         }
     }
 
-    const handleFilterSort = () => {
+    const btnFilterSort = () => {
 
-        //^check isi handle
+        console.log(`===ISI BTN FILTER SORT====`)
+        //^check isi handle filter dan sort
         console.log(`isi filterDateBegin ${filterDateBegin}`);
         console.log(`isi filterDateEnd ${filterDateEnd}`);
-        console.log(`isi filterInvoiceNo ${filterInvoiceNo}`);
+        console.log(`isi filterInvoice ${filterInvoice}`);
+        let _sortBy = orderData.split('-')[0];
+        if (_sortBy == "invoiceNumber") {
+            _sortBy = "t1.invoiceNumber"
+        } else {
+            _sortBy = "t1.addDate"
+        }
+        console.log(`isi _sortBy ${_sortBy}`);
 
-        //TODO try catch axios untuk filter data
-        let filterQuery = '?';
+        let _order = orderData.split('-')[1];
+        console.log(`isi _order ${_order}`);
 
+        //TODO query filter dan sort
+        let query = '?';
+        if (_sortBy && _order) {
+            if (filterInvoice) {
+                if (filterDateBegin && filterDateEnd) {
+                    // ^ ===FILTER CONDITION 1 SORT, INV, DATE===
+                    console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`);
+
+                    query += `_filterInvoice=${filterInvoice}&_dateGte=${filterDateBegin}&_dateLte=${filterDateEnd}&_sortBy=${_sortBy}&_order=${_order}`;
+
+                } else {
+                    // ^ ===FILTER CONDITION 2 SORT, INV===
+                    console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                    query += `_filterInvoice=${filterInvoice}&_sortBy=${_sortBy}&_order=${_order}`;
+
+                }
+            } else if (filterDateBegin && filterDateEnd) {
+                // ^ ===FILTER CONDITION 3 SORT, DATE===
+                console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                query += `_dateGte=${filterDateBegin}&_dateLte=${filterDateEnd}&_sortBy=${_sortBy}&_order=${_order}`;
+
+            } else {
+                // ^ ===FILTER CONDITION 4 SORT===
+                console.log(`===FILTER SORT CONDITION 4 SORT===`);
+
+                query += `_sortBy=${_sortBy}&_order=${_order}`;
+
+            }
+        } else {
+            if (filterDateBegin && filterDateEnd && filterInvoice) {
+                // ^ ===FILTER CONDITION 5 DATE INV ===
+                console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                query += `_filterInvoice=${filterInvoice}&_dateGte=${filterDateBegin}&_dateLte=${filterDateEnd}`;
+
+            } else if (filterDateBegin && filterDateEnd) {
+                // ^ ===FILTER CONDITION 6 DATE===
+                console.log(`===FILTER CONDITION 6 DATE===`);
+
+                query += `_dateGte=${filterDateBegin}&_dateLte=${filterDateEnd}`;
+
+            } else if (filterInvoice) {
+                // ^ ===FILTER CONDITION 7 INV===
+                console.log(`===FILTER CONDITION 7 INV===`);
+
+                query += `_filterInvoice=${filterInvoice}`;
+
+            }
+        }
+
+        console.log(`query jadinya gmn?`, query)
+        setQueryFilterSort(query);
+        return query;
     }
 
-    const handleReset = () => {
-        //getTransaction();
+    const btnReset = () => {
         setFilterDateBegin('');
         setFilterDateEnd('');
-        setFilterInvoiceNo('');
+        setFilterInvoice('');
         setOrderData('');
+        setQueryFilterSort(``);
     }
 
     return (
@@ -167,8 +213,8 @@ const AdminTransactionListPage = (props) => {
                                             <InputLeftAddon children='Nomor invoice' width={150} />
                                             <Input
                                                 type='text'
-                                                placeholder="Cari transaksimu disini" value={filterInvoiceNo}
-                                                onChange={(e) => setFilterInvoiceNo(e.target.value)}
+                                                placeholder="Cari transaksimu disini" value={filterInvoice}
+                                                onChange={(e) => setFilterInvoice(e.target.value)}
                                             />
                                         </InputGroup>
                                         <Select
@@ -210,7 +256,7 @@ const AdminTransactionListPage = (props) => {
                                             mt={{ base: 2, md: 2 }}
                                             width={{ base: 400, md: 300 }}
                                             className="btn-def"
-                                            onClick={handleFilterSort}
+                                            onClick={btnFilterSort}
                                         >
                                             Terapkan
                                         </Button>
@@ -219,7 +265,7 @@ const AdminTransactionListPage = (props) => {
                                             mt={{ base: 2, md: 2 }}
                                             width={{ base: 400, md: 300 }}
                                             className="btn-def"
-                                            onClick={handleReset}
+                                            onClick={btnReset}
                                         >
                                             Reset
                                         </Button>
@@ -310,42 +356,49 @@ const AdminTransactionListPage = (props) => {
                                             <TabPanel>
                                                 <AdminTransCardValidasiResepComponent
                                                 dbValidasiResep={transactionList.filter(val => val.transactionStatus == "Menunggu Diproses Penjual")}
+                                                query={queryFilterSort}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardMenungguPembayaranComponent
                                                 dbMenungguPembayaran={transactionList.filter(val => val.transactionStatus == "Menunggu Pembayaran")}
+                                                query={queryFilterSort}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardMenungguKonfirmasiComponent
                                                 dbMenungguKonfirmasi={transactionList.filter(val => val.transactionStatus == "Menunggu Konfirmasi")}
+                                                query={queryFilterSort}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardDiprosesComponent
                                                 dbDiproses={transactionList.filter(val => val.transactionStatus == "Diproses")}
+                                                query={queryFilterSort}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardDikirimComponent
                                                 dbDikirim={transactionList.filter(val => val.transactionStatus == "Dikirim")}
+                                                query={queryFilterSort}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardPesananDikonfirmasiComponent
                                                 dbPesananDikonfirmasi={transactionList.filter(val => val.transactionStatus == "Pesanan Dikonfirmasi")}
+                                                query={queryFilterSort}
 
                                                 />
                                             </TabPanel>
                                             <TabPanel>
                                                 <AdminTransCardDibatalkanComponent
                                                 dbDibatalkan={transactionList.filter(val => val.transactionStatus == "Dibatalkan")}
+                                                query={queryFilterSort}
 
                                                 />
                                             </TabPanel>

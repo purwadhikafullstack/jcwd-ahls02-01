@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import bank1 from "../../Assets/DevImage/LogoBCA.png";
 import bank2 from "../../Assets/DevImage/LogoMandiri.png";
-import { getTransactionAction } from "../../Redux/Actions/transactionActions";
+import { getTransactionAction,getUserMenungguKonfirmasiAction } from "../../Redux/Actions/transactionActions";
 import { API_URL, BE_URL } from "../../helper";
 import { useToastHook } from "../../Components/CustomToast";
 
@@ -251,7 +251,23 @@ const ModalPaymentProofComponent = (props) => {
 
     const handleImageBukti = (value) => {
         console.log(`value handleImageBukti`, value);
-        setNewImageBukti(value);
+        console.log(`show value size image resep`, value.size);
+        
+        if (value.size <= 1000000) {
+            if(value.type == "image/png" || value.type=="image/jpeg"){
+                setNewImageBukti(value);
+            } else {
+                newToast({
+                    description: "Tipe gambar bukan jpg/jpeg/png",
+                    status: 'error'
+                })
+            }
+        } else {
+            newToast({
+                description: "Ukuran gambar melebihi 1M",
+                status: 'error'
+            })
+        }
     }
 
     //& onClick akan upload bukti bayar ke tabel transaksi lalu tutup modal payment proof
@@ -292,9 +308,11 @@ const ModalPaymentProofComponent = (props) => {
                     });
                     console.log("isi res.data pas btnUnggahBukti", res.data);
                     dispatch(getTransactionAction());
+                    dispatch(getUserMenungguKonfirmasiAction());
                     props.handleSendingToCardParentPaymentMethod();
                     setIsModalPaymentProofOpen(false);
                     setAccordionIndex(null);
+                    setNewImageBukti(null)
                 }
             }
         } catch (error) {
@@ -307,12 +325,14 @@ const ModalPaymentProofComponent = (props) => {
         props.handleSendingToCardParentPaymentMethodOVERLAY();
         setIsModalPaymentProofOpen(false);
         setAccordionIndex(null);
+        setNewImageBukti(null)
     }
 
     const onCloseModalClicked = () => {
         props.handleSendingToCardParentPaymentMethodONCLOSE();
         setIsModalPaymentProofOpen(false);
         setAccordionIndex(null);
+        setNewImageBukti(null)
     }
     //& end -- handle modal open/not open, triggering state between parent-child
 

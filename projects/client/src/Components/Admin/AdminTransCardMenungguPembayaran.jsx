@@ -4,168 +4,104 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
-// import ModalPaymentProofComponent from "./ModalPaymentProof";
+import { API_URL, BE_URL } from "../../helper";
+import { getAdminMenungguPembayaranAction, getAdminFilterMenungguPembayaranAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
     Image,
     Text,
     Button,
+    ButtonGroup
 } from "@chakra-ui/react";
 
 const AdminTransCardMenungguPembayaranComponent = (props) => {
 
-    //^ STATE MANAGEMENT
-    const [total, setTotal] = useState(0);
-    const [isModalMetodeBayarOpen, setIsModalMetodeBayarOpen] = useState(false);
-    const [isModalPaymentProofOpen, setIsModalPaymentProofOpen] = useState(false);
-    const [selectedTransaction, setSelectedTransaction] = useState({});
+    //^ assign functions
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    //TODO axios get seluruh transaksi yang berstatus Menunggu Pembayaran
-    //^ seluruh transaksi user yg login
-    const [dbTransaksi] = useState([
-        {
-            idTransaction: 2,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 2,
-                    productName: 'Decolgen',
-                    productPicture: 'https://d2qjkwm11akmwu.cloudfront.net/products/49b5c4d0-85c9-4dc0-b1e2-96574c106cd9_product_image_url.webp',
-                    stockType: 'saset',
-                    purchaseQuantity: 1,
-                    priceSale: 2300,
-                    subTotal: 2300
-                }
-            ],
-            totalSale: 2300,
-            prescription: null,
-            transactionStatus: 'Menunggu Pembayaran',
-            transferReceipt: null,
-            invoiceNumber: 'INV/20220315/STN/00002',
-            addDate: '2022-03-15 19:05:00',
-            freightCost: 10000,
-            totalPayment: 12300,
-            receiverName: 'Aditya Dimas',
-            receiverAddress: 'Jl. Dimas',
-            receiverPhone: '081287907001',
-            postalCode: '77777'
-        },
-        {
-            idTransaction: 9,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 10,
-                    productName: 'Derma AnGel Acne Patch Day',
-                    productPicture: 'https://d2qjkwm11akmwu.cloudfront.net/products/887201_27-6-2022_14-36-43.webp',
-                    stockType: 'dus',
-                    purchaseQuantity: 2,
-                    priceSale: 16500,
-                    subTotal: 33000
-                },
-                {
-                    idTransactionDetail: 11,
-                    productName: 'Enervon-C',
-                    productPicture: 'https://d2qjkwm11akmwu.cloudfront.net/products/263731_19-5-2022_13-22-8.png',
-                    stockType: 'saset',
-                    purchaseQuantity: 1,
-                    priceSale: 35000,
-                    subTotal: 35000
-                }
-            ],
-            totalSale: 68000,
-            prescription: null,
-            transactionStatus: 'Menunggu Pembayaran',
-            transferReceipt: null,
-            invoiceNumber: 'INV/20220817/STN/00001',
-            addDate: '2022-08-17 11:00:00',
-            freightCost: 10000,
-            totalPayment: 78000,
-            recereceiverName: 'Aditya Dimas',
-            receiverAddress: 'Jl. Dimas',
-            receiverPhone: '081287907001',
-            postalCode: '77777'
-        },
-        {
-            idTransaction: 13,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 14,
-                    productName: 'Labore Sensitive Skin Care Biomerepair Barrier Revive Cream',
-                    productPicture: 'https://d2qjkwm11akmwu.cloudfront.net/products/316515_1-8-2022_9-42-58.webp',
-                    stockType: 'ml',
-                    purchaseQuantity: 10,
-                    priceSale: 3000,
-                    subTotal: 30000,
-                }
-            ],
-            totalSale: 30000,
-            prescription: "https://assets.kompasiana.com/items/album/2016/10/20/2016-10-20-21-00-22-pengantar-ilmu-farmasi-kedokteran-1-pdf-5808c571c823bd662a834f19.png?t=t&v=260",
-            transactionStatus: 'Menunggu Pembayaran',
-            transferReceipt: null,
-            invoiceNumber: 'INV/20220818/RCK/00001',
-            addDate: '2022-08-18 11:00:00',
-            freightCost: 10000,
-            totalPayment: 40000,
-            recereceiverName: 'Aditya Dimas',
-            receiverAddress: 'Jl. Dimas',
-            receiverPhone: '081287907001',
-            postalCode: '77777'
+    //^ state management
+    const { transactionList, transactionLength } = useSelector((state) => {
+        return {
+            transactionList: state.transactionReducers.adminmenunggupembayaran,
+            transactionLength: state.transactionReducers.transactionAdminView.filter(val => val.transactionStatus == "Menunggu Pembayaran").length
         }
-    ]);
+    })
 
     //& component did mount
     useEffect(() => {
+        if (props.query.length > 0) {
+            getArrayFilteredSortedTransaction();
+        } else {
+            getPaginatedTransaction();
+        }
+    }, [props.query])
 
-    }, [])
+    //^ cek props, state
+    console.log(`props.query`, props.query)
+    console.log(`transactionList`, transactionList);
+    console.log(`transactionLength`, transactionLength);
 
-    // & onClick btn back di modal pilih metode pembayaran akan mulangin user ke page Checkout
-    // const btnBackModalMetodeBayar = () => {
-    //     console.log(`btnBackModalMetodeBayar dipencet`)
-    //     setIsModalMetodeBayarOpen(!isModalMetodeBayarOpen);
-    //     setWhichBank("");
-    // }
-
-    // & onClick btn pilih ulang metode pembayaran akan mulangin user ke modal pilih metode pembayaran
-    // const handleCallbackToChildPaymentMethod = () => {
-    //     setIsModalMetodeBayarOpen(true);
-    //     setWhichBank("");
-    // }
-
-    // & onClick metode bayar bca akan buka modal payment method khusus bca
-    // const handleBca = () => {
-    //     setWhichBank('bca');
-    //     setIsModalMetodeBayarOpen(!isModalMetodeBayarOpen);
-    // }
-
-    // & onClick metode bayar mandiri akan buka modal payment method khusus bca
-    // const handleMandiri = () => {
-    //     setWhichBank('mandiri');
-    //     setIsModalMetodeBayarOpen(!isModalMetodeBayarOpen);
-    // }
-
-    //& onClick akan deteksi transaksinya beresep atau ngga, beresep akan minta user pilih metode bayar, ga beresep akan langsung minta user upload bukti bayar
-    const btnUploadBuktiBayar = (selectedIdTransaction) => {
-        let transaction = dbTransaksi.filter((val, idx) => val.idTransaction == selectedIdTransaction)[0]
-
-        setSelectedTransaction(transaction);
-        setTotal(transaction.totalPayment);
-
-        console.log(`selectedTransaction`, selectedTransaction);
-        console.log(`transaction.totalPayment`, total);
-
-        setIsModalPaymentProofOpen(true);
-        //TODO axios untuk patch add multer gambar bukti bayar untuk transaksi yang diklik upload bukti bayar nya
-
-        
+    const getArrayFilteredSortedTransaction = () => {
+        dispatch(getAdminFilterMenungguPembayaranAction(props.query))
     }
 
-    const handleCallbackToChildPaymentProof = () => {
-        setIsModalPaymentProofOpen(false);
+    const getPaginatedTransaction = (page = 0) => {
+        if (props.query.length == 0) {
+            dispatch(getAdminMenungguPembayaranAction(page + 1))
+        }
+    }
+
+    const handlePaginate = (paginate) => {
+        getPaginatedTransaction(paginate);
+    }
+
+    const printBtnPagination = () => {
+        let btn = []
+        console.log(`transactionLength di printBtnPagination`, transactionLength);
+        console.log(`Math.ceil(transactionLength)/3 di printBtnPagination`, Math.ceil(transactionLength) / 3);
+        for (let i = 0; i < Math.ceil(transactionLength / 3); i++) {
+            btn.push(
+                <Box
+                    as='button'
+                    height='30px'
+                    lineHeight='1.5'
+                    transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                    border='1px'
+                    px='8px'
+                    borderRadius='4px'
+                    className="font-brand"
+                    fontSize='14px'
+                    fontWeight='bold'
+                    bg='var(--colorTwo)'
+                    borderColor='var(--colorSix)'
+                    color='var(--colorSix)'
+                    _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                    _active={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)'
+                    }}
+                    _focus={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)',
+                        boxShadow:
+                            '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                    }}
+                    onClick={() => handlePaginate(i)}
+                >
+                    {i + 1}
+                </Box>
+            )
+        }
+        return btn;
     }
 
     //& print list transaksi yg menunggu pembayaran
     const printMenungguPembayaran = () => {
-        if (dbTransaksi.length > 0) {
-            return dbTransaksi.map((value, index) => {
+        if (transactionList.length > 0) {
+            return transactionList.map((value, index) => {
                 return (
                     <div
                         className="card mb-2" key={value.idTransaction}
@@ -221,7 +157,7 @@ const AdminTransCardMenungguPembayaranComponent = (props) => {
                                                 <Image
                                                     borderRadius='xl'
                                                     boxSize='70px'
-                                                    src={valProduct.productPicture}
+                                                    src={BE_URL + valProduct.productPicture}
                                                     alt={`IMG-${valProduct.productName}`}
                                                     className="d-md-block d-none"
                                                 />
@@ -299,7 +235,7 @@ const AdminTransCardMenungguPembayaranComponent = (props) => {
                                 </Button> */}
                             </Box>
 
-                            <Text
+                            {/* <Text
                                 fontSize={15}
                                 className='font-brand'
                             >
@@ -318,7 +254,7 @@ const AdminTransCardMenungguPembayaranComponent = (props) => {
                                 >
                                     , bila melewati batas waktu maka pesanan otomatis dibatalkan.
                                 </span>
-                            </Text>
+                            </Text> */}
 
                             <Text
                                 fontSize={15}
@@ -339,15 +275,20 @@ const AdminTransCardMenungguPembayaranComponent = (props) => {
 
     return (
         <>
-            {/* <ModalPaymentProofComponent
-                openModalPaymentProofFromCard={isModalPaymentProofOpen}
-                handleSendingToCardParentPaymentMethod={handleCallbackToChildPaymentProof}
-                selectedTransaction={selectedTransaction}
-                totalPayment={total}
-            /> */}
-
-            {printMenungguPembayaran()}
-
+            {
+                props.query.length > 0
+                    ?
+                    <>
+                        {printMenungguPembayaran()}
+                    </>
+                    :
+                    <>
+                        {printMenungguPembayaran()}
+                        <ButtonGroup>
+                            {printBtnPagination()}
+                        </ButtonGroup>
+                    </>
+            }
         </>
     )
 

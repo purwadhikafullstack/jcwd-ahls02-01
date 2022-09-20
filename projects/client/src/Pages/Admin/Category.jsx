@@ -25,6 +25,7 @@ import {
   Input,
 } from "@chakra-ui/react";
 import Sidebar from "../../Components/Admin/Sidebar";
+import ModalConversion from "../../Components/Admin/ModalConversion";
 
 const ModalCreate = (props) => {
   const [newCategory, setNewCategory] = test.useState("");
@@ -95,6 +96,7 @@ const Categorypage = () => {
   const [categoryData, setCategoryData] = test.useState([]);
   const [modalState, setModalState] = test.useState("none");
   const [selectedEdit, setSelectedEdit] = test.useState([]);
+  // const [show,setShow] = test.useState(false);
   test.useEffect(() =>{categoryFetch()}, []);
   const CategoryList = (props) => {
     return (
@@ -226,6 +228,8 @@ const Categorypage = () => {
                     <Button onClick={() => setModalState("Create")}>
                       Tambah Kategori
                     </Button>
+                    {/* <Button style={{marginRight:"0px", marginTop:"75px"}} class="btn-def_second" onClick={()=> setShow(!show)}>Unggah Resep</Button>
+                        <ModalConversion style={{color: "#000000"}} onClose={() => setShow(!show)} show={show} /> */}
                     <CategoryList
                       deleteCategory={deleteCategory}
                       Data={categoryData}
@@ -248,6 +252,8 @@ const Categorypage = () => {
                     <Button onClick={() => setModalState("Create")}>
                       Tambah Kategori
                     </Button>
+                    {/* <Button style={{marginRight:"0px", marginTop:"75px"}} class="btn-def_second" onClick={()=> setShow(!show)}>Unggah Resep</Button>
+                        <ModalConversion style={{color: "#000000"}} onClose={() => setShow(!show)} show={show} /> */}
                     <CategoryList
                       deleteCategory={deleteCategory}
                       Data={categoryData}

@@ -2,16 +2,12 @@ import React, { useState, useEffect } from "react";
 import Axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
-// import NavbarComponent from "./Navbar";
 import { useToastHook } from "../CustomToast";
 import { API_URL, BE_URL } from "../../helper";
+import { getAdminValidasiResepAction, getAdminFilterValidasiResepAction,updateTransactionStatusOnlyAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
-    Flex,
     Divider,
-    VStack,
-    Center,
-    Stack,
     Image,
     Text,
     Button,
@@ -26,318 +22,100 @@ import {
     InputGroup,
     InputLeftAddon,
     Select,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel
 } from "@chakra-ui/react";
 
 const AdminTransCardValidasiResepComponent = (props) => {
-    const navigate = useNavigate();
-    //TODO axios get seluruh transaksi yang prescriptionnya ga null dan berstatus Menunggu Diproses Penjual
-    //^ seluruh transaksi user yg login
-    const [dbTransaksi] = useState([
-        {
-            idTransaction: 1,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 1,
-                    productName: 'Derma AnGel Acne Patch Day',
-                    productPicture: 'https://d2qjkwm11akmwu.cloudfront.net/products/887201_27-6-2022_14-36-43.webp',
-                    stockType: 'dus',
-                    purchaseQuantity: 2,
-                    priceSale: 16500,
-                    subTotal: 33000
-                }
-            ],
-            totalSale: 33000,
-            prescription: null,
-            transactionStatus: 'Pesanan Dikonfirmasi',
-            transferReceipt: 'https://mahirtransaksi.com/wp-content/uploads/2020/09/2-1-179x300.jpg',
-            invoiceNumber: 'INV/20220315/STN/00001',
-            addDate: '2022-03-15 16:15:00',
-            freightCost: 10000,
-            totalPayment: 43000,
-            receiverName: 'Margareth Devina',
-            receiverAddress: 'Jl. Aster VI No. 7',
-            receiverPhone: '081287907000',
-            postalCode: '16134'
-        },
-        {
-            idTransaction: 2,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 2,
-                    productName: 'Decolgen',
-                    productPicture: 'https://d2qjkwm11akmwu.cloudfront.net/products/49b5c4d0-85c9-4dc0-b1e2-96574c106cd9_product_image_url.webp',
-                    stockType: 'saset',
-                    purchaseQuantity: 1,
-                    priceSale: 2300,
-                    subTotal: 2300
-                }
-            ],
-            totalSale: 2300,
-            prescription: null,
-            transactionStatus: 'Menunggu Pembayaran',
-            transferReceipt: null,
-            invoiceNumber: 'INV/20220315/STN/00002',
-            addDate: '2022-03-15 19:05:00',
-            freightCost: 10000,
-            totalPayment: 12300,
-            recereceiverName: 'Aditya Dimas',
-            receiverAddress: 'Jl. Dimas',
-            receiverPhone: '081287907001',
-            postalCode: '77777'
-        },
-        {
-            idTransaction: 3,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 3,
-                    productName: 'Renovit',
-                    productPicture: 'https://cf.shopee.co.id/file/bdb49a41e77413654fe1d71bb8ddc46a',
-                    stockType: 'saset',
-                    purchaseQuantity: 5,
-                    priceSale: 15000,
-                    subTotal: 75000,
-                }
-            ],
-            totalSale: 75000,
-            prescription: null,
-            transactionStatus: 'Menunggu Konfirmasi',
-            transferReceipt: 'https://mahirtransaksi.com/wp-content/uploads/2020/09/2-1-179x300.jpg',
-            invoiceNumber: 'INV/20220304/STN/00001',
-            addDate: '2022-03-04 21:10:00',
-            freightCost: 10000,
-            totalPayment: 85000,
-            recereceiverName: 'Aditya Dimas',
-            receiverAddress: 'Jl. Dimas',
-            receiverPhone: '081287907001',
-            postalCode: '77777'
-        },
-        {
-            idTransaction: 4,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 4,
-                    productName: 'Decolgen',
-                    productPicture: 'https://d2qjkwm11akmwu.cloudfront.net/products/49b5c4d0-85c9-4dc0-b1e2-96574c106cd9_product_image_url.webp',
-                    stockType: 'saset',
-                    purchaseQuantity: 1,
-                    priceSale: 2300,
-                    subTotal: 2300,
-                }
-            ],
-            totalSale: 2300,
-            prescription: null,
-            transactionStatus: 'Dikirim',
-            transferReceipt: 'https://mahirtransaksi.com/wp-content/uploads/2020/09/2-1-179x300.jpg',
-            invoiceNumber: 'INV/20220304/STN/00001',
-            addDate: '2022-03-05 10:05:00',
-            freightCost: 10000,
-            totalPayment: 12300,
-            receiverName: 'Margareth Devina',
-            receiverAddress: 'Jl. Aster VI No. 7',
-            receiverPhone: '081287907000',
-            postalCode: '16134'
-        },
-        {
-            idTransaction: 5,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 5,
-                    productName: 'Renovit',
-                    productPicture: 'https://cf.shopee.co.id/file/bdb49a41e77413654fe1d71bb8ddc46a',
-                    stockType: 'tablet',
-                    purchaseQuantity: 5,
-                    priceSale: 3000,
-                    subTotal: 15000,
-                },
-                {
-                    idTransactionDetail: 6,
-                    productName: 'Labore Sensitive Skin Care Biomerepair Barrier Revive Cream',
-                    productPicture: 'https://d2qjkwm11akmwu.cloudfront.net/products/316515_1-8-2022_9-42-58.webp',
-                    stockType: 'ml',
-                    purchaseQuantity: 10,
-                    priceSale: 3000,
-                    subTotal: 30000,
-                }
-            ],
-            totalSale: 45000,
-            prescription: 'https://assets.kompasiana.com/items/album/2016/10/20/2016-10-20-21-00-22-pengantar-ilmu-farmasi-kedokteran-1-pdf-5808c571c823bd662a834f19.png?t=t&v=260',
-            transactionStatus: 'Pesanan Dikonfirmasi',
-            transferReceipt: 'https://mahirtransaksi.com/wp-content/uploads/2020/09/2-1-179x300.jpg',
-            invoiceNumber: 'INV/20220410/RCK/00001',
-            addDate: '2022-04-10 10:00:00',
-            freightCost: 10000,
-            totalPayment: 55000,
-            receiverName: 'Margareth Devina',
-            receiverAddress: 'Jl. Aster VI No. 7',
-            receiverPhone: '081287907000',
-            postalCode: '16134'
-        },
-        {
-            idTransaction: 6,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 7,
-                    productName: '',
-                    productPicture: '',
-                    stockType: '',
-                    purchaseQuantity: 0,
-                    priceSale: 0,
-                    subTotal: 0
-                }
-            ],
-            totalSale: 0,
-            prescription: 'https://assets.kompasiana.com/items/album/2016/10/20/2016-10-20-21-00-22-pengantar-ilmu-farmasi-kedokteran-1-pdf-5808c571c823bd662a834f19.png?t=t&v=260',
-            transactionStatus: 'Menunggu Diproses Penjual',
-            transferReceipt: null,
-            invoiceNumber: 'INV/20220411/RCK/00001',
-            addDate: '2022-04-11 10:00:00',
-            freightCost: 10000,
-            totalPayment: 10000,
-            receiverName: 'Margareth Devina',
-            receiverAddress: 'Jl. Aster VI No. 7',
-            receiverPhone: '081287907000',
-            postalCode: '16134'
-        },
-        {
-            idTransaction: 7,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 8,
-                    productName: 'Renovit',
-                    productPicture: 'https://cf.shopee.co.id/file/bdb49a41e77413654fe1d71bb8ddc46a',
-                    stockType: 'tablet',
-                    purchaseQuantity: 5,
-                    priceSale: 3000,
-                    subTotal: 15000
-                }
-            ],
-            totalSale: 15000,
-            prescription: 'https://assets.kompasiana.com/items/album/2016/10/20/2016-10-20-21-00-22-pengantar-ilmu-farmasi-kedokteran-1-pdf-5808c571c823bd662a834f19.png?t=t&v=260',
-            transactionStatus: 'Diproses',
-            transferReceipt: 'https://mahirtransaksi.com/wp-content/uploads/2020/09/2-1-179x300.jpg',
-            invoiceNumber: 'INV/20220411/RCK/00002',
-            addDate: '2022-04-11 9:00:00',
-            freightCost: 10000,
-            totalPayment: 25000,
-            receiverName: 'Margareth Devina',
-            receiverAddress: 'Jl. Aster VI No. 7',
-            receiverPhone: '081287907000',
-            postalCode: '16134'
-        },
-        {
-            idTransaction: 8,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 9,
-                    productName: 'Renovit',
-                    productPicture: 'https://cf.shopee.co.id/file/bdb49a41e77413654fe1d71bb8ddc46a',
-                    stockType: 'tablet',
-                    purchaseQuantity: 5,
-                    priceSale: 3000,
-                    subTotal: 15000
-                }
-            ],
-            totalSale: 15000,
-            prescription: 'https://assets.kompasiana.com/items/album/2016/10/20/2016-10-20-21-00-22-pengantar-ilmu-farmasi-kedokteran-1-pdf-5808c571c823bd662a834f19.png?t=t&v=260',
-            transactionStatus: 'Dibatalkan',
-            transferReceipt: 'https://mahirtransaksi.com/wp-content/uploads/2020/09/2-1-179x300.jpg',
-            invoiceNumber: 'INV/20220411/RCK/00002',
-            addDate: '2022-04-11 9:00:00',
-            freightCost: 10000,
-            totalPayment: 25000,
-            receiverName: 'Margareth Devina',
-            receiverAddress: 'Jl. Aster VI No. 7',
-            receiverPhone: '081287907000',
-            postalCode: '16134'
-        },
-        {
-            idTransaction: 9,
-            purchasedProducts: [
-                {
-                    idTransactionDetail: 10,
-                    productName: 'Derma AnGel Acne Patch Day',
-                    productPicture: 'https://d2qjkwm11akmwu.cloudfront.net/products/887201_27-6-2022_14-36-43.webp',
-                    stockType: 'dus',
-                    purchaseQuantity: 2,
-                    priceSale: 16500,
-                    subTotal: 33000
-                },
-                {
-                    idTransactionDetail: 11,
-                    productName: 'Enervon-C',
-                    productPicture: 'https://d2qjkwm11akmwu.cloudfront.net/products/263731_19-5-2022_13-22-8.png',
-                    stockType: 'saset',
-                    purchaseQuantity: 1,
-                    priceSale: 35000,
-                    subTotal: 35000
-                }
-            ],
-            totalSale: 68000,
-            prescription: null,
-            transactionStatus: 'Menunggu Pembayaran',
-            transferReceipt: null,
-            invoiceNumber: 'INV/20220817/STN/00001',
-            addDate: '2022-08-17 11:00:00',
-            freightCost: 10000,
-            totalPayment: 78000,
-            recereceiverName: 'Aditya Dimas',
-            receiverAddress: 'Jl. Dimas',
-            receiverPhone: '081287907001',
-            postalCode: '77777'
-        }
-    ]);
 
-    const printProdukResep = () => {
-        if (props.dbValidasiResep.length > 0) {
-            return props.dbValidasiResep.map((value, index) => {
-                if (value.prescription != null && value.transactionStatus == "Menunggu Diproses Penjual") {
-                    return (
-                        <div class="col-md-10">
-                            <Box>
-                                <div>
-                                    <Text class="h6b">
-                                        Paracetamol
-                                    </Text>
-                                </div>
-                                <div>
-                                    <Box
-                                        display='flex'
-                                        flexDirection={{ base: 'column', md: 'row' }}
-                                        alignItems={{ base: 'start', md: 'center' }}
-                                        justifyContent='space-between'
-                                        className="font-brand"
-                                        pb={3}
-                                    >
-                                        <Text class="h6">
-                                            10 Kapsul x Rp 1.300
-                                        </Text>
-                                        <Text
-                                            as='b'
-                                            textColor='var(--colorSix)'
-                                        >
-                                            Rp 13.000
-                                        </Text>
-                                    </Box>
-                                </div>
-                            </Box>
-                        </div>
-                    )
-                }
-            }
+    //^ assign functions
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    //^ state management
+    const { transactionList, transactionLength } = useSelector((state) => {
+        return {
+            transactionList: state.transactionReducers.adminvalidasiresep,
+            transactionLength: state.transactionReducers.transactionAdminView.filter(val => val.transactionStatus == "Menunggu Diproses Penjual").length
+        }
+    })
+    const [tagihDiklik,setTagihDiklik] = useState(0)
+
+    //& component did mount
+    useEffect(() => {
+        if (props.query.length > 0) {
+            getArrayFilteredSortedTransaction();
+            setTagihDiklik(0)
+        } else {
+            getPaginatedTransaction();
+            setTagihDiklik(0)
+        }
+    }, [props.query,tagihDiklik])
+
+    //^ cek props, state
+    console.log(`props.query`, props.query)
+    console.log(`transactionList`, transactionList);
+    console.log(`transactionLength`, transactionLength);
+
+    const getArrayFilteredSortedTransaction = () => {
+        dispatch(getAdminFilterValidasiResepAction(props.query))
+    }
+
+    const getPaginatedTransaction = (page = 0) => {
+        if (props.query.length == 0) {
+            dispatch(getAdminValidasiResepAction(page + 1))
+        }
+    }
+
+    const handlePaginate = (paginate) => {
+        getPaginatedTransaction(paginate);
+    }
+
+    const printBtnPagination = () => {
+        let btn = []
+        console.log(`transactionLength di printBtnPagination`, transactionLength);
+        console.log(`Math.ceil(transactionLength)/3 di printBtnPagination`, Math.ceil(transactionLength) / 3);
+        for (let i = 0; i < Math.ceil(transactionLength / 3); i++) {
+            btn.push(
+                <Box
+                    as='button'
+                    height='30px'
+                    lineHeight='1.5'
+                    transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                    border='1px'
+                    px='8px'
+                    borderRadius='4px'
+                    className="font-brand"
+                    fontSize='14px'
+                    fontWeight='bold'
+                    bg='var(--colorTwo)'
+                    borderColor='var(--colorSix)'
+                    color='var(--colorSix)'
+                    _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                    _active={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)'
+                    }}
+                    _focus={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)',
+                        boxShadow:
+                            '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                    }}
+                    onClick={() => handlePaginate(i)}
+                >
+                    {i + 1}
+                </Box>
             )
         }
+        return btn;
     }
 
     //! pending list product dr hasil konversi / validasi resep
     //! pending handling subtotal
     const printSemuaTransaksi = () => {
-        if (props.dbValidasiResep.length > 0) {
-            return props.dbValidasiResep.map((value, index) => {
+        if (transactionList.length > 0) {
+            return transactionList.map((value, index) => {
                 if (value.prescription != null && value.transactionStatus == "Menunggu Diproses Penjual") {
                     return (
                         <div
@@ -375,59 +153,98 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                 </Box>
                                 <Button
                                     className="btn-def_second"
-                                    onClick={() => navigate("/admin/racikResep")}
+                                    mb={3}
+                                    onClick={() => navigate(`/admin/racikResep?id=${value.idTransaction}`)}
                                 >
                                     Validasi Resep
                                 </Button>
-                                <div class="row mt-3" key={value.idTransaction}>
-                                    <div class="col-md-2 d-flex justify-content-center">
-                                        <Image
-                                            id={value.idTransaction}
-                                            src={value.prescription.includes("http")
-                                                ?
-                                                value.prescription
-                                                :
-                                                `${BE_URL}${value.prescription}`}
-                                            alt='Gambar resep dokter'
-                                            borderRadius='sm'
-                                            boxSize='80px'
-                                            className="imgResep"
-                                        />
-                                    </div>
-                                    <div class="col-md-10">
-                                        <Box>
-                                            <div>
-                                                <Text class="h6b">
-                                                    Paracetamol
-                                                </Text>
-                                            </div>
-                                            <div>
+
+                                {/* UPDATE V2.0 */}
+                                <>
+                                    <Box
+                                        // display='flex-vertical'
+                                        alignItems='start'
+                                        justifyContent='space-between'
+                                        className="font-brand"
+                                        pb={2}
+
+                                    >
+                                        {value.purchasedProducts.length > 0
+                                            ?
+                                            value.purchasedProducts.map((valProduct, idxProduct) => {
+                                                return (
+                                                    <>
+                                                        <Box
+                                                            display='flex'
+                                                            alignItems='start'
+                                                            justifyContent='space-between'
+                                                            className="font-brand"
+                                                            pb={2}
+
+                                                        >
+                                                            <Box
+                                                                display='flex'
+                                                                alignItems='start'
+                                                                justifyContent='start'
+                                                                gap={5}
+                                                                key={valProduct.idTransactionDetail}
+                                                            >
+                                                                <Image
+                                                                    borderRadius='xl'
+                                                                    boxSize='70px'
+                                                                    src={BE_URL + valProduct.productPicture}
+                                                                    alt='Gambar resep dokter'
+                                                                    className="d-md-block d-none"
+                                                                />
+                                                                <Text>
+                                                                    <span>
+                                                                        {valProduct.productName}
+                                                                    </span>
+                                                                    <br />
+                                                                    <span>
+                                                                        {valProduct.purchaseQuantity} {valProduct.stockType} x Rp {valProduct.priceSale.toLocaleString()}
+                                                                    </span>
+                                                                </Text>
+                                                            </Box>
+                                                            <Text
+                                                                className="me-1"
+                                                            >
+                                                                Rp {valProduct.subTotal.toLocaleString()}
+                                                            </Text>
+                                                        </Box>
+                                                    </>
+                                                )
+                                            })
+                                            :
+                                            <>
                                                 <Box
                                                     display='flex'
-                                                    flexDirection={{ base: 'column', md: 'row' }}
-                                                    alignItems={{ base: 'start', md: 'center' }}
-                                                    justifyContent='space-between'
-                                                    className="font-brand"
-                                                    pb={3}
+                                                    alignItems='start'
+                                                    justifyContent='start'
+                                                    gap={5}
                                                 >
-                                                    <Text class="h6">
-                                                        10 Kapsul x Rp 1.300
-                                                    </Text>
-                                                    <Text
-                                                        as='b'
-                                                        textColor='var(--colorSix)'
-                                                    >
-                                                        Rp 13.000
-                                                    </Text>
+                                                    <Image
+                                                        borderRadius='xl'
+                                                        boxSize='70px'
+                                                        src={value.prescription.includes("http")
+                                                            ?
+                                                            value.prescription
+                                                            :
+                                                            `${BE_URL}${value.prescription}`}
+                                                        alt='Gambar resep dokter'
+                                                        className="d-md-block d-none imgResep"
+                                                    />
                                                 </Box>
-                                            </div>
-                                        </Box>
-                                    </div>
-                                </div>
+                                            </>
+                                        }
+                                    </Box>
+
+                                </>
+
                                 <Divider mt={4} />
-                                <div class="row">
-                                    <div class="col-md-2"></div>
-                                    <div class="col-md-10">
+                                <div className="row">
+                                    <div className="col-md-2"></div>
+                                    <div className="col-md-10">
                                         <Box
                                             display='flex'
                                             flexDirection={{ base: 'column', md: 'row' }}
@@ -437,7 +254,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                             pb={3}
                                         >
                                             <Box mt={5}>
-                                                <Text class="h6">
+                                                <Text className="h6">
                                                     Ongkir
                                                 </Text>
                                             </Box>
@@ -457,7 +274,7 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                             pb={3}
                                         >
                                             <Box>
-                                                <Text class="h6">
+                                                <Text className="h6">
                                                     Total
                                                 </Text>
                                             </Box>
@@ -465,21 +282,26 @@ const AdminTransCardValidasiResepComponent = (props) => {
                                                 as='b'
                                                 textColor='var(--colorSix)'
                                             >
-                                                Rp 35.000
+                                                Rp {value.totalPayment != null
+                                                    ?
+                                                    value.totalPayment.toLocaleString()
+                                                    :
+                                                    value.freightCost.toLocaleString()
+                                                }
                                             </Text>
                                         </Box>
                                     </div>
                                 </div>
-                                <div class="d-flex justify-content-end mt-2">
+                                <div className="d-flex justify-content-end mt-2">
                                     <Button
                                         className="btn-def_second"
-                                    // onClick={() => btnUploadBuktiBayar(value.idTransaction)}
+                                        onClick={() => btnTagihPembayaran(value.idTransaction,"Menunggu Pembayaran")}
                                     >
                                         Tagih Pembayaran
                                     </Button>
                                 </div>
                             </div>
-                        </div>
+                        </div >
                     )
                 }
             }
@@ -487,9 +309,28 @@ const AdminTransCardValidasiResepComponent = (props) => {
         }
     }
 
+    const btnTagihPembayaran = (idTransaction,status)=>{
+        dispatch(updateTransactionStatusOnlyAction(idTransaction, status))
+        getPaginatedTransaction();
+        setTagihDiklik(1);
+    }
+
     return (
         <>
-            {printSemuaTransaksi()}
+            {
+                props.query.length > 0
+                    ?
+                    <>
+                        {printSemuaTransaksi()}
+                    </>
+                    :
+                    <>
+                        {printSemuaTransaksi()}
+                        <ButtonGroup>
+                            {printBtnPagination()}
+                        </ButtonGroup>
+                    </>
+            }
         </>
     )
 

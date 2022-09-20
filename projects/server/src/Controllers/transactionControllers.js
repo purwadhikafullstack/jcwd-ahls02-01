@@ -3,78 +3,13 @@ const { uploader } = require("../Config/uploader");
 const fs = require("fs");
 
 module.exports = {
-    userGetAllTransaction: async (req, res, next) => {
+    userGetAllTransaction: async (req, res, next) => { //* USER GET ALL TRANSACTION
         try {
-            //* by default ada query untuk pagination
-            // console.log("req.query._page", req.query._page);
 
-            //* query untuk sortir
-            //^ _sortBy date = "t1.addDate"
-            //^ _sortBy invoice = "t1.invoiceNumber"
-            // console.log("req.query._sortBy", req.query._sortBy);
-            // let sortBy = req.query._sortBy
-            // console.log("req.query._order", req.query._order);
-            // let _order = req.query._order
-
-            //* query untuk filter
-            // console.log("req.query._filterInvoice", req.query._filterInvoice);
-            // let filterInvoice = req.query._filterInvoice
-            // console.log("req.query._dateGte", req.query._dateGte);
-            // let dateGte = req.query._dateGte
-            // console.log("req.query._dateLte", req.query._dateLte);
-            // let dateLte = req.query._dateLte
-
-            //! COBA FILTER DAN PAGINATION -- MASIH GAGAL
-            // let transaction = [];
-
-            // if (sortBy && _order && filterInvoice == "" && dateGte == "" && dateLte == "") {
-            //     //! KONDISI 1
-            //     //* sortBy ada isinya _order harus ada isinya (sesuai dropdown)
-            //     //* semua filter == empty string / falsy
-
-            //     console.log(`KONDISI 1 select t1.idTransaction, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, t1.addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress group by t1.idTransaction order by ${dbConf.escape(sortBy)} ${dbConf.escape(_order)} limit 2 offset ${dbConf.escape((req.query._page - 1) * 2)};`)
-
-            // } else if (sortBy && _order && filterInvoice && dateGte == "" && dateLte == "") {
-            //     //! KONDISI 2
-            //     //* sortBy ada isinya _order harus ada isinya (sesuai dropdown)
-            //     //* filterInvoice ada isinya sisa filternya == empty string / falsy
-
-            //     console.log(`KONDISI 2 select t1.idTransaction, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, t1.addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.invoiceNumber like "%${dbConf.escape(filterInvoice)}%" group by t1.idTransaction order by ${dbConf.escape(sortBy)} ${dbConf.escape(_order)} limit 2 offset ${dbConf.escape((req.query._page - 1) * 2)};`)
-
-            // } else if (sortBy && _order && filterInvoice == "" && dateGte && dateLte) {
-            //     //! KONDISI 3
-            //     //* sortBy ada isinya _order harus ada isinya (sesuai dropdown)
-            //     //* filterInvoice ada isinya sisa filternya == empty string / falsy
-            //     console.log(`KONDISI 3 select t1.idTransaction, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, t1.addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.addDate between ${dbConf.escape(dateGte)} and ${dbConf.escape(dateLte)} group by t1.idTransaction order by ${dbConf.escape(sortBy)} ${dbConf.escape(_order)} limit 2 offset ${dbConf.escape((req.query._page - 1) * 2)};`)
-
-            // } else {
-            //     //! KONDISI 4
-            //     //* by default transaksi di tampilan user tersortir tanggal paling baru ke lama dan terpaginate 2 card per tampilan
-
-            //     console.log(`KONDISI 4 select t1.idTransaction, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, t1.addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress group by t1.idTransaction order by t1.addDate desc limit 2 offset ${dbConf.escape((req.query._page - 1) * 2)};`)
-
-            // }
-
-            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
-            // let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
-
-            // console.log(`transactionDetail, ${transactionDetail}`);
-
-            // transaction.forEach((val, idx) => {
-            //     val.purchasedProducts = [];
-            //     transactionDetail.forEach((valDetail, idxDetail) => {
-            //         if (val.idTransaction == valDetail.idTransaction) {
-            //             val.purchasedProducts.push(valDetail)
-            //         }
-            //     })
-            // });
-
-            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, t1.addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser=${dbConf.escape(req.dataUser.idUser)} group by t1.idTransaction order by t1.addDate desc;`)
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser=${dbConf.escape(req.dataUser.idUser)} group by t1.idTransaction order by t1.addDate desc;`)
 
             //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
             let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
-
-            // console.log(`transactionDetail, ${transactionDetail}`);
 
             transaction.forEach((val, idx) => {
                 val.purchasedProducts = [];
@@ -91,25 +26,111 @@ module.exports = {
             return next(error);
         }
     },
-    userGetValidasiResep: async (req, res, next) => {
+    userGetValidasiResep: async (req, res, next) => { //! PAGINATION DONE
+        try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Diproses Penjual" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    userFilterValidasiResep: async (req, res, next) => { //! FILTER AND SORT DONE
         //* butuh slot untuk pagination dan filtering
         try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
 
-        } catch (error) {
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
 
-        }
-    },
-    userGetMenungguPembayaran: async (req, res, next) => {
-        try {
-            //* by default transaksi di tampilan user tersortir tanggal paling baru ke lama dan terpaginate 2 card per tampilan
-            let transaction = await dbQuery(`select t1.idTransaction, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, t1.addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus="Menunggu Pembayaran" group by t1.idTransaction order by t1.addDate desc limit 2 offset ${dbConf.escape((req.query._page - 1) * 2)};`);
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
 
-            console.log(`transaction, ${transaction}`);
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Diproses Penjual" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
 
-            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Diproses Penjual" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Diproses Penjual" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Diproses Penjual" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Diproses Penjual" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Diproses Penjual" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Diproses Penjual" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Diproses Penjual" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                    console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Diproses Penjual" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Diproses Penjual" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
             let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
 
-            // console.log(`transactionDetail, ${transactionDetail}`);
+            // // console.log(`transactionDetail, ${transactionDetail}`);
 
             transaction.forEach((val, idx) => {
                 val.purchasedProducts = [];
@@ -121,19 +142,723 @@ module.exports = {
             });
 
             return res.status(200).send(transaction);
-
         } catch (error) {
             return next(error);
         }
     },
-    userGetMenungguKonfirmasi: async (req, res, next) => {
+    userGetMenungguPembayaran: async (req, res, next) => { //! PAGINATION DONE
         try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Pembayaran" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
 
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
         } catch (error) {
-
+            return next(error);
         }
     },
-    addNormalTransaction: async (req, res, next) => {
+    userFilterMenungguPembayaran: async (req, res, next) => { //! FILTER AND SORT DONE
+        //* butuh slot untuk pagination dan filtering
+        try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
+
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
+
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
+
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Pembayaran" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Pembayaran" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Pembayaran" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Pembayaran" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Pembayaran" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Pembayaran" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Pembayaran" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Pembayaran" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                    console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Pembayaran" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Pembayaran" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            // // console.log(`transactionDetail, ${transactionDetail}`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    userGetMenungguKonfirmasi: async (req, res, next) => { //! PAGINATION DONE
+        try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Konfirmasi" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    userFilterMenungguKonfirmasi: async (req, res, next) => { //! FILTER AND SORT DONE
+        //* butuh slot untuk pagination dan filtering
+        try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
+
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
+
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
+
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Konfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Konfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Konfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Konfirmasi" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Konfirmasi" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Konfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Konfirmasi" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Konfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                    console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Konfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Menunggu Konfirmasi" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            // // console.log(`transactionDetail, ${transactionDetail}`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    userGetDiproses: async (req, res, next) => { //! PAGINATION DONE
+        try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Diproses" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    userFilterDiproses: async (req, res, next) => { //! FILTER AND SORT DONE
+        //* butuh slot untuk pagination dan filtering
+        try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
+
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
+
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
+
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Diproses" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Diproses" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Diproses" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Diproses" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Diproses" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Diproses" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Diproses" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Diproses" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Diproses" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            // // console.log(`transactionDetail, ${transactionDetail}`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    userGetDikirim: async (req, res, next) => { //! PAGINATION DONE
+        try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dikirim" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    userFilterDikirim: async (req, res, next) => { //! FILTER AND SORT DONE
+        //* butuh slot untuk pagination dan filtering
+        try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
+
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
+
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
+
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dikirim" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dikirim" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dikirim" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dikirim" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dikirim" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dikirim" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dikirim" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dikirim" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dikirim" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            // // console.log(`transactionDetail, ${transactionDetail}`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    userGetPesananDikonfirmasi: async (req, res, next) => { //! PAGINATION DONE
+        try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Pesanan Dikonfirmasi" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    userFilterPesananDikonfirmasi: async (req, res, next) => { //! FILTER AND SORT DONE
+        //* butuh slot untuk pagination dan filtering
+        try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
+
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
+
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
+
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Pesanan Dikonfirmasi" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Pesanan Dikonfirmasi" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            // // console.log(`transactionDetail, ${transactionDetail}`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    userGetDibatalkan: async (req, res, next) => { //! PAGINATION DONE
+        try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dibatalkan" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    userFilterDibatalkan: async (req, res, next) => { //! FILTER AND SORT DONE
+        //* butuh slot untuk pagination dan filtering
+        try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
+
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
+
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
+
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dibatalkan" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dibatalkan" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dibatalkan" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dibatalkan" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dibatalkan" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dibatalkan" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dibatalkan" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dibatalkan" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idUser = ${dbConf.escape(req.dataUser.idUser)} and t1.transactionStatus = "Dibatalkan" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            // // console.log(`transactionDetail, ${transactionDetail}`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    addNormalTransaction: async (req, res, next) => { //* USER ADD TRANSACTION FROM CART
         try {
             console.log(`arrayIdCart`, req.body.arrayIdCart);
             console.log(`idAddress`, req.body.idAddress);
@@ -218,15 +943,13 @@ module.exports = {
             return next(error);
         }
     },
-    addRecipeTransaction: async (req, res, next) => {
+    addRecipeTransaction: async (req, res, next) => { //* USER ADD TRANSACTION FROM RECIPE
         try {
 
             if (req.dataUser.idUser) {
 
                 const uploadFile = uploader('/Resep', `RESEP-DOKTER`).array('resepPicture', 1);
 
-                // console.log('pengecekan size file', req.files[0].size <= 1000000);
-                // if (req.files[0].size <= 1000000) {
                 uploadFile(req, res, async (error) => {
                     try {
 
@@ -271,14 +994,12 @@ module.exports = {
             return next(error);
         }
     },
-    addBuktiBayar: async (req, res, next) => {
+    addBuktiBayar: async (req, res, next) => { //* USER ADD BUKTI BAYAR
         try {
 
             if (req.dataUser.idUser) {
                 const uploadFile = uploader('/BuktiBayar', `BUKTI-BAYAR`).array('buktiPicture', 1);
 
-                // console.log('pengecekan size file', req.files[0].size <= 1000000);
-                // if (req.files[0].size <= 1000000) {
                 uploadFile(req, res, async (error) => {
                     try {
 
@@ -297,84 +1018,18 @@ module.exports = {
                         return next(error);
                     }
                 })
-                // }
             }
         } catch (error) {
             return next(error);
         }
     },
-    adminGetAllTransaction: async (req, res, next) => {
+    adminGetAllTransaction: async (req, res, next) => { //* ADMIN GET ALL TRANSACTION
         try {
-            //* by default ada query untuk pagination
-            // console.log("req.query._page", req.query._page);
 
-            //* query untuk sortir
-            //^ _sortBy date = "t1.addDate"
-            //^ _sortBy invoice = "t1.invoiceNumber"
-            // console.log("req.query._sortBy", req.query._sortBy);
-            // let sortBy = req.query._sortBy
-            // console.log("req.query._order", req.query._order);
-            // let _order = req.query._order
-
-            //* query untuk filter
-            // console.log("req.query._filterInvoice", req.query._filterInvoice);
-            // let filterInvoice = req.query._filterInvoice
-            // console.log("req.query._dateGte", req.query._dateGte);
-            // let dateGte = req.query._dateGte
-            // console.log("req.query._dateLte", req.query._dateLte);
-            // let dateLte = req.query._dateLte
-
-            //! COBA FILTER DAN PAGINATION -- MASIH GAGAL
-            // let transaction = [];
-
-            // if (sortBy && _order && filterInvoice == "" && dateGte == "" && dateLte == "") {
-            //     //! KONDISI 1
-            //     //* sortBy ada isinya _order harus ada isinya (sesuai dropdown)
-            //     //* semua filter == empty string / falsy
-
-            //     console.log(`KONDISI 1 select t1.idTransaction, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, t1.addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress group by t1.idTransaction order by ${dbConf.escape(sortBy)} ${dbConf.escape(_order)} limit 2 offset ${dbConf.escape((req.query._page - 1) * 2)};`)
-
-            // } else if (sortBy && _order && filterInvoice && dateGte == "" && dateLte == "") {
-            //     //! KONDISI 2
-            //     //* sortBy ada isinya _order harus ada isinya (sesuai dropdown)
-            //     //* filterInvoice ada isinya sisa filternya == empty string / falsy
-
-            //     console.log(`KONDISI 2 select t1.idTransaction, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, t1.addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.invoiceNumber like "%${dbConf.escape(filterInvoice)}%" group by t1.idTransaction order by ${dbConf.escape(sortBy)} ${dbConf.escape(_order)} limit 2 offset ${dbConf.escape((req.query._page - 1) * 2)};`)
-
-            // } else if (sortBy && _order && filterInvoice == "" && dateGte && dateLte) {
-            //     //! KONDISI 3
-            //     //* sortBy ada isinya _order harus ada isinya (sesuai dropdown)
-            //     //* filterInvoice ada isinya sisa filternya == empty string / falsy
-            //     console.log(`KONDISI 3 select t1.idTransaction, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, t1.addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.addDate between ${dbConf.escape(dateGte)} and ${dbConf.escape(dateLte)} group by t1.idTransaction order by ${dbConf.escape(sortBy)} ${dbConf.escape(_order)} limit 2 offset ${dbConf.escape((req.query._page - 1) * 2)};`)
-
-            // } else {
-            //     //! KONDISI 4
-            //     //* by default transaksi di tampilan user tersortir tanggal paling baru ke lama dan terpaginate 2 card per tampilan
-
-            //     console.log(`KONDISI 4 select t1.idTransaction, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, t1.addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress group by t1.idTransaction order by t1.addDate desc limit 2 offset ${dbConf.escape((req.query._page - 1) * 2)};`)
-
-            // }
-
-            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
-            // let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
-
-            // console.log(`transactionDetail, ${transactionDetail}`);
-
-            // transaction.forEach((val, idx) => {
-            //     val.purchasedProducts = [];
-            //     transactionDetail.forEach((valDetail, idxDetail) => {
-            //         if (val.idTransaction == valDetail.idTransaction) {
-            //             val.purchasedProducts.push(valDetail)
-            //         }
-            //     })
-            // });
-
-            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, t1.addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress group by t1.idTransaction order by t1.addDate asc;`)
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress group by t1.idTransaction order by t1.addDate asc;`)
 
             //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
             let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
-
-            // console.log(`transactionDetail, ${transactionDetail}`);
 
             transaction.forEach((val, idx) => {
                 val.purchasedProducts = [];
@@ -390,5 +1045,1009 @@ module.exports = {
         } catch (error) {
             return next(error);
         }
-    }
+    },
+    adminGetValidasiResep: async (req, res, next) => { //! PAGINATION DONE
+        try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Diproses Penjual" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminFilterValidasiResep: async (req, res, next) => { //! FILTER AND SORT DONE
+        //* butuh slot untuk pagination dan filtering
+        try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
+
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
+
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
+
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Diproses Penjual" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Diproses Penjual" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Diproses Penjual" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Diproses Penjual" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Diproses Penjual" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Diproses Penjual" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Diproses Penjual" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Diproses Penjual" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                    console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Diproses Penjual" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Diproses Penjual" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            // // console.log(`transactionDetail, ${transactionDetail}`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminGetMenungguPembayaran: async (req, res, next) => { //! PAGINATION DONE
+        try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Pembayaran" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminFilterMenungguPembayaran: async (req, res, next) => { //! FILTER AND SORT DONE
+        //* butuh slot untuk pagination dan filtering
+        try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
+
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
+
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
+
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Pembayaran" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Pembayaran" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Pembayaran" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Pembayaran" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Pembayaran" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Pembayaran" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Pembayaran" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Pembayaran" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                    console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Pembayaran" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Pembayaran" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            // // console.log(`transactionDetail, ${transactionDetail}`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminGetMenungguKonfirmasi: async (req, res, next) => { //! PAGINATION DONE
+        try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Konfirmasi" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminFilterMenungguKonfirmasi: async (req, res, next) => { //! FILTER AND SORT DONE
+        //* butuh slot untuk pagination dan filtering
+        try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
+
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
+
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
+
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Konfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Konfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Konfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Konfirmasi" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Konfirmasi" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Konfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Konfirmasi" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Konfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                    console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Konfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Menunggu Konfirmasi" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            // // console.log(`transactionDetail, ${transactionDetail}`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminGetDiproses: async (req, res, next) => { //! PAGINATION DONE
+        try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Diproses" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminFilterDiproses: async (req, res, next) => { //! FILTER AND SORT DONE
+        //* butuh slot untuk pagination dan filtering
+        try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
+
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
+
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
+
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Diproses" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Diproses" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Diproses" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Diproses" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Diproses" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Diproses" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Diproses" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Diproses" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                    console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Diproses" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Diproses" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            // // console.log(`transactionDetail, ${transactionDetail}`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminGetDikirim: async (req, res, next) => { //! PAGINATION DONE
+        try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dikirim" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminFilterDikirim: async (req, res, next) => { //! FILTER AND SORT DONE
+        //* butuh slot untuk pagination dan filtering
+        try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
+
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
+
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
+
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dikirim" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dikirim" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dikirim" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dikirim" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dikirim" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dikirim" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dikirim" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dikirim" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                    console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dikirim" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dikirim" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            // // console.log(`transactionDetail, ${transactionDetail}`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminGetPesananDikonfirmasi: async (req, res, next) => { //! PAGINATION DONE
+        try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Pesanan Dikonfirmasi" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminFilterPesananDikonfirmasi: async (req, res, next) => { //! FILTER AND SORT DONE
+        //* butuh slot untuk pagination dan filtering
+        try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
+
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
+
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
+
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Pesanan Dikonfirmasi" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                    console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Pesanan Dikonfirmasi" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Pesanan Dikonfirmasi" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            // // console.log(`transactionDetail, ${transactionDetail}`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminGetDibatalkan: async (req, res, next) => { //! PAGINATION DONE
+        try {
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dibatalkan" group by t1.idTransaction order by t1.addDate desc limit 3 offset ${dbConf.escape((req.query._page - 1) * 3)};`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminFilterDibatalkan: async (req, res, next) => { //! FILTER AND SORT DONE
+        //* butuh slot untuk pagination dan filtering
+        try {
+            //* query untuk sortir
+            // ^ _sortBy date = "t1.addDate"
+            // ^ _sortBy invoice = "t1.invoiceNumber"
+            console.log("req.query._sortBy", req.query._sortBy);
+            console.log("req.query._order", req.query._order);
+
+            //* query untuk filter
+            console.log("req.query._filterInvoice", req.query._filterInvoice);
+            console.log("req.query._dateGte", req.query._dateGte);
+            console.log("req.query._dateLte", req.query._dateLte);
+
+            let { _sortBy, _order, _filterInvoice, _dateGte, _dateLte } = req.query;
+            console.log("_sortBy", _sortBy);
+            console.log("_order", _order);
+            console.log("_filterInvoice", _filterInvoice);
+            console.log("_dateGte", _dateGte);
+            console.log("_dateLte", _dateLte);
+
+            let transaction = [];
+            if (_sortBy && _order) {
+                if (_filterInvoice) {
+                    if (_dateGte && _dateLte) {
+                        console.log(`===FILTER CONDITION 1 SORT, INV, DATE===`, `select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dibatalkan" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dibatalkan" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    } else {
+                        console.log(`===FILTER CONDITION 2 SORT, INV===`);
+
+                        transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dibatalkan" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                    }
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 3 SORT, DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dibatalkan" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 4 SORT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dibatalkan" group by t1.idTransaction order by ${_sortBy} ${_order};`)
+
+                }
+
+            } else {
+                if (_dateGte && _dateLte && _filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 5 DATE INV ===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dibatalkan" and t1.invoiceNumber like '%${_filterInvoice}%' and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_dateGte && _dateLte) {
+
+                    console.log(`===FILTER CONDITION 6 DATE===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dibatalkan" and t1.addDate between ${dbConf.escape(_dateGte)} and ${dbConf.escape(_dateLte)} group by t1.idTransaction;`)
+
+                } else if (_filterInvoice) {
+
+                    console.log(`===FILTER CONDITION 7 INV===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dibatalkan" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                    console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dibatalkan" and t1.invoiceNumber like '%${_filterInvoice}%' group by t1.idTransaction;`)
+
+                } else {
+
+                    console.log(`===FILTER CONDITION 8 DEFAULT===`);
+
+                    transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.transactionStatus = "Dibatalkan" group by t1.idTransaction order by t1.addDate desc;`)
+                }
+            }
+
+            console.log(`isi transaction`, transaction);
+
+            // //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            // // console.log(`transactionDetail, ${transactionDetail}`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction);
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminGetDetailRecipe: async (req, res, next) => { //* ADMIN GET DETAIL RECIPE
+        try {
+
+            console.log(`req.query.id di adminGetDetailRecipe`, req.query.id);
+
+            let transaction = await dbQuery(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idTransaction = ${req.query.id} group by t1.idTransaction;`)
+
+            console.log(`select t1.idTransaction, t1.idUser, sum(t2.subTotal) as totalSale, t1.prescription, t1.transactionStatus, t1.transferReceipt, t1.invoiceNumber, date_format(t1.addDate, '%Y-%m-%d %H:%i:%S') as addDate, t1.freightCost, (sum(t2.subTotal) + t1.freightCost) as totalPayment, a.receiverName, a.address, a.receiverPhone, a.postalCode from transactions t1 left join transactionsdetail t2 on t1.idTransaction = t2.idTransaction left join address a on t1.idAddress = a.idAddress where t1.idTransaction = ${req.query.id} group by t1.idTransaction;`)
+
+            //* transactionDetail ditarik dan diattach ke transaction sebagai purchasedProducts
+            let transactionDetail = await dbQuery(`select t2.idTransactionDetail, t2.idTransaction, t2.idStock, s.idProduct, t2.idUser, t2.productName, t2.productPicture, t2.stockType, s.stockQuantity, t2.purchaseQuantity, t2.priceSale, t2.subTotal from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock;`);
+
+            transaction.forEach((val, idx) => {
+                val.purchasedProducts = [];
+                transactionDetail.forEach((valDetail, idxDetail) => {
+                    if (val.idTransaction == valDetail.idTransaction) {
+                        val.purchasedProducts.push(valDetail)
+                    }
+                })
+            });
+
+            return res.status(200).send(transaction[0]);
+
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminGetAllProduct: async (req, res, next) => { //* ADMIN GET SEMUA LIST PRODUK SERTA STOKNYA
+        try {
+
+            let productList = await dbQuery(`select p.idProduct, p.productName, p.productPicture, p.convertedQuantity, s.idStock, s.stockType, s.stockQuantity, s.priceSale, s.isMain from products p left join stocks s on p.idProduct = s.idProduct where p.isDeleted = false;`)
+
+            return res.status(200).send(productList);
+
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminAddTransactionDetailForRecipe: async (req, res, next) => { //* ADMIN EDIT DETAIL RECIPE
+        try {
+
+            console.log(`req.body.idTransaction`, req.body.idTransaction)
+            console.log(`req.body.idUser`, req.body.idUser)
+            console.log(`req.body.selectMeds`, req.body.selectedMeds)
+
+            let { idTransaction, idUser, selectedMeds } = req.body;
+
+            let addDetailQuery = [];
+            if (selectedMeds.length >= 1) {
+                selectedMeds.forEach((valueNewTransaction) => {
+                    console.log(`insert into transactionsdetail (idTransaction, idStock, idUser, productName, productPicture, stockType, purchaseQuantity, priceSale, subTotal) values (${idTransaction},${valueNewTransaction.idStock},${idUser},${dbConf.escape(valueNewTransaction.productName)},${dbConf.escape(valueNewTransaction.productPicture)},${dbConf.escape(valueNewTransaction.stockType)},${valueNewTransaction.purchaseQuantity},${valueNewTransaction.priceSale},${valueNewTransaction.subTotal})`);
+
+                    addDetailQuery.push(`insert into transactionsdetail (idTransaction, idStock, idUser, productName, productPicture, stockType, purchaseQuantity, priceSale, subTotal) values (${idTransaction},${valueNewTransaction.idStock},${idUser},${dbConf.escape(valueNewTransaction.productName)},${dbConf.escape(valueNewTransaction.productPicture)},${dbConf.escape(valueNewTransaction.stockType)},${valueNewTransaction.purchaseQuantity},${valueNewTransaction.priceSale},${valueNewTransaction.subTotal});`)
+                })
+            }
+            let contents1
+            await Promise.all(addDetailQuery.map(async (valArrayDetail) => {
+                contents1 = await dbQuery(valArrayDetail);
+            }));
+
+            let getStock = await dbQuery(`select s.idStock, s.stockQuantity, s.priceSale from stocks s;`);
+
+            let updateStockQuery = [];
+            if (selectedMeds.length >= 1) {
+                selectedMeds.forEach((valueNewTransaction) => {
+                    getStock.forEach(valueGetStock => {
+                        if (valueNewTransaction.idStock == valueGetStock.idStock) {
+                            console.log(`update stocks set stockQuantity = ${valueGetStock.stockQuantity - valueNewTransaction.purchaseQuantity} where idStock = ${valueNewTransaction.idStock};`)
+
+                            updateStockQuery.push(`update stocks set stockQuantity = ${valueGetStock.stockQuantity - valueNewTransaction.purchaseQuantity} where idStock = ${valueNewTransaction.idStock};`)
+                        }
+                    })
+                })
+            }
+            let contents2
+            await Promise.all(updateStockQuery.map(async (valArrayDetail) => {
+                contents2 = await dbQuery(valArrayDetail);
+            }));
+
+            return res.status(200).send({ success: true, message: `update stock berhasil` });
+        } catch (error) {
+            return next(error);
+        }
+    },
+    adminEditTransactionStatusOnly: async (req, res, next) => {
+        try {
+            console.log(`req.params.id`, req.params.id);
+            console.log(`req.body.transactionStatus`, req.body.newTransactionStatus);
+
+            if (req.dataUser.idUser) {
+                let editTransaction = await dbQuery(`update transactions set transactionStatus = ${dbConf.escape(req.body.newTransactionStatus)} where idTransaction = ${req.params.id};`);
+            }
+
+            return res.status(200).send({ success: true, message: `update transactionStatus berhasil` })
+
+        } catch (error) {
+            return next(error)
+        }
+    },
+    adminCancelingTheOrder: async (req, res, next) => {
+        try {
+            console.log(`req.params.id`, req.params.id);
+            console.log(`req.body.transactionStatus`, req.body.newTransactionStatus);
+
+            if (req.dataUser.idUser) {
+                console.log(`update transactions set transactionStatus = ${dbConf.escape(req.body.newTransactionStatus)} where idTransaction = ${req.params.id};`)
+
+                let editTransaction = await dbQuery(`update transactions set transactionStatus = ${dbConf.escape(req.body.newTransactionStatus)} where idTransaction = ${req.params.id};`);
+
+                //* transactionDetail ditarik untuk ambil idStock dan purchase quantity
+                let transactionDetail = await dbQuery(`select t2.idTransaction, t2.idStock, s.stockQuantity, t2.purchaseQuantity from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock where t2.idTransaction = ${req.params.id};`);
+
+                let updateStockQuery = []
+                transactionDetail.forEach((val, idx) => {
+                    updateStockQuery.push(`update stocks set stockQuantity = ${val.stockQuantity + val.purchaseQuantity} where idStock = ${val.idStock};`)
+
+                    console.log(`update stocks set stockQuantity = ${val.stockQuantity + val.purchaseQuantity} where idStock = ${val.idStock};`)
+                })
+
+                let contents1
+                await Promise.all(updateStockQuery.map(async (valArray) => {
+                    contents1 = await dbQuery(valArray);
+                }));
+
+            }
+
+            return res.status(200).send({ success: true, message: `update transactionStatus dan stocks berhasil` })
+
+        } catch (error) {
+            return next(error)
+        }
+    },
+    userConfirmReceivingThePackage: async (req, res, next) => {
+        try {
+            console.log(`req.params.id`, req.params.id);
+            console.log(`req.body.transactionStatus`, req.body.newTransactionStatus);
+
+            if (req.dataUser.idUser) {
+                //* update tabel transaksi
+                let editTransaction = await dbQuery(`update transactions set transactionStatus = ${dbConf.escape(req.body.newTransactionStatus)} where idTransaction = ${req.params.id};`);
+
+                console.log(`update transactions set transactionStatus = ${dbConf.escape(req.body.newTransactionStatus)} where idTransaction = ${req.params.id};`)
+
+                //* transactionDetail ditarik untuk ambil idStock dan purchase quantity
+                let transactionDetail = await dbQuery(`select t2.idTransaction, t2.idStock, s.stockQuantity, t2.purchaseQuantity from transactionsdetail t2 left join stocks s on t2.idStock = s.idStock where t2.idTransaction = ${req.params.id};`);
+
+                let updateTableProductHistory = []
+                transactionDetail.forEach((val, idx) => {
+                    updateTableProductHistory.push(`insert into producthistory (idStock,idTransaction,mutationSource,mutationType) values (${val.idStock},${req.params.id},"Penjualan","Pengurangan");`)
+
+                    console.log(`insert into producthistory (idStock,idTransaction,mutationSource,mutationType) values (${val.idStock},${req.params.id},"Penjualan","Pengurangan");`)
+                })
+
+                let contents1
+                await Promise.all(updateTableProductHistory.map(async (valArray) => {
+                    contents1 = await dbQuery(valArray);
+                }));
+
+                return res.status(200).send({ success: true, message: `update transactionStatus dan producthistory berhasil` })
+            }
+        } catch (error) {
+            return next(error)
+        }
+    },
 }

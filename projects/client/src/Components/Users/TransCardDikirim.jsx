@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Axios from 'axios';
-// import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
 import { API_URL, BE_URL } from "../../helper";
+import { getUserDikirimAction, getUserFilterDikirimAction, confirmReceivePackageAction } from "../../Redux/Actions/transactionActions";
 import {
     Box,
     Divider,
@@ -34,11 +35,93 @@ import {
 
 const TransCardDikirimComponent = (props) => {
 
-    //TODO axios get seluruh transaksi yang berstatus Dikirim
+    //^ assign functions
+    const dispatch = useDispatch();
+
+    //^ state management
+    const { transactionList, transactionLength } = useSelector((state) => {
+        return {
+            transactionList: state.transactionReducers.userdikirim,
+            transactionLength: state.transactionReducers.transaction.filter(val => val.transactionStatus == "Dikirim").length
+        }
+    })
+    const [terimaPesanan, setTerimaPesanan] = useState(0);
+
+    //& component did mount
+    useEffect(() => {
+        if (props.query.length > 0) {
+            getArrayFilteredSortedTransaction();
+            setTerimaPesanan(0)
+        } else {
+            getPaginatedTransaction();
+            setTerimaPesanan(0)
+        }
+    }, [props.query,terimaPesanan])
+
+    //^ cek props, state
+    console.log(`props.query`, props.query)
+    console.log(`transactionList`, transactionList);
+    console.log(`transactionLength`, transactionLength);
+
+    const getArrayFilteredSortedTransaction = () => {
+        dispatch(getUserFilterDikirimAction(props.query))
+    }
+
+    const getPaginatedTransaction = (page = 0) => {
+        if (props.query.length == 0) {
+            dispatch(getUserDikirimAction(page + 1))
+        }
+    }
+
+    const handlePaginate = (paginate) => {
+        getPaginatedTransaction(paginate);
+    }
+
+    const printBtnPagination = () => {
+        let btn = []
+        console.log(`transactionLength di printBtnPagination`, transactionLength);
+        console.log(`Math.ceil(transactionLength)/3 di printBtnPagination`, Math.ceil(transactionLength) / 3);
+        for (let i = 0; i < Math.ceil(transactionLength / 3); i++) {
+            btn.push(
+                <Box
+                    as='button'
+                    height='30px'
+                    lineHeight='1.5'
+                    transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                    border='1px'
+                    px='8px'
+                    borderRadius='4px'
+                    className="font-brand"
+                    fontSize='14px'
+                    fontWeight='bold'
+                    bg='var(--colorTwo)'
+                    borderColor='var(--colorSix)'
+                    color='var(--colorSix)'
+                    _hover={{ bg: 'var(--colorSix)', borderColor: 'var(--colorOne)', color: 'var(--colorOne)' }}
+                    _active={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)'
+                    }}
+                    _focus={{
+                        bg: 'var(--colorSix)',
+                        color: 'var(--colorOne)',
+                        borderColor: 'var(--colorOne)',
+                        boxShadow:
+                            '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+                    }}
+                    onClick={() => handlePaginate(i)}
+                >
+                    {i + 1}
+                </Box>
+            )
+        }
+        return btn;
+    }
 
     const printDikirim = () => {
-        if (props.dbDikirim.length > 0) {
-            return props.dbDikirim.map((value, index) => {
+        if (transactionList.length > 0) {
+            return transactionList.map((value, index) => {
                 return (
                     <div
                         className="card mb-2" key={value.idTransaction}
@@ -94,7 +177,7 @@ const TransCardDikirimComponent = (props) => {
                                                 <Image
                                                     borderRadius='xl'
                                                     boxSize='70px'
-                                                    src={BE_URL+valProduct.productPicture}
+                                                    src={BE_URL + valProduct.productPicture}
                                                     alt={`IMG-${valProduct.productName}`}
                                                     className="d-md-block d-none"
                                                 />
@@ -167,6 +250,7 @@ const TransCardDikirimComponent = (props) => {
                                 <Button
                                     className="btn-def_second"
                                     width={230}
+                                    onClick={() => btnTerimaPesanan(value.idTransaction, "Pesanan Dikonfirmasi")}
                                 >
                                     Konfirmasi Terima Pesanan
                                 </Button>
@@ -179,9 +263,28 @@ const TransCardDikirimComponent = (props) => {
         }
     }
 
+    const btnTerimaPesanan = (idTransaction, status) => {
+        dispatch(confirmReceivePackageAction(idTransaction, status))
+        getPaginatedTransaction();
+        setTerimaPesanan(1);
+    }
+
     return (
         <>
-            {printDikirim()}
+            {
+                props.query.length > 0
+                    ?
+                    <>
+                        {printDikirim()}
+                    </>
+                    :
+                    <>
+                        {printDikirim()}
+                        <ButtonGroup>
+                            {printBtnPagination()}
+                        </ButtonGroup>
+                    </>
+            }
         </>
     )
 
