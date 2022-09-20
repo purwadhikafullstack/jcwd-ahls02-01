@@ -3,7 +3,7 @@ import React from "react";
 import { API_URL } from "../../helper";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from "react-router-dom";
-import { Text, useMediaQuery, Box, Button, ButtonGroup, Flex, Divider, TableContainer, Table, TableCaption, Thead, Tbody, Tfoot,
+import { Text, useMediaQuery, Box, Button, ButtonGroup, Spinner, Flex, Divider, TableContainer, Table, TableCaption, Thead, Tbody, Tfoot,
         Tr, Th, Td, Input, Menu, MenuButton, MenuList, MenuItem, Spacer, MenuDivider} from '@chakra-ui/react';
 import { getUserSalesReportPaginateAction, getSearchUserPaginateAction, getUserTotalASCPaginateAction, getUserTotalDSCPaginateAction } from '../../Redux/Actions/salesReportUserActions'
 
@@ -20,6 +20,7 @@ const SalesReportByUser=(props)=>{
   const [searchUser, setSearchUser] = React.useState("");
   const [searchByUser, setSearchByUser] = React.useState();
   const [searchOn, setSearchOn]=React.useState(false);
+  const [loadingStat, setLoadingStat]=React.useState(false);
 
   const { userSalesReportPaginate, userSalesReportPaginateLength, userSalesSearchPaginate, userSalesSearchPaginateLength,
     userSalesTotalASCPaginate, userSalesTotalASCPaginateLength, userSalesTotalDSCPaginate, userSalesTotalDSCPaginateLength } = useSelector((state) => {
@@ -73,23 +74,6 @@ const SalesReportByUser=(props)=>{
     getPaginatedUserTotalDSC(paginate);
   }
 
-  console.log("check user reducers pagenate====", userSalesTotalDSCPaginate, "&", userSalesTotalDSCPaginateLength)
-  // const getLaporanUser = async() => {
-  //   try {
-  //     let token = localStorage.getItem("tokenIdUser");
-  //     let res = await Axios.get(`${API_URL}/salesReport/getLaporanUser`, {
-  //       headers: {
-  //         'Authorization': `Bearer ${token}`
-  //       }
-  //     })
-  //     if (res.data) {
-  //       console.log("RES DATA GET LAPORAN USER", res.data)
-  //       setLaporanUser(res.data)
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
 
   const handleSortTotalASC =async()=>{
     try {
@@ -97,16 +81,6 @@ const SalesReportByUser=(props)=>{
       setSortirTotalASC(true)
       console.log("SORTIR TOTAL ASC JALANNNNNN")
       {getPaginatedUserTotalASC()}
-        // let token = localStorage.getItem("tokenIdUser");
-        // let res = await Axios.get(`${API_URL}/salesReport/getLaporanUserTotalASC`, {
-        //   headers: {
-        //     'Authorization': `Bearer ${token}`
-        //   }
-        // })
-        // if (res.data) {
-        //   console.log("RES DATA GET LAPORAN USER TotalASC", res.data)
-        //   setLaporanUserTotalASC(res.data)
-        // }
       } catch (err) {
     }
   }
@@ -117,16 +91,6 @@ const SalesReportByUser=(props)=>{
       setSortirTotalDSC(true)
       console.log("SORTIR TOTAL DSC JALANNNNNN")
       {getPaginatedUserTotalDSC()}
-        // let token = localStorage.getItem("tokenIdUser");
-        // let res = await Axios.get(`${API_URL}/salesReport/getLaporanUserTotalDSC`, {
-        //   headers: {
-        //     'Authorization': `Bearer ${token}`
-        //   }
-        // })
-        // if (res.data) {
-        //   console.log("RES DATA GET LAPORAN User TotalDSC", res.data)
-        //   setLaporanUserTotalDSC(res.data)
-        // }
       } catch (err) {
     }
   }
@@ -299,13 +263,23 @@ const printBtnPagination = () => {
   const printLaporanUser = () => {
     if(searchOn == true){
       if(userSalesSearchPaginate == undefined){
-        return <div></div>
+        return <div>
+          <Text class="h5b mt-5 mb-5">Loading</Text>
+          <Spinner
+            thickness='5px'
+            speed='0.50s'
+            emptyColor='#FFFFFF'
+            color='#DE1B51'
+            size='xl'
+            marginTop={"10px"}
+          />
+        </div>
       } else {
         return userSalesSearchPaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.name}</Td>
                 <Td>{value.email}</Td>
                 <Td>{value.phone}</Td>
@@ -315,7 +289,7 @@ const printBtnPagination = () => {
           } else {
             return (
               <Tr style={{backgroundColor:"#ebeef3"}}>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.name}</Td>
                 <Td>{value.email}</Td>
                 <Td>{value.phone}</Td>
@@ -328,13 +302,17 @@ const printBtnPagination = () => {
     } else if (sortirTotalASC == true){
       if(userSalesTotalASCPaginate == undefined){
         return (
-          <Tr>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-          </Tr>
+          <div>
+            <Text class="h5b mt-5 mb-5">Loading</Text>
+            <Spinner
+              thickness='5px'
+              speed='0.50s'
+              emptyColor='#FFFFFF'
+              color='#DE1B51'
+              size='xl'
+              marginTop={"10px"}
+            />
+          </div>
         )
       } else {
         return userSalesTotalASCPaginate.map((value, index)=>{
@@ -342,7 +320,7 @@ const printBtnPagination = () => {
           if (index % 2 == 0){
             return (
               <Tr>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.name}</Td>
                 <Td>{value.email}</Td>
                 <Td>{value.phone}</Td>
@@ -352,7 +330,7 @@ const printBtnPagination = () => {
           } else {
             return (
               <Tr style={{backgroundColor:"#ebeef3"}}>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.name}</Td>
                 <Td>{value.email}</Td>
                 <Td>{value.phone}</Td>
@@ -365,20 +343,24 @@ const printBtnPagination = () => {
     } else if (sortirTotalDSC == true){
       if(userSalesTotalDSCPaginate == undefined){
         return (
-          <Tr>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-          </Tr>
+          <div>
+            <Text class="h5b mt-5 mb-5">Loading</Text>
+            <Spinner
+              thickness='5px'
+              speed='0.50s'
+              emptyColor='#FFFFFF'
+              color='#DE1B51'
+              size='xl'
+              marginTop={"10px"}
+            />
+          </div>
         )
       } else{
         return userSalesTotalDSCPaginate.map((value, index)=>{
           if (index % 2 == 0){
             return (
               <Tr>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.name}</Td>
                 <Td>{value.email}</Td>
                 <Td>{value.phone}</Td>
@@ -388,7 +370,7 @@ const printBtnPagination = () => {
           } else {
             return (
               <Tr style={{backgroundColor:"#ebeef3"}}>
-                <Td>{index+1}</Td>
+                <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
                 <Td>{value.name}</Td>
                 <Td>{value.email}</Td>
                 <Td>{value.phone}</Td>
@@ -403,7 +385,7 @@ const printBtnPagination = () => {
         if (index % 2 == 0){
           return (
             <Tr>
-              <Td>{index+1}</Td>
+              <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
               <Td>{value.name}</Td>
               <Td>{value.email}</Td>
               <Td>{value.phone}</Td>
@@ -413,7 +395,7 @@ const printBtnPagination = () => {
         } else {
           return (
             <Tr style={{backgroundColor:"#ebeef3"}}>
-              <Td>{index+1}</Td>
+              <Td>{value.pageNumber > 0 ? value.pageNumber + index + 1 : index + 1}</Td>
               <Td>{value.name}</Td>
               <Td>{value.email}</Td>
               <Td>{value.phone}</Td>
@@ -439,7 +421,23 @@ const printBtnPagination = () => {
       <div class="col-md-8">
       <Flex>
             <Box mt={"3px"}>
-                <Button class="btn-def_second2" onClick={handleSearch}>Cari</Button>
+              {
+                loadingStat == true ?
+                <>
+                  <Button class="btn-def_second2">
+                  <Spinner
+                    thickness='2px'
+                    speed='0.50s'
+                    emptyColor='#DE1B51'
+                    color='#FFFFFF'
+                    size='md'
+                    marginTop={"5px"}
+                  />
+                    </Button>
+                </>
+              :
+              <Button class="btn-def_second2" onClick={handleSearch}>Cari</Button>
+              }
             </Box>
             {
               searchOn == true &&
@@ -482,6 +480,15 @@ const printBtnPagination = () => {
               userSalesReportPaginate == undefined ?
               <Tbody>
                 <div>
+                  <Text class="h5b mt-5 mb-5">Loading</Text>
+                  <Spinner
+                    thickness='5px'
+                    speed='0.50s'
+                    emptyColor='#FFFFFF'
+                    color='#DE1B51'
+                    size='xl'
+                    marginTop={"10px"}
+                  />
                 </div>
               </Tbody>
             :

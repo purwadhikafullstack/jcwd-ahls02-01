@@ -22,6 +22,7 @@ module.exports = {
           valueProdukHistory.dMonth = valueProdukHistory.dateSlice.slice(5, 7)
           valueProdukHistory.dDate = valueProdukHistory.dateSlice.slice(8, 10)
           valueProdukHistory.dateFE = `${valueProdukHistory.dDate}-${valueProdukHistory.dMonth}-${valueProdukHistory.dYear}`
+          valueProdukHistory.pageNumber = (req.query._page - 1) * 10
         })
 
         let productHistoryPaginateLength = 0
@@ -49,6 +50,7 @@ module.exports = {
           valueProdukHistory.dMonth = valueProdukHistory.dateSlice.slice(5, 7)
           valueProdukHistory.dDate = valueProdukHistory.dateSlice.slice(8, 10)
           valueProdukHistory.dateFE = `${valueProdukHistory.dDate}-${valueProdukHistory.dMonth}-${valueProdukHistory.dYear}`
+          valueProdukHistory.pageNumber = (req.query._page - 1) * 10
         })
 
         let produkHistoryPaginated = produkHistoryPaginate.sort((a, b) => { return b.addDate - a.addDate })
@@ -77,6 +79,7 @@ module.exports = {
           valueProdukHistory.dMonth = valueProdukHistory.dateSlice.slice(5, 7)
           valueProdukHistory.dDate = valueProdukHistory.dateSlice.slice(8, 10)
           valueProdukHistory.dateFE = `${valueProdukHistory.dDate}-${valueProdukHistory.dMonth}-${valueProdukHistory.dYear}`
+          valueProdukHistory.pageNumber = (req.query._page - 1) * 10
         })
 
         let produkHistoryPaginated = produkHistoryPaginate.sort((a, b) => { return a.addDate - b.addDate })
@@ -110,6 +113,7 @@ module.exports = {
           valueSearchProdukHistory.dMonth = valueSearchProdukHistory.dateSlice.slice(5, 7)
           valueSearchProdukHistory.dDate = valueSearchProdukHistory.dateSlice.slice(8, 10)
           valueSearchProdukHistory.dateFE = `${valueSearchProdukHistory.dDate}-${valueSearchProdukHistory.dMonth}-${valueSearchProdukHistory.dYear}`
+          valueSearchProdukHistory.pageNumber = (req.query._page - 1) * 10
         })
 
         let searchProdukHistoryLength = 0
@@ -148,6 +152,7 @@ module.exports = {
           valueFilterProdukHistory.dMonth = valueFilterProdukHistory.dateSlice.slice(5, 7)
           valueFilterProdukHistory.dDate = valueFilterProdukHistory.dateSlice.slice(8, 10)
           valueFilterProdukHistory.dateFE = `${valueFilterProdukHistory.dDate}-${valueFilterProdukHistory.dMonth}-${valueFilterProdukHistory.dYear}`
+          valueFilterProdukHistory.pageNumber = (req.query._page - 1) * 10
         })
 
         let filterProdukHistoryLength = 0

@@ -8,7 +8,7 @@ import { useDisclosure, useToast } from '@chakra-ui/react';
 import { useNavigate, useParams } from "react-router-dom";
 import { BsFillPersonCheckFill } from 'react-icons/bs';
 import { IoIosWarning } from "react-icons/io";
-import { Button, Text, Box, useMediaQuery } from "@chakra-ui/react";
+import { Button, Text, Box, useMediaQuery, Spinner } from "@chakra-ui/react";
 import { loginAction } from "../../Redux/Actions/userActions";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
@@ -135,8 +135,28 @@ const Verification=(props)=>{
               <Text class="h6" style={{marginLeft:"15px", marginRight:"15px"}}>Setelah verifikasi, Anda dapat melakukan transaksi di Medhika.</Text>
             </div>
             <div class="d-flex justify-content-center">
-              <Button isLoading={loadingStat} class="btn-def_second"
-                onClick={handleVerified}>Verifikasi Akun Anda</Button>
+              {
+                loadingStat == true ?
+                <>
+                  <Button class="btn-def_second">
+                    <Spinner
+                      thickness='2px'
+                      speed='0.50s'
+                      emptyColor='#DE1B51'
+                      color='#FFFFFF'
+                      size='md'
+                      marginTop={"5px"}
+                    />
+                  </Button>
+                </>
+              :
+                <>
+                  <Button class="btn-def_second"
+                    onClick={handleVerified}>Verifikasi Akun Anda
+                  </Button>
+                </>
+              }
+              
             </div>
             <br />
             <br />

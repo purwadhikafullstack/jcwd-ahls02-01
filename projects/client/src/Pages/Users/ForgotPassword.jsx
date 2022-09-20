@@ -4,7 +4,7 @@ import { API_URL } from "../../helper";
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from "react-router-dom";
 import { useDisclosure, useToast } from '@chakra-ui/react';
-import { Flex, Box, Heading, Input, Image, Text, Divider, Spacer, ButtonGroup, Button, Link, extendTheme, InputGroup, InputLeftElement,
+import { Flex, Box, Heading, Input, Image, Text, Divider, Spacer, Spinner, ButtonGroup, Button, Link, extendTheme, InputGroup, InputLeftElement,
   InputRightElement, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Popover,
   PopoverTrigger, PopoverContent, PopoverHeader, PopoverArrow, PopoverCloseButton, PopoverBody, PopoverFooter } from '@chakra-ui/react';
 import VectorForgot from "../../Assets/DevImage/Forgot.png"
@@ -85,10 +85,27 @@ console.log(emailForgot)
           <Input shadow={"md"} type="email" placeholder="Input Your Email" onChange={(e)=>setEmailForgot(e.target.value)}/>
         </Box>
         <div class="d-grid gap-2 mx-auto mt-3">
-          <Button class="btn btn-danger" isLoading={loadingStat} 
-            onClick={handleSubmit}>
-              Submit
-            </Button>
+          {
+            loadingStat == true ?
+            <>
+              <Button class="btn btn-danger">
+                <Spinner
+                  thickness='2px'
+                  speed='0.50s'
+                  emptyColor='#DE1B51'
+                  color='#FFFFFF'
+                  size='md'
+                  marginTop={"5px"}
+                />
+              </Button>
+            </>
+          :
+            <>
+              <Button class="btn btn-danger" onClick={handleSubmit}>
+                Submit
+              </Button>
+            </>
+          }
             <Image src={VectorForgot} width='100%' style={{marginLeft:"10px", marginTop:"30px"}}/>
         </div>
         <br />
