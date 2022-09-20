@@ -162,7 +162,7 @@ const TransactionListPage = (props) => {
                 className="row container mx-auto pt-3"
             >
                 <div
-                    className="col-12 col-md-3 order-2 order-md-1 py-3"
+                    className="col-12 col-md-3 d-none d-md-block order-md-1 py-3"
                 >
                     <Box
                         borderRadius={5}
@@ -283,7 +283,10 @@ const TransactionListPage = (props) => {
                             defaultIndex={tabIndex}
                             onChange={(e) => setTabIndex(e)}
                         >
-                            <TabList>
+                            <TabList
+                                overflowX={{ base: "scroll", md: "hidden" }}
+                                maxWidth="100vw"
+                            >
                                 <Tab
                                     _selected={{
                                         color: 'var(--colorOne)',

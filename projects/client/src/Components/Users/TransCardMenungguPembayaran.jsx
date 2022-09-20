@@ -5,14 +5,20 @@ import { useNavigate, useLocation } from "react-router-dom";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { useToastHook } from "../../Components/CustomToast";
 import ModalPaymentProofComponent from "./ModalPaymentProof";
-import { getTransactionAction, getUserMenungguPembayaranAction, getUserFilterMenungguPembayaranAction} from "../../Redux/Actions/transactionActions";
+import { getTransactionAction, getUserMenungguPembayaranAction, getUserFilterMenungguPembayaranAction, cancellingOrderAction } from "../../Redux/Actions/transactionActions";
 import { API_URL, BE_URL } from "../../helper";
 import {
     Box,
     Image,
     Text,
     Button,
-    ButtonGroup
+    ButtonGroup,
+    Modal,
+    ModalHeader,
+    ModalContent,
+    ModalBody,
+    ModalCloseButton,
+    ModalOverlay
 } from "@chakra-ui/react";
 
 const TransCardMenungguPembayaranComponent = (props) => {
@@ -34,6 +40,10 @@ const TransCardMenungguPembayaranComponent = (props) => {
 
     //^ cek state isModalPaymentProofOpen
     console.log(`isModalPaymentProofOpen`, isModalPaymentProofOpen);
+    const [batalkanPesanan, setBatalkanPesanan] = useState(0);
+    const [openModalPembatalan, setOpenModalPembatalan] = useState(false);
+    const [idSoonBatal, setIdSoonBatal] = useState(null);
+    const [statusBaru, setStatusBaru] = useState(``);
 
     //TODO axios get seluruh transaksi yang berstatus Menunggu Pembayaran
 
@@ -41,10 +51,12 @@ const TransCardMenungguPembayaranComponent = (props) => {
     useEffect(() => {
         if (props.query.length > 0) {
             getArrayFilteredSortedTransaction();
+            setBatalkanPesanan(0)
         } else {
             getPaginatedTransaction();
+            setBatalkanPesanan(0)
         }
-    }, [props.query, selectedTransaction, isModalPaymentProofOpen, isBtnUploadBuktiBayarClicked])
+    }, [props.query, selectedTransaction, isModalPaymentProofOpen, isBtnUploadBuktiBayarClicked, batalkanPesanan])
 
     //^ cek props, state
     console.log(`props.query`, props.query)
@@ -274,7 +286,15 @@ const TransCardMenungguPembayaranComponent = (props) => {
                                 justifyContent='end'
                                 mt={2}
                                 mb={3}
+                                gap={4}
                             >
+                                <Button
+                                    className="btn-def"
+                                    width={160}
+                                    onClick={() => btnBatalkanPesanan(value.idTransaction, "Dibatalkan")}
+                                >
+                                    Batalkan Pesanan
+                                </Button>
                                 <Button
                                     className="btn-def_second"
                                     onClick={() => btnUploadBuktiBayar(value.idTransaction)}
@@ -321,6 +341,24 @@ const TransCardMenungguPembayaranComponent = (props) => {
         }
     }
 
+    const btnBatalkanPesanan = (idTransaction, status) => {
+        setOpenModalPembatalan(!openModalPembatalan)
+        setIdSoonBatal(idTransaction);
+        setStatusBaru(status);
+    }
+
+    const btnYaBatal = () => {
+        dispatch(cancellingOrderAction(idSoonBatal, statusBaru))
+        getPaginatedTransaction();
+        setBatalkanPesanan(1);
+        setOpenModalPembatalan(!openModalPembatalan);
+    }
+
+    const btnTidakBatal = () => {
+        setBatalkanPesanan(0)
+        setOpenModalPembatalan(!openModalPembatalan)
+    }
+
     return (
         <>
             <ModalPaymentProofComponent
@@ -332,6 +370,48 @@ const TransCardMenungguPembayaranComponent = (props) => {
                 selectedTransaction={selectedTransaction}
                 totalPayment={total}
             />
+
+            <Modal
+                isOpen={openModalPembatalan}
+                onOverlayClick={() => setOpenModalPembatalan(!openModalPembatalan)}
+                onClose={() => setOpenModalPembatalan(!openModalPembatalan)}
+                isCentered
+                size="sm"
+            >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader
+                        className="h5b"
+                    >
+                        Konfirmasi Pembatalan
+                    </ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody
+                        className="font-brand"
+                    >
+                        <div className="mb-3">
+                            Anda yakin ingin membatalkan pesanan ini?
+                        </div>
+                        <div className="d-flex align-items-center justify-content-center">
+                            <Button
+                                className="btn-def"
+                                width={55}
+                                me={2}
+                                onClick={btnYaBatal}
+                            >
+                                Ya
+                            </Button>
+                            <Button
+                                className="btn-def_second"
+                                width={55}
+                                onClick={btnTidakBatal}
+                            >
+                                Tidak
+                            </Button>
+                        </div>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
 
             {
                 props.query.length > 0
