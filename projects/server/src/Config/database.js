@@ -1,5 +1,3 @@
-const dotenv = require("dotenv");
-dotenv.config();
 const mysql = require("mysql");
 const util = require("util");
 
@@ -16,7 +14,7 @@ const dbConf = mysql.createPool({
   timeout: 60 * 60 * 1000,
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   port: "3306",
 });
