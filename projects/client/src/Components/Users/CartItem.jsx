@@ -175,14 +175,14 @@ const CartItemComponent = (props) => {
             })
         }
     }
-    
+
     const btnBatalDelete = () => {
         setIsDeletedClicked(0);
         setCurrentQuantity(0);
         setIdCartDeleted(null);
         setIdStockDeleted(null);
         setOpenModalPenghapusan(!openModalPenghapusan);
-        
+
     }
 
     //& onClick akan kurangi jumlah unit per item
@@ -190,15 +190,20 @@ const CartItemComponent = (props) => {
         console.log(`btnDecreaseQuantity diklik`)
 
         let temp = currentQty;
-        if (temp > 0) {
+        if (temp > 1) {
             temp--;
             console.log(`new cartQuantity`, temp);
         } else {
             newToast({
                 title: "Jumlah minimal",
-                description: "Jumlah produk pada keranjang tidak bisa kurang dari 0",
+                description: "Jumlah produk pada keranjang tidak bisa kurang dari 1",
                 status: 'warning'
-            })
+            });
+
+            setCurrentQuantity(currentQty);
+            setIdCartDeleted(idCart);
+            setIdStockDeleted(idStock);
+            setOpenModalPenghapusan(!openModalPenghapusan);
         }
         console.log(`new cartQuantity`, temp);
 
