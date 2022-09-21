@@ -19,7 +19,14 @@ import {
     Tr,
     Th,
     Td,
-    useMediaQuery
+    useMediaQuery,
+    Button,
+    Modal,
+    ModalHeader,
+    ModalContent,
+    ModalBody,
+    ModalCloseButton,
+    ModalOverlay
 } from "@chakra-ui/react";
 
 import { AiOutlineDelete } from "react-icons/ai";
@@ -38,7 +45,12 @@ const CartItemComponent = (props) => {
 
     //^ STATE MANAGEMENT
     const [checkedCartIds, setCheckedCartIds] = useState([]);
+
     const [isDeletedClicked, setIsDeletedClicked] = useState(0);
+    const [currentQuantity, setCurrentQuantity] = useState(0);
+    const [idCartDeleted, setIdCartDeleted] = useState(null);
+    const [idStockDeleted, setIdStockDeleted] = useState(null);
+    const [openModalPenghapusan, setOpenModalPenghapusan] = useState(false);
 
     //& component did mount
     useEffect(() => {
@@ -71,29 +83,68 @@ const CartItemComponent = (props) => {
         console.log(`handleQty tokenIdUser`, token);
 
         if (token) {
-                Axios.patch(`${API_URL}/cart/${idCart}`, {
-                    idProduct: selectedIdProduct,
-                    cartQuantity: newQty
-                }, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                }).then((res) => {
-                    console.log("isi res.data pas onChange quantity", res.data);
-                    dispatch(getCartAction());
-                }).catch((err) => {
-                    console.log(err)
-                })
+            Axios.patch(`${API_URL}/cart/${idCart}`, {
+                idProduct: selectedIdProduct,
+                cartQuantity: newQty
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then((res) => {
+                console.log("isi res.data pas onChange quantity", res.data);
+                dispatch(getCartAction());
+            }).catch((err) => {
+                console.log(err)
+            })
         }
     }
 
     //& onClick untuk delete 1 cart item
     const btnDeleteItem = (currentQty, idCart, idStock) => {
 
+        setCurrentQuantity(currentQty);
+        setIdCartDeleted(idCart);
+        setIdStockDeleted(idStock);
+        setOpenModalPenghapusan(!openModalPenghapusan);
+
         console.log(`btnDeleteItem diklik`)
 
+        // //^ cari idProduct untuk di transfer ke BE in case product list ga return idStock
+        // let selectedIdProduct = dbMainStock.filter(val => val.idStock == idStock)[0];
+        // selectedIdProduct = selectedIdProduct.idProduct;
+        // console.log(`selectedIdProduct`, selectedIdProduct);
+
+        // let token = localStorage.getItem("tokenIdUser");
+
+        // //^ cek ada token atau tidak
+        // console.log(`handleQty tokenIdUser`, token);
+
+        // if (token) {
+        //     Axios.patch(`${API_URL}/cart/delete/${idCart}`, {
+        //         "idProduct": selectedIdProduct,
+        //         "cartQuantity": currentQty
+        //     }, {
+        //         headers: {
+        //             'Authorization': `Bearer ${token}`
+        //         }
+        //     }).then((res) => {
+        //         console.log("isi res.data pas delete diklik", res.data);
+        //         dispatch(getCartAction());
+        //         newToast({
+        //             title: "Delete item",
+        //             description: "Item keranjang terpilih berhasil didelete",
+        //             status: 'info'
+        //         });
+        //     }).catch((err) => {
+        //         console.log(err)
+        //     })
+        // }
+    }
+
+    const btnYaDelete = () => {
+        setIsDeletedClicked(1);
         //^ cari idProduct untuk di transfer ke BE in case product list ga return idStock
-        let selectedIdProduct = dbMainStock.filter(val => val.idStock == idStock)[0];
+        let selectedIdProduct = dbMainStock.filter(val => val.idStock == idStockDeleted)[0];
         selectedIdProduct = selectedIdProduct.idProduct;
         console.log(`selectedIdProduct`, selectedIdProduct);
 
@@ -103,25 +154,35 @@ const CartItemComponent = (props) => {
         console.log(`handleQty tokenIdUser`, token);
 
         if (token) {
-                Axios.patch(`${API_URL}/cart/delete/${idCart}`, {
-                    "idProduct": selectedIdProduct,
-                    "cartQuantity": currentQty
-                  }, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                }).then((res) => {
-                    console.log("isi res.data pas delete diklik", res.data);
-                    dispatch(getCartAction());
-                    newToast({
-                        title: "Delete item",
-                        description: "Item keranjang terpilih berhasil didelete",
-                        status: 'info'
-                    });
-                }).catch((err) => {
-                    console.log(err)
-                })
+            Axios.patch(`${API_URL}/cart/delete/${idCartDeleted}`, {
+                "idProduct": selectedIdProduct,
+                "cartQuantity": currentQuantity
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then((res) => {
+                console.log("isi res.data pas delete diklik", res.data);
+                dispatch(getCartAction());
+                setOpenModalPenghapusan(!openModalPenghapusan);
+                newToast({
+                    title: "Delete item",
+                    description: "Item keranjang terpilih berhasil didelete",
+                    status: 'info'
+                });
+            }).catch((err) => {
+                console.log(err)
+            })
         }
+    }
+    
+    const btnBatalDelete = () => {
+        setIsDeletedClicked(0);
+        setCurrentQuantity(0);
+        setIdCartDeleted(null);
+        setIdStockDeleted(null);
+        setOpenModalPenghapusan(!openModalPenghapusan);
+        
     }
 
     //& onClick akan kurangi jumlah unit per item
@@ -173,10 +234,12 @@ const CartItemComponent = (props) => {
     const btnIncreaseQuantity = (currentQty, idCart, idStock) => {
         console.log(`btnIncreaseQuantity diklik`)
 
+        //^ untuk buat proteksi
         let quantityMax = dbMainStock.filter(val => val.idStock == idStock)[0];
         quantityMax = quantityMax.stockQuantity;
         console.log(`quantityMax`, quantityMax);
 
+        //^ proteksi saat tambah kuantiti per item
         let temp = currentQty;
         if (temp < quantityMax) {
             temp++;
@@ -194,6 +257,9 @@ const CartItemComponent = (props) => {
         selectedIdProduct = selectedIdProduct.idProduct;
         console.log(`selectedIdProduct`, selectedIdProduct);
 
+        //^ untuk hitung ulang subTotal saat ada request increase kuantiti
+        let tempSubTotal = 0;
+
         let token = localStorage.getItem("tokenIdUser");
 
         //^ cek ada token atau tidak
@@ -210,9 +276,18 @@ const CartItemComponent = (props) => {
             }).then((res) => {
                 console.log("isi res.data pas increase quantity", res.data);
                 dispatch(getCartAction());
+                // props.dbCart.map((valueCart, indexCart) => {
+                //     checkedCartIds.forEach((valueId, indexId) => {
+                //         if (valueCart.idCart == valueId) {
+                //             tempSubTotal += valueCart.subTotal
+                //         }
+                //     })
+                // });
+                // props.handleCallback(tempSubTotal, checkedCartIds);
             }).catch((err) => {
                 console.log(err)
             })
+
         }
     }
 
@@ -239,6 +314,49 @@ const CartItemComponent = (props) => {
     }
 
     return (<>
+
+        <Modal
+            isOpen={openModalPenghapusan}
+            onOverlayClick={() => setOpenModalPenghapusan(!openModalPenghapusan)}
+            onClose={() => setOpenModalPenghapusan(!openModalPenghapusan)}
+            isCentered
+            size="sm"
+        >
+            <ModalOverlay />
+            <ModalContent>
+                <ModalHeader
+                    className="h5b"
+                >
+                    Konfirmasi Penghapusan
+                </ModalHeader>
+                <ModalCloseButton />
+                <ModalBody
+                    className="font-brand"
+                >
+                    <div className="mb-3">
+                        Anda yakin ingin menghapus item ini?
+                    </div>
+                    <div className="d-flex align-items-center justify-content-center">
+                        <Button
+                            className="btn-def"
+                            width={55}
+                            me={2}
+                            onClick={btnYaDelete}
+                        >
+                            Ya
+                        </Button>
+                        <Button
+                            className="btn-def_second"
+                            width={55}
+                            onClick={btnBatalDelete}
+                        >
+                            Tidak
+                        </Button>
+                    </div>
+                </ModalBody>
+            </ModalContent>
+        </Modal>
+
 
         <Table
             variant="simple"
@@ -308,7 +426,7 @@ const CartItemComponent = (props) => {
                                         <Image
                                             borderRadius='xl'
                                             boxSize='80px'
-                                            src={BE_URL+value.productPicture}
+                                            src={BE_URL + value.productPicture}
                                             alt={`IMG-${value.productName}`}
                                             className="d-md-flex d-none"
                                         />

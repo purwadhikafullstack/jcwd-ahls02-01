@@ -193,7 +193,7 @@ const CartPage = (props) => {
                         >
 
                             <Text className="font-brand" as='b'>
-                                Sub Total
+                                Total
                             </Text>
 
                             <Text className="font-brand" as='b'>
