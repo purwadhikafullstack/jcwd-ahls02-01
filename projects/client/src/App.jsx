@@ -69,6 +69,7 @@ function App() {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/productdetail/:id" element={<ProductDetail />} />
                 <Route path="/productList" element={<ProductList />} />
+                <Route path="/productList/:id" element={<ProductList />} />
                 <Route path="/verification/:token" element={<Verification />} />
                 <Route path="/changePassword" element={<ChangePassword />} />
                 <Route
@@ -90,6 +91,7 @@ function App() {
             <Route path="/forgot" element={<ForgotPassword />} />
             <Route path="/productdetail/:id" element={<ProductDetail />} />
             <Route path="/productList" element={<ProductList />} />
+            <Route path="/productList/:id" element={<ProductList />} />
           </>
         )}
         <Route path="*" element={<NotFoundPage />} />
