@@ -1,7 +1,7 @@
 import Axios from "axios";
 import React from "react";
 import { API_URL } from "../../helper";
-import { Button, Text, Box, Input, InputGroup, InputRightElement, Image, Spinner } from "@chakra-ui/react";
+import { Button, Text, Box, Input, Progress, InputGroup, InputRightElement, Image, Spinner } from "@chakra-ui/react";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from "react-router-dom";
 import { IoIosWarning } from "react-icons/io";
@@ -20,6 +20,8 @@ const ChangePassword=(props)=>{
   const handleClick = () => setShow(!show)
   const [oldPassword, setOldPassword]=React.useState("")
   const [newPassword, setNewPassword]=React.useState("")
+  const [colorProgress, setColorProgress]=React.useState("");
+  const [progressPassword, setProgressPassword]=React.useState(0);
   const [passwordLength, setPasswordLength]=React.useState(false)
   const [containsNumbers, setContainsNumbers]=React.useState(false)
   const [isUpperCase, setIsUpperCase]=React.useState(false)
@@ -103,10 +105,28 @@ const ChangePassword=(props)=>{
     setInForm({ ...inForm, [property]: value})
     checkUpperCase();
     checkNumbers();
-    if(inForm.password.length > 6){
-      setPasswordLength(true);
-    } else {
-      setPasswordLength(false)
+    checkPasswordLength();
+    if(!inForm.password.match(/^(?=.*[A-Z])/) == false && inForm.password.length > 6 && !inForm.password.match(/\d+/g) == false){
+      setProgressPassword(100);
+      setColorProgress("telegram")
+    } else if (!inForm.password.match(/^(?=.*[A-Z])/) == false && inForm.password.length < 7 && !inForm.password.match(/\d+/g) == false){
+      setProgressPassword(70);
+      setColorProgress("orange")
+    } else if (!inForm.password.match(/^(?=.*[A-Z])/) == false && inForm.password.length > 6 && !inForm.password.match(/\d+/g) == true){
+      setProgressPassword(70);
+      setColorProgress("orange")
+    } else if (!inForm.password.match(/^(?=.*[A-Z])/) == true && inForm.password.length > 6 && !inForm.password.match(/\d+/g) == false){
+      setProgressPassword(70);
+      setColorProgress("orange")
+    } else if (!inForm.password.match(/^(?=.*[A-Z])/) == false && inForm.password.length < 7 && !inForm.password.match(/\d+/g) == true){
+      setProgressPassword(35);
+      setColorProgress("red")
+    } else if (!inForm.password.match(/^(?=.*[A-Z])/) == true && inForm.password.length < 7 && !inForm.password.match(/\d+/g) == false){
+      setProgressPassword(35);
+      setColorProgress("red")
+    } else if (!inForm.password.match(/^(?=.*[A-Z])/) == true && inForm.password.length > 6 && !inForm.password.match(/\d+/g) == true){
+      setProgressPassword(35);
+      setColorProgress("red")
     }
   }
 
@@ -119,6 +139,14 @@ const ChangePassword=(props)=>{
           description: 'Disarankan untuk merubah password yang kuat. setidaknya memiliki 8 huruf yang terdiri dari huruf kapital dan angka',
           status: 'warning',
         })
+  }
+}
+
+const checkPasswordLength=()=>{
+  if(inForm.password.length > 6){
+    setPasswordLength(true);
+  } else {
+    setPasswordLength(false)
   }
 }
 
@@ -194,6 +222,9 @@ const checkNumbers=()=>{
                   <span class="h6"> dan </span>
                   <span class={containsNumbers ? 'h6r' : 'h6'}>Angka</span>
                 </div>
+                <Box>
+                    <Progress mt={"10px"} borderRadius={"3px"} size='sm' value={progressPassword} colorScheme={colorProgress} bgColor={"#d5dbe2"}/>
+                  </Box>
               </Box>
               <Box marginTop={"20px"}>
                 <Text class="h6b">Konfirmasi Password</Text>

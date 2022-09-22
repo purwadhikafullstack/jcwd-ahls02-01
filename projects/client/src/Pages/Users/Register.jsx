@@ -5,7 +5,7 @@ import VectorRegister from "../../Assets/DevImage/Register.png";
 import logo from "../../Assets/DevImage/LogoMedhika.png";
 import NavbarComponent from "../../Components/Users/Navbar";
 import { Flex, Box, Heading, Spinner, Input, Image, Text, Divider, Spacer, ButtonGroup, Button, Link, extendTheme, InputGroup, InputLeftElement,
-  InputRightElement, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Popover,
+  InputRightElement, Progress, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Popover,
   PopoverTrigger, PopoverContent, PopoverHeader, PopoverArrow, PopoverCloseButton, PopoverBody, PopoverFooter, InputLeftAddon } from '@chakra-ui/react';
 // import { PhoneIcon } from '@chakra-ui/icons'
 import { BsTelephone } from 'react-icons/bs';
@@ -25,6 +25,8 @@ const Register=()=>{
   const [phone, setPhone]=React.useState();
   const [email, setEmail]=React.useState("");
   const [password, setPassword]=React.useState("");
+  const [progressPassword, setProgressPassword]=React.useState(0);
+  const [colorProgress, setColorProgress]=React.useState("");
   const [passwordLength, setPasswordLength]=React.useState(false);
   const [containsNumbers, setContainsNumbers]=React.useState(false);
   const [isUpperCase, setIsUpperCase]=React.useState(false);
@@ -81,7 +83,7 @@ const Register=()=>{
             password: password,
             role: "user",
             phone: `+62${phone}`,
-            profilePicture: "https://sman11tangerangselatan.sch.id/images/user-u.jpg",
+            profilePicture: "/Profile/PROFILE-PICTURE-USERBARU.jpg",
             isVerified:"unverified"
           })
           console.log("res.data registerUser", res.data)
@@ -116,15 +118,35 @@ const Register=()=>{
       setLoadingStat(false)
   }
   }
-
+  
+  console.log("check negesi", !inForm.password.match(/^(?=.*[A-Z])/) == true)
+  console.log("check normal", inForm.password.match(/^(?=.*[A-Z])/) == true)
   const handleInput = (value, property) => {
     setInForm({ ...inForm, [property]: value})
     checkUpperCase();
     checkNumbers();
-    if(inForm.password.length > 6){
-      setPasswordLength(true);
-    } else {
-      setPasswordLength(false)
+    checkPasswordLength();
+    if(!inForm.password.match(/^(?=.*[A-Z])/) == false && inForm.password.length > 6 && !inForm.password.match(/\d+/g) == false){
+      setProgressPassword(100);
+      setColorProgress("telegram")
+    } else if (!inForm.password.match(/^(?=.*[A-Z])/) == false && inForm.password.length < 7 && !inForm.password.match(/\d+/g) == false){
+      setProgressPassword(70);
+      setColorProgress("orange")
+    } else if (!inForm.password.match(/^(?=.*[A-Z])/) == false && inForm.password.length > 6 && !inForm.password.match(/\d+/g) == true){
+      setProgressPassword(70);
+      setColorProgress("orange")
+    } else if (!inForm.password.match(/^(?=.*[A-Z])/) == true && inForm.password.length > 6 && !inForm.password.match(/\d+/g) == false){
+      setProgressPassword(70);
+      setColorProgress("orange")
+    } else if (!inForm.password.match(/^(?=.*[A-Z])/) == false && inForm.password.length < 7 && !inForm.password.match(/\d+/g) == true){
+      setProgressPassword(35);
+      setColorProgress("red")
+    } else if (!inForm.password.match(/^(?=.*[A-Z])/) == true && inForm.password.length < 7 && !inForm.password.match(/\d+/g) == false){
+      setProgressPassword(35);
+      setColorProgress("red")
+    } else if (!inForm.password.match(/^(?=.*[A-Z])/) == true && inForm.password.length > 6 && !inForm.password.match(/\d+/g) == true){
+      setProgressPassword(35);
+      setColorProgress("red")
     }
   }
 
@@ -137,6 +159,14 @@ const Register=()=>{
           description: 'Disarankan untuk merubah password yang kuat. setidaknya memiliki 8 huruf yang terdiri dari huruf kapital dan angka',
           status: 'warning',
         })
+  }
+}
+
+const checkPasswordLength=()=>{
+  if(inForm.password.length > 6){
+    setPasswordLength(true);
+  } else {
+    setPasswordLength(false)
   }
 }
 
@@ -211,6 +241,9 @@ const checkNumbers=()=>{
                   <span class="h6"> dan </span>
                   <span class={containsNumbers ? 'h6r' : 'h6'}>Angka</span>
                 </div>
+                  <Box>
+                    <Progress mt={"10px"} borderRadius={"3px"} size='sm' value={progressPassword} colorScheme={colorProgress} bgColor={"#d5dbe2"}/>
+                  </Box>
               </Box>
               <Box marginTop={"20px"}>
                 <Text class="h6b">Konfirmasi Password</Text>
