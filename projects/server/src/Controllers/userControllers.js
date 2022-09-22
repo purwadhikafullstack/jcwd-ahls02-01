@@ -6,11 +6,13 @@ const { transporter } = require("../Config/nodemailer");
 const { uploader } = require("../Config/uploader");
 const fs = require("fs");
 const productUserController = require("./Randy/productUsercontroller");
-const { join } = require("path")
+const { join } = require("path");
+const categoryControllers = require("./Randy/categoryControllers");
 
 
 module.exports = {
   ...productUserController,
+  ...categoryControllers,
   register: async (req, res, next) => {
     try {
       let checkEmail = await dbQuery(

@@ -32,26 +32,57 @@ const ProductList = (props) => {
   const navigate = useNavigate();
   const [currentToast, newToast] = useToastHook();
   const [loadingStat, setLoadingStat] = React.useState(false);
+  const [filterData, setFilterData] = React.useState({
+    category: "",
+    name: "",
+  });
+  const [categoryList, setCategoryList] = React.useState([]);
+  const params = useParams();
+
   React.useEffect(() => {
+    if(params.id){
+      setFilterData({category:params.id,name:""})
+    }
     fetchProductList();
+    fetchCategoryList();
     dispatch(getCartAction());
   }, []);
+
+  React.useEffect(() => {
+    fetchProductList();
+  }, [filterData]);
   const fetchProductList = () => {
     let token = localStorage.getItem("tokenIdUser");
-    Axios.get(`${API_URL}/users/getproducts`, {
-
+    Axios.post(`${API_URL}/users/getproducts`, {
+      category: filterData.category,
+      name: filterData.name,
     }).then((res) => {
       setProductData(res.data.data);
+      console.log(res.data);
+    });
+  };
+  function hdnFilter(filterStruct) {
+    setFilterData(filterStruct);
+  }
+  const fetchCategoryList = () => {
+    let token = localStorage.getItem("tokenIdUser");
+    Axios.get(`${API_URL}/users/getCategoryList`, {}).then((res) => {
+      setCategoryList([
+        { idCategory: "", categoryName: "ALL" },
+        ...res.data.data,
+      ]);
       console.log(res.data);
     });
   };
 
   const { isVerified, databaseCart } = useSelector((state) => {
     return {
-      databaseCart: state.cartReducers.cart.filter(val => val.isActive == "true"),
+      databaseCart: state.cartReducers.cart.filter(
+        (val) => val.isActive == "true"
+      ),
       isVerified: state.userReducers.isVerified,
-    }
-  })
+    };
+  });
 
   //^ check isi databaseCart
   console.log(`databaseCart di productlist`, databaseCart);
@@ -69,18 +100,22 @@ const ProductList = (props) => {
       console.log(`btnCheckout tokenIdUser`, token);
 
       if (token) {
-
         if (isVerified == "verified") {
-
-          if ((databaseCart.findIndex(val => val.productName == productName)) == -1) {
-
-            let res = await Axios.post(`${API_URL}/cart/add`, {
-              idProduct
-            }, {
-              headers: {
-                'Authorization': `Bearer ${token}`
+          if (
+            databaseCart.findIndex((val) => val.productName == productName) ==
+            -1
+          ) {
+            let res = await Axios.post(
+              `${API_URL}/cart/add`,
+              {
+                idProduct,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
               }
-            })
+            );
 
             if (res.data) {
               console.log("isi res.data saat btnCart diklik", res.data);
@@ -88,23 +123,28 @@ const ProductList = (props) => {
               setLoadingStat(false);
               navigate("/cart");
             }
-
           } else {
-
-            let idxInDatabaseCart = databaseCart.findIndex(val => val.productName == productName);
+            let idxInDatabaseCart = databaseCart.findIndex(
+              (val) => val.productName == productName
+            );
 
             let idCart = databaseCart[idxInDatabaseCart].idCart;
-            let previousCartQuantity = databaseCart[idxInDatabaseCart].cartQuantity;
+            let previousCartQuantity =
+              databaseCart[idxInDatabaseCart].cartQuantity;
             let newQuantity = previousCartQuantity + 1;
 
-            let res = await Axios.patch(`${API_URL}/cart/idCart`, {
-              idProduct,
-              cartQuantity: newQuantity
-            }, {
-              headers: {
-                'Authorization': `Bearer ${token}`
+            let res = await Axios.patch(
+              `${API_URL}/cart/idCart`,
+              {
+                idProduct,
+                cartQuantity: newQuantity,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
               }
-            })
+            );
 
             if (res.data) {
               console.log("isi res.data saat btnCart diklik", res.data);
@@ -112,9 +152,7 @@ const ProductList = (props) => {
               setLoadingStat(false);
               navigate("/cart");
             }
-
           }
-
         } else {
           newToast({
             title: "Error",
@@ -124,7 +162,6 @@ const ProductList = (props) => {
           setLoadingStat(false);
         }
       }
-
     } catch (err) {
       newToast({
         title: "Error.",
@@ -134,7 +171,6 @@ const ProductList = (props) => {
       setLoadingStat(false);
     }
   };
-
 
   const printProduct = (value, index) => {
     // return product.map((value, index) =>{
@@ -198,13 +234,19 @@ const ProductList = (props) => {
     // })
   };
 
-  const printCategory = () => {
+  const printCategory = (value, index) => {
     // return category.map((value, index) =>{
     return (
       <>
-        <Box mt={"15px"} ms={"30px"}>
+        <Box
+          mt={"15px"}
+          ms={"30px"}
+          onClick={() => {
+            hdnFilter({ category: value.idCategory, name: "" });
+          }}
+        >
           <Text style={{ cursor: "pointer" }} class="h6">
-            Nama Kategori
+            {value.categoryName}
           </Text>
         </Box>
       </>
@@ -233,14 +275,7 @@ const ProductList = (props) => {
                   <Text class="h6b text-uppercase">KATEGORI</Text>
                 </Box>
                 <Divider mt={"10px"} />
-                {printCategory()}
-                {printCategory()}
-                {printCategory()}
-                {printCategory()}
-                {printCategory()}
-                {printCategory()}
-                {printCategory()}
-                {printCategory()}
+                {categoryList.map(printCategory)}
                 <Divider mt={"30px"} />
                 <Box pt={"10px"} ms={"30px"}>
                   <Text class="h6b text-uppercase">FILTER</Text>
