@@ -17,6 +17,7 @@ import { getAddress, getAddressActions } from "../../Redux/Actions/addressAction
 import ModalAddress from "../../Components/Users/ModalAddress";
 import { getProvinceRajaOngkir, getProvinceActions2 } from "../../Redux/Actions/getProvinceActions";
 import { getCityRajaOngkir, getCityActions2 } from "../../Redux/Actions/getCityActions";
+import defaultImage from "../../Assets/DevImage/defaultImage.jpg";
 
 const EditProfile=(props)=>{
   const navigate = useNavigate();
@@ -79,18 +80,18 @@ const EditProfile=(props)=>{
   // console.log("fullname",fullnameProfile != "")
   // console.log("username",usernameProfile != "")
   // console.log("bio",bioProfile != "")
-  console.log("check previewPost", previewPost)
+  // console.log("check previewPost", previewPost)
   
   const handleProfilePicture = async()=>{
     try {
-      console.log("check idUser", idUser);
+      // console.log("check idUser", idUser);
       // alert('check')
       let idUserLogin = idUser;
       let formData = new FormData();
         let data = {
           idUserLogin
         }
-      console.log('data edit foto', data);
+      // console.log('data edit foto', data);
       // menambahkan data kedalam formData yang harus pake JSON.stringify
       formData.append('data', JSON.stringify(data));
   
@@ -106,7 +107,7 @@ const EditProfile=(props)=>{
 
       if (res.data.token) {
         localStorage.setItem("tokenIdUser", res.data.token);
-        console.log("res.data edit profilepict", res.data)
+        // console.log("res.data edit profilepict", res.data)
         dispatch(loginAction(res.data));
         setLoadingStat(false);
       }
@@ -121,17 +122,17 @@ const EditProfile=(props)=>{
   }
 }
 
-console.log("EMAIL EDIT CHECK", emailEdit);
+// console.log("EMAIL EDIT CHECK", emailEdit);
 const handleEditProfile=async()=>{
   try {
     setLoadingStat(true);
     if(previewPost==true){
-          console.log("JALUR true jalan");
+          // console.log("JALUR true jalan");
           if(nameEdit != "" || emailEdit !="" || genderEdit !="" || birthDateEdit !=""){
             // if (emailEdit !=""){
-              console.log("EMAILEDIT KE ISI JALAN")
+              // console.log("EMAILEDIT KE ISI JALAN")
               if (emailEdit.includes("@")){
-                console.log("previewPost true 1");
+                // console.log("previewPost true 1");
                 let token = localStorage.getItem("tokenIdUser");
                 let res = await Axios.patch(`${API_URL}/users/edit`, {
                   name: nameEdit,
@@ -160,7 +161,7 @@ const handleEditProfile=async()=>{
                   setLoadingStat(false);
                 }
               } else if (emailEdit == ""){
-                console.log("previewPost true 2");
+                // console.log("previewPost true 2");
                 let token = localStorage.getItem("tokenIdUser");
                 let res = await Axios.patch(`${API_URL}/users/edit`, {
                   name: nameEdit,
@@ -197,12 +198,12 @@ const handleEditProfile=async()=>{
                 setLoadingStat(false)
               }
           } else {
-            console.log("JALUR true 2");
+            // console.log("JALUR true 2");
               {handleProfilePicture()};
               setEditProfile(!editProfile);
           }
         } else {
-          console.log("JALUR false JALANNN");
+          // console.log("JALUR false JALANNN");
           if(nameEdit == "" && emailEdit=="" && genderEdit =="" && birthDateEdit ==""){
             newToast({
               title: 'Edit Profile Tidak Berhasil.',
@@ -213,9 +214,9 @@ const handleEditProfile=async()=>{
           }
           else if(nameEdit != "" || emailEdit !="" || genderEdit !="" || birthDateEdit !=""){
             // if (emailEdit !=""){
-              console.log("EMAILEDIT KE ISI JALAN")
+              // console.log("EMAILEDIT KE ISI JALAN")
               if (emailEdit.includes("@")){
-                console.log("previewPost false 1");
+                // console.log("previewPost false 1");
                 let token = localStorage.getItem("tokenIdUser");
                 let res = await Axios.patch(`${API_URL}/users/edit`, {
                   name: nameEdit,
@@ -244,7 +245,7 @@ const handleEditProfile=async()=>{
                   setLoadingStat(false);
                 }
               } else if (emailEdit ==""){
-                console.log("previewPost false 2");
+                // console.log("previewPost false 2");
                 let token = localStorage.getItem("tokenIdUser");
                 let res = await Axios.patch(`${API_URL}/users/edit`, {
                   name: nameEdit,
@@ -354,7 +355,7 @@ const handleEditProfile=async()=>{
 
     const handleCity = async(e) => {
       try {
-        console.log("====addProvinsiId func", addProvinsiId)
+        // console.log("====addProvinsiId func", addProvinsiId)
         if (addProvinsiId > 0){
           let a = addProvinsiId
           // let b = !getCityOn
@@ -375,7 +376,7 @@ const handleEditProfile=async()=>{
 
     const handleCityName = async(e) => {
       try {
-        console.log("====addProvinsiId func", addKotaId)
+        // console.log("====addProvinsiId func", addKotaId)
         if (addKotaId > 0){
           {getCityRajaOngkir2()}
         } else {
@@ -388,16 +389,16 @@ const handleEditProfile=async()=>{
 
     const getProvinceRajaOngkir2 = async() => {
       try {
-        console.log("PROVINCE_ID ACTIONS 2", addProvinsiId)
+        // console.log("PROVINCE_ID ACTIONS 2", addProvinsiId)
         if (addProvinsiId > 0) {
-          console.log("PROVINCE2 JALANNN")
+          // console.log("PROVINCE2 JALANNN")
           let res = await Axios.get(`${API_URL}/rajaOngkir/getProvince2`, {
             headers: {
               provinceid: addProvinsiId
             }
           })
           if (res.data) {
-            console.log("RES DATA GET PROVINCE RAJAONGKIR", res.data.namaProvinsi[0])
+            // console.log("RES DATA GET PROVINCE RAJAONGKIR", res.data.namaProvinsi[0])
             dispatch(getProvinceActions2(res.data.namaProvinsi[0]))
           }
         }
@@ -407,9 +408,9 @@ const handleEditProfile=async()=>{
   }
     const getCityRajaOngkir2 = async() => {
       try {
-        console.log("CITY_ID ACTIONS 2", addKotaId)
+        // console.log("CITY_ID ACTIONS 2", addKotaId)
         if (addKotaId > 0) {
-          console.log("CITY2 JALANNN")
+          // console.log("CITY2 JALANNN")
           let res = await Axios.get(`${API_URL}/rajaOngkir/getCity2`, {
             headers: {
               provinceid: addProvinsiId,
@@ -417,7 +418,7 @@ const handleEditProfile=async()=>{
             }
           })
           if (res.data) {
-            console.log("RES DATA GET CITY RAJAONGKIR", res.data.namaKota[0])
+            // console.log("RES DATA GET CITY RAJAONGKIR", res.data.namaKota[0])
             dispatch(getCityActions2(res.data.namaKota[0]))
           }
         }
@@ -442,14 +443,15 @@ const handleEditProfile=async()=>{
     setNameEdit("");
     setGenderEdit("");
     setBirthDateEdit("");
-    setFile(profilePicture);
+    setFile(undefined);
+    // setFile(profilePicture);
   };
 
   const printPrimaryAddress=()=>{
     return address.map((value ,index) =>{
       // console.log("value map address", value)
       if (value.isDefaultAddress == "true"){
-        console.log("value.isDefaultAddress utama", value.isDefaultAddress == "true")
+        // console.log("value.isDefaultAddress utama", value.isDefaultAddress == "true")
         return <>
           <div type="button" class="rounded-4 mt-2 d-inline" style={{backgroundColor:"#DE1B51", height:"200px", width:"48%", paddingTop:"0px", color:"#FFFFFF", marginLeft:"10px" }}
             onClick={() => {(setShow(!show)); (setDataID(value.idAddress)); (setUtama(true))}}>
@@ -476,7 +478,7 @@ const handleEditProfile=async()=>{
 
   const printAddress=()=>{
     return address.map((value ,index) =>{
-      console.log("value map address", value)
+      // console.log("value map address", value)
       if (value.isDefaultAddress != "true"){
         // console.log("value.isDefaultAddress utama", value.isDefaultAddress == "true")
         return <>
@@ -501,7 +503,7 @@ const handleEditProfile=async()=>{
   }
 
   // console.log("check ADD ADDRESS BARU", addLabel, addAlamat, getProvince2, addProvinsiId, getCity2, addKotaId, addPenerima, addTelfon, addKodePos)
-  // console.log("check users", BE_URL+profilePicture)
+  console.log("======check file foto", file)
   // console.log("edit value", nameEdit, emailEdit, genderEdit, birthDateEdit)
 
   return (
@@ -521,7 +523,7 @@ const handleEditProfile=async()=>{
         <>
         <div class="row mt-5">
           <div class="d-flex justify-content-center">
-            <img src={BE_URL+profilePicture} alt="Profile Picture" style={{ width:"15%", borderRadius:"50%", cursor:"pointer"}} 
+            <img class="cropped" src={BE_URL+profilePicture} alt="Profile Picture" style={{ borderRadius:"50%", cursor:"pointer"}} 
               onClick={() => setEditProfile(!editProfile)}/>
           </div>
         </div>
@@ -562,13 +564,23 @@ const handleEditProfile=async()=>{
             {
               previewPost == false ?
             <>
-              <img src={BE_URL+profilePicture} onClick={onButtonClick}
-                alt="Profile Picture" style={{cursor:"pointer", width:"15%", borderRadius:"50%"}} />
+                <img class="cropped" src={BE_URL+profilePicture} onClick={onButtonClick}
+                  alt="Profile Picture" style={{cursor:"pointer", borderRadius:"50%"}} />
             </>
             :
             <>
-              <img src={file} onClick={onButtonClick}
-                alt="Upload Profile Picture" style={{cursor:"pointer", width:"15%", borderRadius:"50%"}} />
+              {
+                file == undefined ?
+                <>
+                  <img src={defaultImage} onClick={onButtonClick}
+                    alt="Upload Profile Picture" style={{cursor:"pointer", width:"15%", borderRadius:"50%"}} />
+                </>
+              :
+                <>
+                  <img class="cropped" src={file} onClick={onButtonClick}
+                    alt="Upload Profile Picture" style={{cursor:"pointer", borderRadius:"50%"}} />
+                </>
+              }
             </>
             }
           </div>

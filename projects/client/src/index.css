@@ -341,3 +341,19 @@ nav ul li a:hover {
   transform: scale(5);
   z-index: 99;
 }
+
+.cropped {
+  width: 200px; /* width of container */
+  height: 200px; /* height of container */
+  overflow: hidden;
+  object-fit: cover;
+  /* box-shadow: 5px 10px 18px #888888; */
+}
+
+.cropped:hover {
+  width: 200px; /* width of container */
+  height: 200px; /* height of container */
+  /* overflow: hidden; */
+  object-fit: cover;
+  border: 5px solid #88888800;
+} 
