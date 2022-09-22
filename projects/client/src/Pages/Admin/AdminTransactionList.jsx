@@ -254,16 +254,16 @@ const AdminTransactionListPage = (props) => {
                                         <Button
                                             mx={{ base: 2, md: 0 }}
                                             mt={{ base: 2, md: 2 }}
-                                            width={{ base: 400, md: 300 }}
+                                            width={{ base: "100%", md: "100%"}}
                                             className="btn-def"
                                             onClick={btnFilterSort}
-                                        >
+                                            >
                                             Terapkan
                                         </Button>
                                         <Button
                                             mx={{ base: 2, md: 0 }}
                                             mt={{ base: 2, md: 2 }}
-                                            width={{ base: 400, md: 300 }}
+                                            width={{ base: "100%", md: "100%"}}
                                             className="btn-def"
                                             onClick={btnReset}
                                         >
