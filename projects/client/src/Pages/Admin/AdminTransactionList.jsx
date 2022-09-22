@@ -246,7 +246,7 @@ const AdminTransactionListPage = (props) => {
                                                 Tanggal Invoice - Ascending
                                             </option>
                                             <option
-                                                value="addDate-dessc"
+                                                value="addDate-desc"
                                             >
                                                 Tanggal Invoice - Descending
                                             </option>
