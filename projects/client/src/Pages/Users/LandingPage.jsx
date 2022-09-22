@@ -220,8 +220,9 @@ const LandingPage = (props) => {
                           <div class="col-5">
                             <Image src={kategori1} width='70%' style={{ marginLeft: "25px", marginTop: "5px" }} />
                           </div>
-                          <div class="col-7">
-                            <Text class="h6-link">Obat-Obatan</Text>
+                          <div class="col-7 my-auto">
+                            <Link href="/productlist/1"  class="h6-link">Obat-Obatan</Link>
+                            
                           </div>
                         </div>
                       </Box>
@@ -232,20 +233,21 @@ const LandingPage = (props) => {
                           <div class="col-5">
                             <Image src={kategori2} width='70%' style={{ marginLeft: "25px", marginTop: "5px" }} />
                           </div>
-                          <div class="col-7">
-                            <Text class="h6" style={{ marginTop: "50px" }}>Vitamin & Suplemen</Text>
+                          <div class="col-7 my-auto">
+                            <Link  href="/productlist/2" class="h6" style={{ marginTop: "50px" }}>Vitamin & Suplemen</Link>
                           </div>
                         </div>
                       </Box>
                     </div>
-                    <div class="col-md-4 col-sm-12">
+                    <div class="col-md-4 col-sm-12 ">
                       <Box borderRadius={"10px"} width="100%" boxShadow='md' bg='#FFFFFF' marginTop={"10px"} paddingBottom={"10px"}>
                         <div class="row">
                           <div class="col-5">
                             <Image src={kategori3} width='70%' style={{ marginLeft: "25px", marginTop: "5px" }} />
                           </div>
-                          <div class="col-7">
-                            <Text class="h6" style={{ marginTop: "50px" }}>Perawatan Tubuh</Text>
+                          <div class="col-7 my-auto">
+                            <a href="/productlist/3"  style={{align:"center"}}>Perawatan Tubuh</a>
+                            
                           </div>
                         </div>
                       </Box>
