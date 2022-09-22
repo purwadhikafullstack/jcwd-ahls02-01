@@ -19,7 +19,9 @@ import {
     AccordionButton,
     AccordionPanel,
     AccordionIcon,
-    Select
+    Select,
+    Tooltip,
+    Button
 } from "@chakra-ui/react";
 
 import { FaEdit } from "react-icons/fa";
@@ -171,17 +173,31 @@ const AccorAddressComponent = (props) => {
                                 </InputGroup>
 
                                 {/* ❗❗❗ btnSaveEdit untuk save address terupdate */}
-                                <MdCheckCircle
-                                    onClick={() => btnSaveEdit(valueAddress.idAddress, valueAddress.label, valueAddress.isDefaultAddress)}
-                                    className="iconFirst"
-                                    size={25}
-                                />
+                                <Tooltip
+                                    hasArrow
+                                    label="tekan disini untuk simpan perubahan / batallkan perubahan"
+                                    isOpen={true}
+                                    placement='right'
+                                    backgroundColor="var(--colorEight)"
+                                >
+                                    <Box
+                                        mx={0}
+                                        my={0}
+                                        display="flex"
+                                    >
+                                        <MdCheckCircle
+                                            onClick={() => btnSaveEdit(valueAddress.idAddress, valueAddress.label, valueAddress.isDefaultAddress)}
+                                            className="iconFirst"
+                                            size={25}
+                                        />
 
-                                <MdCancel
-                                    onClick={btnCancelEdit}
-                                    className="iconSecond"
-                                    size={25}
-                                />
+                                        <MdCancel
+                                            onClick={btnCancelEdit}
+                                            className="iconSecond"
+                                            size={25}
+                                        />
+                                    </Box>
+                                </Tooltip>
                             </Box>
 
                             <InputGroup size="sm">
@@ -663,17 +679,30 @@ const AccorAddressComponent = (props) => {
                         </InputGroup>
 
                         {/* ❗❗❗ btnSaveNewAddress untuk save new address */}
-                        <MdCheckCircle
-                            onClick={btnSaveNewAddress}
-                            className="iconFirst"
-                            size={25}
-                        />
-
-                        <MdCancel
-                            onClick={btnCancelNewAddress}
-                            className="iconSecond"
-                            size={25}
-                        />
+                        <Tooltip
+                            hasArrow
+                            label="tekan disini untuk simpan alamat baru / batal simpan alamat baru"
+                            isOpen={true}
+                            placement='right'
+                            backgroundColor="var(--colorEight)"
+                        >
+                            <Box
+                                mx={0}
+                                my={0}
+                                display="flex"
+                            >
+                                <MdCheckCircle
+                                    onClick={btnSaveNewAddress}
+                                    className="iconFirst"
+                                    size={25}
+                                />
+                                <MdCancel
+                                    onClick={btnCancelNewAddress}
+                                    className="iconSecond"
+                                    size={25}
+                                />
+                            </Box>
+                        </Tooltip>
                     </Box>
 
                     <InputGroup size="sm">
@@ -797,7 +826,7 @@ const AccorAddressComponent = (props) => {
             null
         }
 
-    </Accordion>)
+    </Accordion >)
 }
 
 export default AccorAddressComponent;

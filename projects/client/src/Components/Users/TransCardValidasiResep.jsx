@@ -10,6 +10,8 @@ import {
     Box,
     Image,
     Text,
+    Divider,
+    Button,
     ButtonGroup,
 } from "@chakra-ui/react";
 
@@ -176,6 +178,21 @@ const TransCardValidasiResepComponent = (props) => {
                                         Menunggu Pembayaran
                                     </span>
                                 </Text>
+                                {/* <Divider /> */}
+                                {/* <Box
+                                    display='flex'
+                                    alignItems='center'
+                                    justifyContent='end'
+                                    mt={3}
+                                >
+                                    <Button
+                                        className="btn-def"
+                                        width={160}
+                                        onClick={() => btnBatalkanPesanan(value.idTransaction, "Dibatalkan")}
+                                    >
+                                        Batalkan Pesanan
+                                    </Button>
+                                </Box> */}
                             </div>
                         </div>
                     )
