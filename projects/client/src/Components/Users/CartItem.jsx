@@ -97,6 +97,7 @@ const CartItemComponent = (props) => {
             }).then((res) => {
                 console.log("isi res.data pas onChange quantity", res.data);
                 dispatch(getCartAction());
+                handleToParent();
             }).catch((err) => {
                 console.log(err)
             })
@@ -113,36 +114,6 @@ const CartItemComponent = (props) => {
 
         console.log(`btnDeleteItem diklik`)
 
-        // //^ cari idProduct untuk di transfer ke BE in case product list ga return idStock
-        // let selectedIdProduct = dbMainStock.filter(val => val.idStock == idStock)[0];
-        // selectedIdProduct = selectedIdProduct.idProduct;
-        // console.log(`selectedIdProduct`, selectedIdProduct);
-
-        // let token = localStorage.getItem("tokenIdUser");
-
-        // //^ cek ada token atau tidak
-        // console.log(`handleQty tokenIdUser`, token);
-
-        // if (token) {
-        //     Axios.patch(`${API_URL}/cart/delete/${idCart}`, {
-        //         "idProduct": selectedIdProduct,
-        //         "cartQuantity": currentQty
-        //     }, {
-        //         headers: {
-        //             'Authorization': `Bearer ${token}`
-        //         }
-        //     }).then((res) => {
-        //         console.log("isi res.data pas delete diklik", res.data);
-        //         dispatch(getCartAction());
-        //         newToast({
-        //             title: "Delete item",
-        //             description: "Item keranjang terpilih berhasil didelete",
-        //             status: 'info'
-        //         });
-        //     }).catch((err) => {
-        //         console.log(err)
-        //     })
-        // }
     }
 
     const btnYaDelete = () => {
@@ -208,6 +179,7 @@ const CartItemComponent = (props) => {
             setIdCartDeleted(idCart);
             setIdStockDeleted(idStock);
             setOpenModalPenghapusan(!openModalPenghapusan);
+            handleToParent();
         }
         console.log(`new cartQuantity`, temp);
 
@@ -285,16 +257,8 @@ const CartItemComponent = (props) => {
             }).then((res) => {
                 console.log("isi res.data pas increase quantity", res.data);
                 dispatch(getCartAction());
+                handleToParent();
 
-                // console.log(`props.dbCart di increaseBtn`, props.dbCart)
-                // props.dbCart.map((valueCart, indexCart) => {
-                //     checkedCartIds.forEach((valueId, indexId) => {
-                //         if (valueCart.idCart == valueId) {
-                //             tempSubTotal += valueCart.subTotal
-                //         }
-                //     })
-                // });
-                // props.handleCallback(tempSubTotal, checkedCartIds);
             }).catch((err) => {
                 console.log(err)
             })
