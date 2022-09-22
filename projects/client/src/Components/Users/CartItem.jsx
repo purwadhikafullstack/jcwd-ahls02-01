@@ -45,6 +45,7 @@ const CartItemComponent = (props) => {
 
     //^ STATE MANAGEMENT
     const [checkedCartIds, setCheckedCartIds] = useState([]);
+    const [qtyHandleQuantity, setQtyHandleQuantity] = useState(0);
 
     const [isDeletedClicked, setIsDeletedClicked] = useState(0);
     const [currentQuantity, setCurrentQuantity] = useState(0);
@@ -56,8 +57,9 @@ const CartItemComponent = (props) => {
     useEffect(() => {
         handleToParent();
         dispatch(getAllMainStockAction());
+        setIsDeletedClicked(0)
 
-    }, [checkedCartIds])
+    }, [isDeletedClicked, checkedCartIds, qtyHandleQuantity])
 
     const { dbMainStock } = useSelector((state) => {
         return {
@@ -71,6 +73,8 @@ const CartItemComponent = (props) => {
     //& supaya qty bisa diinput manual jg
     const handleQty = (e, idCart, idStock) => {
         let newQty = parseInt(e.target.value);
+
+        setQtyHandleQuantity(parseInt(e.target.value))
 
         //^ cari idProduct untuk di transfer ke BE in case product list ga return idStock
         let selectedIdProduct = dbMainStock.filter(val => val.idStock == idStock)[0];
@@ -281,6 +285,8 @@ const CartItemComponent = (props) => {
             }).then((res) => {
                 console.log("isi res.data pas increase quantity", res.data);
                 dispatch(getCartAction());
+
+                // console.log(`props.dbCart di increaseBtn`, props.dbCart)
                 // props.dbCart.map((valueCart, indexCart) => {
                 //     checkedCartIds.forEach((valueId, indexId) => {
                 //         if (valueCart.idCart == valueId) {
