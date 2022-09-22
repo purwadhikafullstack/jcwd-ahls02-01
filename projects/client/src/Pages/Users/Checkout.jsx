@@ -453,7 +453,7 @@ const CheckoutPage = (props) => {
                         borderRadius={5}
                         borderColor="var(--colorSix)"
                         className="d-flex d-md-none col-6"
-                        onClick={() => navigate("/cart")}
+                        onClick={btnBackToCart}
                     >
                         <TiArrowBack
                             style={iconStyles}

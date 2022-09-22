@@ -127,11 +127,12 @@ const NavbarComponent = (props) => {
                           <MenuButton>
                           {
                             isLargerThan1280 ?
-                            <Image
+                            <Image 
                               borderRadius='full'
                               boxSize='35px'
                               src={BE_URL+profilePicture}
                               alt='Foto Profile'
+                              objectFit={"cover"}
                             />
                           :
                           <Image
@@ -139,6 +140,7 @@ const NavbarComponent = (props) => {
                             boxSize='25px'
                             src={BE_URL+profilePicture}
                             alt='Foto Profile'
+                            objectFit={"cover"}
                           />
                           }
                           </MenuButton>
@@ -167,6 +169,7 @@ const NavbarComponent = (props) => {
                             boxSize='35px'
                             src={BE_URL+profilePicture}
                             alt='Foto Profile'
+                            objectFit={"cover"}
                           />
                         </MenuButton>
                         <MenuList>
@@ -202,6 +205,7 @@ const NavbarComponent = (props) => {
                       boxSize='35px'
                       src={BE_URL+profilePicture}
                       alt='Foto Profile'
+                      objectFit={"cover"}
                     />
                     </MenuButton>
                     <MenuList>

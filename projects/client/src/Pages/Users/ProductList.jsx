@@ -87,8 +87,11 @@ const ProductList = (props) => {
   //^ check isi databaseCart
   console.log(`databaseCart di productlist`, databaseCart);
 
-  const btnCart = async (idProduct, productName) => {
+  const [indexSelectedProduct, setIndexSelectedProduct] = React.useState(null);
+
+  const btnCart = async (idProduct, productName, idx) => {
     try {
+      setIndexSelectedProduct(idx);
       setLoadingStat(true);
 
       let token = localStorage.getItem("tokenIdUser");
@@ -212,9 +215,14 @@ const ProductList = (props) => {
             </div>
             <div class="d-flex justify-content-center mt-3">
               <Button
-                isLoading={loadingStat}
+                isLoading=
+                {
+                  index == indexSelectedProduct
+                  &&
+                  loadingStat
+                }
                 class="btn-rekom"
-                onClick={() => btnCart(value.idProduct, value.productName)}
+                onClick={() => btnCart(value.idProduct, value.productName, index)}
               >
                 Add To Cart
               </Button>

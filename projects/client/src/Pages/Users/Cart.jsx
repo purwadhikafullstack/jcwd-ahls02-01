@@ -26,7 +26,6 @@ const CartPage = (props) => {
     useEffect(() => {
         dispatch(getCartAction());
 
-        // handleToParentSubTotalAllCartItems();
     }, [])
 
     //^ STATE MANAGEMENT
@@ -43,46 +42,6 @@ const CartPage = (props) => {
     //^ check isi databaseCart
     console.log(`databaseCart`, databaseCart);
 
-    //! bisa didelete krn sudah diganti dr reducer
-    const [dbCart, setDbCart] = useState([
-        {
-            idCart: 1,
-            idStock: 15,
-            idUser: 6,
-            productName: "Derma AnGel Acne Patch Day",
-            productPicture: "https://d2qjkwm11akmwu.cloudfront.net/products/887201_27-6-2022_14-36-43.webp",
-            cartQuantity: 2,
-            stockType: "dus",
-            priceSale: 16500,
-            subTotal: 33000,
-            isActive: "true"
-        },
-        {
-            idCart: 2,
-            idStock: 7,
-            idUser: 6,
-            productName: "Enervon-C",
-            productPicture: "https://d2qjkwm11akmwu.cloudfront.net/products/263731_19-5-2022_13-22-8.png",
-            cartQuantity: 1,
-            stockType: "saset",
-            priceSale: 35000,
-            subTotal: 35000,
-            isActive: "true"
-        },
-        {
-            idCart: 3,
-            idStock: 3,
-            idUser: 7,
-            productName: "Decolgen",
-            productPicture: "https://d2qjkwm11akmwu.cloudfront.net/products/49b5c4d0-85c9-4dc0-b1e2-96574c106cd9_product_image_url.webp",
-            cartQuantity: 1,
-            stockType: "saset",
-            priceSale: 2300,
-            subTotal: 2300,
-            isActive: "true"
-        }
-    ]);
-
     const handleCallbackToChild = (subTotalData = 0, selectedIdCart) => {
         setSubTotalAllCartItems(subTotalData);
         setArrayIdCart(selectedIdCart);
@@ -90,15 +49,6 @@ const CartPage = (props) => {
 
     console.log(`arrayIdCart cartPage ${arrayIdCart}`);
     console.log(`typeof arrayIdCart di cartPage ${typeof (arrayIdCart)}`);
-
-    // const handleToParentSubTotalAllCartItems = () => {
-    //     let temp = 0
-    //     dbCart.map((value, index) => {
-    //         temp += value.subTotal
-    //     });
-    //     console.log(temp)
-    //     setSubTotalAllCartItems(temp);
-    // }
 
     const btnCheckout = () => {
         setLoadingStatus(true);
@@ -193,7 +143,7 @@ const CartPage = (props) => {
                         >
 
                             <Text className="font-brand" as='b'>
-                                Sub Total
+                                Total
                             </Text>
 
                             <Text className="font-brand" as='b'>
