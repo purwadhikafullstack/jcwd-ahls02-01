@@ -58,13 +58,15 @@ const LandingPage = (props) => {
 
   const fetchProductList = () => {
     let token = localStorage.getItem("tokenIdUser");
-    Axios.get(`${API_URL}/users/getproducts`, {
+    Axios.post(`${API_URL}/users/getproducts`, {
       category: filterData.category,
       name: filterData.name,
     }).then((res) => {
       setProductData(res.data.data);
       console.log(res.data);
-    });
+    }).catch(err=>{
+        console.log(err)
+    };
   };
 
   const { isVerified, users, name, profilePicture, token } = useSelector(
