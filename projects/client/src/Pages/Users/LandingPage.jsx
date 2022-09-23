@@ -47,6 +47,10 @@ const LandingPage = (props) => {
   const [currentToast, newToast] = useToastHook();
   const [isLargerThan1280] = useMediaQuery("(min-width: 1280px)");
   const [productData, setProductData] = React.useState([]);
+  const [filterData, setFilterData] = React.useState({
+    category: "",
+    name: "",
+  });
 
   React.useEffect(() => {
     fetchProductList();
@@ -55,6 +59,8 @@ const LandingPage = (props) => {
   const fetchProductList = () => {
     let token = localStorage.getItem("tokenIdUser");
     Axios.get(`${API_URL}/users/getproducts`, {
+      category: filterData.category,
+      name: filterData.name,
     }).then((res) => {
       setProductData(res.data.data);
       console.log(res.data);
