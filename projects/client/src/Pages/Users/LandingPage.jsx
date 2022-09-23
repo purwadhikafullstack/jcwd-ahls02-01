@@ -66,7 +66,7 @@ const LandingPage = (props) => {
       console.log(res.data);
     }).catch(err=>{
         console.log(err)
-    };
+    });
   };
 
   const { isVerified, users, name, profilePicture, token } = useSelector(
