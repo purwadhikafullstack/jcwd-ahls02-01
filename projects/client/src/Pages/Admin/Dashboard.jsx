@@ -604,7 +604,7 @@ const Dashboard=(props)=>{
                       <div class="rounded-4 shadow p-3 mb-3 text-center" style={{backgroundColor:"#f6f8fc", height:"120px"}}>
                         <Text class="h6">Sedang Dikirim</Text>
                         {
-                          sedangProses == undefined ?
+                          sedangDikirim == undefined ?
                             <div>
                               <Box mt={"15px"}>
                                 <Text class="h4b">0</Text> 
@@ -612,7 +612,7 @@ const Dashboard=(props)=>{
                             </div>
                         :
                           <Box mt={"15px"}>
-                            <Text class="h4b">{sedangProses.length}</Text> 
+                            <Text class="h4b">{sedangDikirim.length}</Text> 
                           </Box>
                         }
                         {/* <Text class="text-muted">Data dinyatakan dalam puluhan ribu rupiah</Text> */}
